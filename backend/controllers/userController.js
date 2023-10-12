@@ -6,23 +6,28 @@ import generateToken from "../utils/generateToken.js";
 //@access public
 
 const authUser = asyncHandler(async (req, res) => {
+
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPasswords(password))) {
+
     generateToken(res, user._id);
 
     res.status(201).json({
+
       _id: user._id,
 
       name: user.name,
 
       email: user.email,
 
-      image: user.imagePath,
+      // image: user.imagePath,
     });
+
   } else {
+
     res.status(401);
 
     throw new Error("Invalid email or password");
@@ -34,12 +39,13 @@ const authUser = asyncHandler(async (req, res) => {
 //@access public
 
 const registerUser = asyncHandler(async (req, res) => {
-  console.log(req.body, "hkjglkgk");
+
   const { name, email, password } = req.body;
 
   const userExists = await User.findOne({ email });
 
   if (userExists) {
+
     res.status(400);
 
     throw new Error("user already exists");
@@ -48,16 +54,21 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({ name, email, password });
 
   if (user) {
+
     generateToken(res, user._id);
 
     res.status(201).json({
+
       _id: user._id,
 
       name: user.name,
 
       email: user.email,
+
     });
+
   } else {
+
     res.status(401);
 
     throw new Error("Invalid user data");
@@ -69,6 +80,7 @@ const registerUser = asyncHandler(async (req, res) => {
 //@access public
 
 const logoutUser = asyncHandler(async (req, res) => {
+
   res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
 
   res.status(200).json({ message: "user logged out" });
@@ -79,21 +91,26 @@ const logoutUser = asyncHandler(async (req, res) => {
 //@access private(need to have access and the valid tokken)
 
 const profile = asyncHandler(async (req, res) => {
+
   const user = {
+
     _id: req.user._id,
 
     name: req.user.name,
 
     email: req.user.email,
+
   };
 
   res.status(200).json(user);
+
 });
 
 //@user update user profile
 //@ route PUT api/users/profile
 //@access private(need to have access and the valid tokken)
 const updateUserProfile = asyncHandler(async (req, res) => {
+   
   const user = await User.findById(req.body._id);
 
   if (user) {
