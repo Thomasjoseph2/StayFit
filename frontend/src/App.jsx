@@ -1,50 +1,47 @@
 import React from "react";
+import { createBrowserRouter, Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-import UserNavbar from "./components/UserNavbar";
-import UserBody from "./components/UserBody";
-import WorkoutCard from "./components/WorkoutCard";
+import UserNavbar from "./components/userComponents/UserNavbar";
+import UserBody from "./components/userComponents/UserBody";
 import Footer from "./components/Footer";
 import ErrorPage from "./components/ErrorPage";
-import Registration from "./components/Registration";
-import LoginPage from "./components/LoginPage";
-import { createBrowserRouter ,Outlet} from 'react-router-dom'
+import Registration from "./components/userComponents/Registration";
+import LoginPage from "./components/userComponents/LoginPage";
+
 
 const App = () => {
   return (
     <div className="app bg-black flex flex-col h-screen  ">
       <UserNavbar />
       <Outlet />
-      <Footer/>
+      <Footer />
+      <ToastContainer/>
     </div>
   );
 };
 
-export const appRouter=createBrowserRouter([
+export const appRouter = createBrowserRouter([
   {
-    path:"/",
-    element:<App/>,
-    errorElement:<ErrorPage/>,
-    children:[
-       {
-        path:"/",
-        element:<UserBody/>
-
-       },
+    path: "/",
+    element: <App />,
+    errorElement: <ErrorPage />,
+    children: [
       {
-        path:"/registration",
-        element:<Registration/>
+        path: "/",
+        element: <UserBody />,
       },
       {
-        path:"/login",
-        element:<LoginPage/>
-      }
-    ]
-
-
+        path: "/registration",
+        element: <Registration />,
+      },
+      {
+        path: "/login",
+        element: <LoginPage />,
+      },
+    ],
   },
-
- 
-  
-])
+]);
 
 export default App;

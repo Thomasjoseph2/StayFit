@@ -1,5 +1,5 @@
 import React from 'react'
-import forearm from "../assets/best-forearm.jpg"
+import forearm from "../../assets/best-forearm.jpg"
 import {
     Card,
     CardHeader,

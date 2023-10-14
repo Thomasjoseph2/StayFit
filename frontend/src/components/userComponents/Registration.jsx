@@ -1,6 +1,17 @@
-import React from 'react'
+
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const Registration = () => {
+    const [name,setName]=useState('')
+    const [email,setEmail]=useState('')
+    const [password,setPassword]=useState('')
+    const [confirmPassword,setConfirmPassword]=useState('')
+
+    const submitHandler=async (e)=>{
+        e.preventDefault();
+        console.log('submit');
+    }
   return (
    
      
@@ -14,7 +25,7 @@ const Registration = () => {
                     </a>
                 </div>
                 <div className="w-full px-6 py-4 mt-6 overflow-hidden bg-gray-900 shadow-md sm:max-w-lg sm:rounded-lg">
-                    <form>
+                    <form onSubmit={submitHandler}>
                         <div>
                             <label
                                 htmlFor="name"
@@ -26,6 +37,8 @@ const Registration = () => {
                                 <input
                                     type="text"
                                     name="name"
+                                    value={name}
+                                    onChange={(e)=>{setName(e.target.value)}}
                                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-100 h-10"
                                 />
                             </div>
@@ -41,6 +54,8 @@ const Registration = () => {
                                 <input
                                     type="email"
                                     name="email"
+                                    value={email}
+                                    onChange={(e)=>{setEmail(e.target.value)}}
                                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10"
                                 />
                             </div>
@@ -56,6 +71,8 @@ const Registration = () => {
                                 <input
                                     type="password"
                                     name="password"
+                                    value={password}
+                                    onChange={(e)=>{setPassword(e.target.value)}}
                                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10"
                                 />
                             </div>
@@ -71,18 +88,15 @@ const Registration = () => {
                                 <input
                                     type="password"
                                     name="password_confirmation"
+                                    value={confirmPassword}
+                                    onChange={(e)=>{setConfirmPassword(e.target.value)}}
                                     className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10"
                                 />
                             </div>
                         </div>
-                        <a
-                            href="#"
-                            className="text-xs text-white hover:underline"
-                        >
-                            Forget Password?
-                        </a>
-                        <div className="flex items-center mt-4">
-                            <button className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-800 rounded-md hover:bg-green-600 focus:outline-none focus:bg-purple-600">
+                       
+                        <div className="flex items-center mt-8">
+                            <button type='submit' className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-800 rounded-md hover:bg-green-600 focus:outline-none focus:bg-purple-600">
                                 Register
                             </button>
                         </div>
@@ -90,12 +104,12 @@ const Registration = () => {
                     <div className="mt-10 text-white ">
                         Already have an account?{" "}
                         <span>
-                            <a className="text-light-blue-800 hover:underline" href="#">
+                            <Link className="text-light-blue-800 hover:underline" to="/login">
                                 Log in
-                            </a>
+                                </Link>
                         </span>
                     </div>
-                    {/* <div className="flex items-center w-full my-4">
+                     {/* <div className="flex items-center w-full my-4">
                         <hr className="w-full" />
                         <p className="px-3 text-white ">OR</p>
                         <hr className="w-full" />

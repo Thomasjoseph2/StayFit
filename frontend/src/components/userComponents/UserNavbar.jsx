@@ -1,8 +1,30 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CgProfile } from "react-icons/cg";
+import { useSelector, useDispatch } from "react-redux";
+import { useLogoutMutation } from "../../slices/usersApiSlice";
+import { logout } from "../../slices/authSlice";
+import { toast } from "react-toastify";
 
 const UserNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const dispatch =useDispatch();
+  const navigate=useNavigate();
+
+  const [logoutApiCall]=useLogoutMutation();
+
+  const logoutHandler=async ()=>{
+  try {
+    await logoutApiCall().unwrap();
+    dispatch(logout())
+    navigate('/')
+  } catch (error) {
+    toast.error(error.message)
+  }
+ }
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -10,7 +32,9 @@ const UserNavbar = () => {
 
   return (
     <nav className="bg-red-700 bg-opacity-75 p-4 flex justify-between items-center z-10 fixed w-full ">
-      <div className="text-white font-bold text-xl"><Link to="/">Stayfit</Link></div>
+      <div className="text-white font-bold text-xl">
+        <Link to="/">Stayfit</Link>
+      </div>
       <div className="flex items-center space-x-4">
         <div className="md:hidden flex-grow"></div>
         <div className="hidden md:flex flex-grow justify-center space-x-4">
@@ -30,10 +54,30 @@ const UserNavbar = () => {
       </div>
       <div className="md:hidden flex-grow"></div>
       <div className="flex items-center space-x-4">
-        <div className="hidden md:flex items-center space-x-2">
-        <Link to="/registration"> <span className="text-white">SignUp</span></Link> 
-        </div>
-       <Link to="/login"><button className="text-white hidden md:block">Login</button></Link> 
+        {userInfo ? (
+          <div className="hidden md:flex items-center space-x-2">
+            <Link to="/login">
+              <button onClick={logoutHandler} className="text-white hidden md:block">Logout</button>
+            </Link>
+            <Link
+              to="/profile"
+              className="text-white hover:text-gray-300 w-full block"
+            >
+              <CgProfile />
+            </Link>
+          </div>
+        ) : (
+          <div className="hidden md:flex items-center space-x-2">
+            <Link to="/registration">
+              {" "}
+              <span className="text-white">SignUp</span>
+            </Link>
+            <Link to="/login">
+              <button className="text-white hidden md:block">Login</button>
+            </Link>
+           
+          </div>
+        )}
         <button
           onClick={toggleMenu}
           className="md:hidden text-white focus:outline-none"
@@ -81,8 +125,23 @@ const UserNavbar = () => {
                 BMI Calculator
               </a>
             </li>
-            <li>
-              <Link 
+            {userInfo ? (<><li>
+              <Link
+                to="/profile"
+                className="text-white hover:text-gray-300 w-full block"
+              >
+               Profile
+              </Link>
+            </li>
+            <li onClick={logoutHandler}>
+              <Link
+                to="/logout"
+                className="text-white hover:text-gray-300 w-full block"
+              >
+               Logout
+              </Link>
+            </li></>) : ( <><li>
+              <Link
                 to="/login"
                 className="text-white hover:text-gray-300 w-full block"
               >
@@ -96,7 +155,9 @@ const UserNavbar = () => {
               >
                 Signup
               </Link>
-            </li>
+              </li></> )}
+          
+              
           </ul>
         </div>
       )}
