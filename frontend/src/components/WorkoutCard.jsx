@@ -13,7 +13,7 @@ import {
 const WorkoutCard = () => {
     return (
 
-        <Card className="max-w-[20rem] overflow-hidden mt-1 ">
+        <Card className="max-w-[20rem] overflow-hidden mt-1 m-2  bg-black">
           <CardHeader
             floated={false}
             shadow={false}

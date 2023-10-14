@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const UserNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,7 +10,7 @@ const UserNavbar = () => {
 
   return (
     <nav className="bg-red-700 bg-opacity-75 p-4 flex justify-between items-center z-10 fixed w-full ">
-      <div className="text-white font-bold text-xl">Stayfit</div>
+      <div className="text-white font-bold text-xl"><Link to="/">Stayfit</Link></div>
       <div className="flex items-center space-x-4">
         <div className="md:hidden flex-grow"></div>
         <div className="hidden md:flex flex-grow justify-center space-x-4">
@@ -30,9 +31,9 @@ const UserNavbar = () => {
       <div className="md:hidden flex-grow"></div>
       <div className="flex items-center space-x-4">
         <div className="hidden md:flex items-center space-x-2">
-          <span className="text-white">SignUp</span>
+        <Link to="/registration"> <span className="text-white">SignUp</span></Link> 
         </div>
-        <button className="text-white hidden md:block">Login</button>
+       <Link to="/login"><button className="text-white hidden md:block">Login</button></Link> 
         <button
           onClick={toggleMenu}
           className="md:hidden text-white focus:outline-none"
@@ -81,20 +82,20 @@ const UserNavbar = () => {
               </a>
             </li>
             <li>
-              <a
-                href="#"
+              <Link 
+                to="/login"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Login
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/registration"
                 className="text-white hover:text-gray-300 w-full block"
               >
-                Profile
-              </a>
+                Signup
+              </Link>
             </li>
           </ul>
         </div>

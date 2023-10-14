@@ -1,0 +1,7 @@
+.flex.flex-wrap.justify-center.p-4.bg-black {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 4px;
+    background-color: black;
+  }
