@@ -24,9 +24,16 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         method:'GET'
       })
     }),
-    deleteUser:builder.mutation({
+    blockUser:builder.mutation({
       query:(data)=>({
-        url:`${ADMIN_URL}/delete`,
+        url:`${ADMIN_URL}/block-user`,
+        method:'POST',
+        body: data,
+      })
+    }),
+    unblockUser:builder.mutation({
+      query:(data)=>({
+        url:`${ADMIN_URL}/unblock-user`,
         method:'POST',
         body: data,
       })
@@ -44,4 +51,4 @@ export const adminApiSlice = apiSlice.injectEndpoints({
 
 });
 
-export const {useAdminLoginMutation,useAdminLogoutMutation,useUsersMutation,useDeleteUserMutation,useUpdateUserMutation}=adminApiSlice;
+export const {useAdminLoginMutation,useAdminLogoutMutation,useUsersMutation,useBlockUserMutation,useUpdateUserMutation,useUnblockUserMutation}=adminApiSlice;

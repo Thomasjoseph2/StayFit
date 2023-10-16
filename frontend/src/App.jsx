@@ -1,20 +1,25 @@
 import React from "react";
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { Outlet,useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-
 import UserNavbar from "./components/userComponents/UserNavbar";
-import UserBody from "./components/userComponents/UserBody";
 import Footer from "./components/Footer";
-import ErrorPage from "./components/ErrorPage";
-import Registration from "./components/userComponents/Registration";
-import LoginPage from "./components/userComponents/LoginPage";
+import Sidebar from "./components/adminComponents/SideBar";
+import PrivateRoute from "./components/adminComponents/PrivateRoutes";
 
 
 const App = () => {
+const location=useLocation();
+
+const isAdminRoute=location.pathname.startsWith("/admin")
+const isLoginTrainer=location.pathname.startsWith("/trainer")
+const isAdminlogin = location.pathname.includes("/admin/login");
+const isLoginUser=location.pathname.startsWith("/users")
+
   return (
     <div className="app bg-black flex flex-col h-screen  ">
-      <UserNavbar />
+      
+      {!isAdminlogin && ( isAdminRoute ? "" : <UserNavbar />)}
       <Outlet />
       <Footer />
       <ToastContainer/>
@@ -22,26 +27,6 @@ const App = () => {
   );
 };
 
-export const appRouter = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/",
-        element: <UserBody />,
-      },
-      {
-        path: "/registration",
-        element: <Registration />,
-      },
-      {
-        path: "/login",
-        element: <LoginPage />,
-      },
-    ],
-  },
-]);
+
 
 export default App;

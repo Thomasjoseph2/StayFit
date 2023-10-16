@@ -56,7 +56,7 @@ const UserNavbar = () => {
       <div className="flex items-center space-x-4">
         {userInfo ? (
           <div className="hidden md:flex items-center space-x-2">
-            <Link to="/login">
+            <Link to="/">
               <button onClick={logoutHandler} className="text-white hidden md:block">Logout</button>
             </Link>
             <Link

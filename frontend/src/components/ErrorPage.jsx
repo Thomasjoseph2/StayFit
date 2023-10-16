@@ -13,7 +13,7 @@ const ErrorPage=()=>{
             Sorry, an unexpected error has occurred.
           </p>
           <p className="text-3xl text-white">
-            {error.statusText || error.message}
+            {error?.statusText || error?.message}
           </p>
           <div className="mt-4"> 
             <Link
