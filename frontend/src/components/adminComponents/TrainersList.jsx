@@ -1,12 +1,10 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AddTrainerModal from "./AddTrainerModal";
 import axios from "axios";
 import { toast } from "react-toastify";
-import ConfirmationModal from "../ConfirmationModal";
 
 const TrainersList = () => {
   const [actualData, setActualData] = useState([]);
-  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refresher, setRefresher] = useState("");
 
@@ -20,63 +18,53 @@ const TrainersList = () => {
       .get("/api/admin/trainers")
       .then((response) => {
         setActualData(response.data); // Set user data in state
-        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
-
         toast.error("Error fetching user data");
       });
   }, [refresher]);
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setRefresher("changed")
+    setRefresher("changed");
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Tutors List</h2>
+    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Tutors List</h2>
         <button
           onClick={openModal}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
         >
           Add Trainer
         </button>
       </div>
-      <table className="min-w-full border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 px-4 py-2">Name</th>
-            <th className="border border-gray-300 px-4 py-2">Email</th>
-            <th className="border border-gray-300 px-4 py-2">Phone</th>
-            <th className="border border-gray-300 px-4 py-2">Experience</th>
-            <th className="border border-gray-300 px-4 py-2">Specialization</th>
-          </tr>
-        </thead>
-        <tbody>
-          {actualData.map((trainer, index) => (
-            <tr key={trainer._id}>
-              <td className="border border-gray-300 px-4 py-2">
-                {trainer.firstName + trainer.lastName}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {trainer.email}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {trainer.phone}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {trainer.experience}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {trainer.specialties}
-              </td>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-300 rounded shadow-lg">
+          <thead className="bg-blue-500 text-white">
+            <tr>
+              <th className="py-2 px-4">Name</th>
+              <th className="py-2 px-4">Email</th>
+              <th className="py-2 px-4">Phone</th>
+              <th className="py-2 px-4">Experience</th>
+              <th className="py-2 px-4">Specialization</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {actualData.map((trainer, index) => (
+              <tr key={trainer._id} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                <td className="py-2 px-4">{trainer.firstName} {trainer.lastName}</td>
+                <td className="py-2 px-4">{trainer.email}</td>
+                <td className="py-2 px-4">{trainer.phone}</td>
+                <td className="py-2 px-4">{trainer.experience}</td>
+                <td className="py-2 px-4">{trainer.specialties}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <AddTrainerModal isOpen={isModalOpen} onRequestClose={closeModal} />
     </div>
   );

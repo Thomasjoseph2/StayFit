@@ -45,7 +45,7 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="h-8 bg-gray-800"></div>
+      <div className="h-8 bg-blue-500"></div>
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/5 bg-gray-800 h-screen">
           <div className="p-4 text-white">

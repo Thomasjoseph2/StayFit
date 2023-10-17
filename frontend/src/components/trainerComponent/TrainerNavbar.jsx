@@ -25,16 +25,25 @@ const TrainerNavbar = () => {
 
   const logoutHandler = async () => {
     try {
+
       await logoutApiCall().unwrap();
+
       dispatch(logout());
+
       navigate("/trainer");
+    
     } catch (error) {
-      toast.error(error.message);
+    
+        toast.error(error.message);
     }
+
   };
 
+
   const toggleMenu = () => {
+
     setIsOpen(!isOpen);
+
   };
 
   return (
@@ -63,8 +72,6 @@ const TrainerNavbar = () => {
           <Link to="#" className="text-white hover:text-gray-300 text-xl">
             <FaUtensils size={24} />
           </Link>
-        
-         
         </div>
       </div>
 
@@ -86,7 +93,9 @@ const TrainerNavbar = () => {
               <CgProfile />
             </Link>
           </div>
-        ):("")}
+        ) : (
+          ""
+        )}
         <button
           onClick={toggleMenu}
           className="md:hidden text-white focus:outline-none"
@@ -110,21 +119,45 @@ const TrainerNavbar = () => {
       {isOpen && (
         <div className="md:hidden absolute top-16 right-4 left-4 bg-gray-800 p-2">
           <ul className="space-y-2">
+          <li>
+              <Link
+                href="#"
+                className="text-white hover:text-gray-300 w-full block"
+              >
+               Dashboard
+              </Link>
+            </li>
             <li>
-              <a
+              <Link
+                href="#"
+                className="text-white hover:text-gray-300 w-full block"
+              >
+                Live
+              </Link>
+            </li>
+            <li>
+            <li>
+              <Link
+                href="#"
+                className="text-white hover:text-gray-300 w-full block"
+              >
+                Messages
+              </Link>
+            </li>
+              <Link
                 href="#"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Diet
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href="#"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Videos
-              </a>
+              </Link>
             </li>
 
             {trainerInfo ? (

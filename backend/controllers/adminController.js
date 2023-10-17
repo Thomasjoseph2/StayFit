@@ -55,7 +55,6 @@ const logoutAdmin = asyncHandler(async (req, res) => {
 
 const users = asyncHandler(async (req, res) => {
 
-
     const users = await User.find({}); // Fetch all users from the database
 
     if(users){

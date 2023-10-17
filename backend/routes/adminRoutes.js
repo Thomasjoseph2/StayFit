@@ -14,7 +14,7 @@ router.post("/block-user",blockUser)
 router.post("/unblock-user",unblockUser )
 router.get("/users", protect ,users)
 router.post('/add-trainer',addTrainer)
-router.get("/trainers",getTrainers)
+router.get("/trainers",protect,getTrainers)
 
 // router.route('/profile').get(protect,profile).put(protect,upload.single('file'),updateUserProfile);
 

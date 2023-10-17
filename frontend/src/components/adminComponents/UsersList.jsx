@@ -11,113 +11,107 @@ const UsersList = () => {
   const [actualData, setActualData] = useState([]);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
-  const [blockUser]=useBlockUserMutation();
-  const [unblockUser]=useUnblockUserMutation();
-  const [refresher,setRefresher]=useState('')
+  const [blockUser] = useBlockUserMutation();
+  const [unblockUser] = useUnblockUserMutation();
+  const [refresher, setRefresher] = useState("");
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get("/api/admin/users");
+      setActualData(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      toast.error("Error fetching user data");
+    }
+  };
 
   useEffect(() => {
     // Fetch user data from the backend
-    axios
-      .get("/api/admin/users")
-      .then((response) => {
-        setActualData(response.data); // Set user data in state
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-
-        toast.error("Error fetching user data");
-      });
+    fetchUserData();
   }, [refresher]);
 
-
- const handleBlockUser=async(userId)=>{
-    const confirmBlock=window.confirm(
-      "are you sure you want to delete this user?"
+  const handleBlockUser = async (userId) => {
+    const confirmBlock = window.confirm(
+      "are you sure you want to block this user?"
     );
-    if(confirmBlock){
+    if (confirmBlock) {
       try {
-        await blockUser({userId});
+        await blockUser({ userId });
 
-        toast.success("user blocked")
+        toast.success("user blocked");
 
-        setRefresher("blocked")
+        setRefresher("blocked");
       } catch (err) {
         console.error("Error blocking user:", err);
         // Show an error toast
         toast.error("An error occurred while blocking the user.");
       }
     }
+  };
 
- }
-
- const handleUnBlockUser = async (userId) => {
-  const confirmUnblock = window.confirm("Are you sure you want to unblock this user?");
-  if (confirmUnblock) {
-    try {
-      await unblockUser({ userId });
-      toast.success("User unblocked successfully");
-      // Refetch user data and update state after unblocking
-      setRefresher("unblocked")
-    } catch (err) {
-      console.error("Error unblocking user:", err);
-      // Show an error toast
-      toast.error("An error occurred while unblocking the user.");
+  const handleUnBlockUser = async (userId) => {
+    const confirmUnblock = window.confirm(
+      "Are you sure you want to unblock this user?"
+    );
+    if (confirmUnblock) {
+      try {
+        await unblockUser({ userId });
+        toast.success("User unblocked successfully");
+        // Refetch user data and update state after unblocking
+        setRefresher("unblocked");
+      } catch (err) {
+        console.error("Error unblocking user:", err);
+        // Show an error toast
+        toast.error("An error occurred while unblocking the user.");
+      }
     }
-  }
-}
+  };
 
   return (
-    <div className="table-auto ">
-      <div className="bg-black text-white">
-        {" "}
-        <h2 className="text-2xl font-bold mb-4">Users List</h2>
-      </div>
-
-      <table className="min-w-full border border-gray-300">
-        <thead>
-          <tr>
-            <th className="border border-gray-300 px-4 py-2">ID</th>
-            <th className="border border-gray-300 px-4 py-2">Name</th>
-            <th className="border border-gray-300 px-4 py-2">Subject</th>
-            <th className="border border-gray-300 px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {actualData.map((user, index) => (
-            <tr key={user._id}>
-              <td className="border border-gray-300 px-4 py-2 text-center">
-                {user._id}
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
-                {user.name}
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
-                {user.email}
-              </td>
-              <td className="border border-gray-300 px-4 py-2 text-center">
-                {user.blocked === true ? (
-                  <button
-                    onClick={() => handleUnBlockUser(user._id)}
-                    type="button"
-                    className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                  >
-                    Unblock
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleBlockUser(user._id)}
-                    type="button"
-                    className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                  >
-                    Block
-                  </button>
-                )}
-              </td>
+    <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
+      <h2 className="text-3xl font-bold text-gray-800">Users List</h2>
+      <div className="overflow-x-auto mt-4">
+        <table className="min-w-full bg-white border border-gray-300 rounded shadow">
+          <thead className="bg-blue-500 text-white">
+            <tr>
+              <th className="py-2 px-4">ID</th>
+              <th className="py-2 px-4">Name</th>
+              <th className="py-2 px-4">Email</th>
+              <th className="py-2 px-4">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {actualData.map((user, index) => (
+              <tr
+                key={user._id}
+                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
+              >
+                <td className="py-2 px-4 text-center">{user._id}</td>
+                <td className="py-2 px-4 text-center">{user.name}</td>
+                <td className="py-2 px-4 text-center">{user.email}</td>
+                <td className="py-2 px-4 text-center">
+                  {user.blocked ? (
+                    <button
+                      onClick={() => handleUnBlockUser(user._id)}
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mr-2"
+                    >
+                      Unblock
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleBlockUser(user._id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg mr-2"
+                    >
+                      Block
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
