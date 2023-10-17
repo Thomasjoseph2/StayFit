@@ -26,7 +26,6 @@ const TrainersList = () => {
           Add Trainer
         </button>
       </div>
-      <h2 className="text-2xl font-bold mb-4">Tutors List</h2>
       <table className="min-w-full border border-gray-300">
         <thead>
           <tr>

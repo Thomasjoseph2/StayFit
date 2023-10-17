@@ -12,14 +12,14 @@ const App = () => {
 const location=useLocation();
 
 const isAdminRoute=location.pathname.startsWith("/admin")
-const isLoginTrainer=location.pathname.startsWith("/trainer")
+const isTrainerRoute=location.pathname.startsWith("/trainer")
 const isAdminlogin = location.pathname.includes("/admin/login");
-const isLoginUser=location.pathname.startsWith("/users")
+const isLoginTrainer=location.pathname.includes("/trainer/login")
 
   return (
     <div className="app bg-black flex flex-col h-screen  ">
       
-      {!isAdminlogin && ( isAdminRoute ? "" : <UserNavbar />)}
+      {!isAdminlogin || !isLoginTrainer && ( isAdminRoute|| isTrainerRoute ? "" : <UserNavbar />)}
       <Outlet />
       <Footer />
       <ToastContainer/>

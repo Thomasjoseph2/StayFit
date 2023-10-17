@@ -11,44 +11,56 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    adminLogout:builder.mutation({
-      query:()=>({
-        url:`${ADMIN_URL}/logout`,
-        method:'POST'
-      })
+    adminLogout: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/logout`,
+        method: "POST",
+      }),
     }),
-   
-    users:builder.mutation({
-      query:()=>({
-        url:`${ADMIN_URL}/users`,
-        method:'GET'
-      })
-    }),
-    blockUser:builder.mutation({
-      query:(data)=>({
-        url:`${ADMIN_URL}/block-user`,
-        method:'POST',
-        body: data,
-      })
-    }),
-    unblockUser:builder.mutation({
-      query:(data)=>({
-        url:`${ADMIN_URL}/unblock-user`,
-        method:'POST',
-        body: data,
-      })
-    }),
-    updateUser:builder.mutation({
-      query:(data)=>({
-        url:`${USERS_URL}/updateUser`,
-        method:'PUT',
-        body:data
-      })
-    })
 
+    users: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/users`,
+        method: "GET",
+      }),
+    }),
+    blockUser: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/block-user`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    unblockUser: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/unblock-user`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateUser: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/updateUser`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+    AddTrainer: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/add-trainer`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
-
-
 });
 
-export const {useAdminLoginMutation,useAdminLogoutMutation,useUsersMutation,useBlockUserMutation,useUpdateUserMutation,useUnblockUserMutation}=adminApiSlice;
+export const {
+  useAdminLoginMutation,
+  useAdminLogoutMutation,
+  useUsersMutation,
+  useBlockUserMutation,
+  useUpdateUserMutation,
+  useUnblockUserMutation,
+  useAddTrainerMutation
+} = adminApiSlice;
