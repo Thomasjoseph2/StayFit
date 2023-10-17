@@ -8,7 +8,7 @@ const { ObjectId } = mongooseTypes;
 
 
 //@desc Auth user/set token
-//@route POST /api/users/auth
+//@route POST /api/admin/auth
 //@access public
 
 const authAdmin = asyncHandler(async (req, res) => {
@@ -41,8 +41,8 @@ const authAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-//@user logout
-//@ route post api/users/logout
+//@admin logout
+//@ route post api/admin/logout
 //@access public
 
 const logoutAdmin = asyncHandler(async (req, res) => {

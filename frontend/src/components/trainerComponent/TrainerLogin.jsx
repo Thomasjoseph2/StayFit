@@ -1,11 +1,11 @@
 import React, { useState,useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import { useDispatch,useSelector } from "react-redux";
-import { setTrainerCredentials} from "../../slices/trainerAuthSlice";
 import { useTrainerLoginMutation } from "../../slices/trainerApiSlice";
-import {toast} from 'react-toastify'
-
-const TrainerLogin = () => {
+import { setCredentials } from "../../slices/trainerAuthSlice";
+import  {toast} from 'react-toastify'
+import trainerAuthSlice from "../../slices/trainerAuthSlice";
+const TrainerLogin= () => {
     const [email,setEmail]=useState('');
     const [password,setPassword]=useState('');
     
@@ -13,21 +13,18 @@ const TrainerLogin = () => {
     const dispatch=useDispatch();
 
     const [login,{isLoading}]=useTrainerLoginMutation();
-    const {trainerInfo} =useSelector((state)=>state.trainerAuth) || {};
-
-    console.log(trainerInfo);
+    const {trainerInfo} =useSelector((state)=>state.trainerAuth);
    
     useEffect(() => {
-       console.log("Trainer Info:", trainerInfo);
-  if (trainerInfo) {
-    navigate("/trainer");
-  }
+        if (trainerInfo) {
+          navigate("/trainer");
+        }
       }, [navigate, trainerInfo]);
-   const submitHandler = async (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault(); // Corrected typo here
         try {
             const res=await login({email,password}).unwrap();
-            dispatch( setTrainerCredentials({...res}));
+            dispatch(setCredentials({...res}));
             navigate('/trainer');
         } catch (err) {
             toast.error(err?.data?.message || err?.error);
@@ -90,7 +87,7 @@ const TrainerLogin = () => {
             </button>
           </div>
         </form>
-   
+ 
       </div>
     </div>
   );

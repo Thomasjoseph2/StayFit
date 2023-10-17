@@ -11,23 +11,25 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    trainerLogout:builder.mutation({
-      query:()=>({
-        url:`${TRAINER_URL}/logout`,
-        method:'POST'
-      })
+    trainerLogout: builder.mutation({
+      query: () => ({
+        url: `${TRAINER_URL}/logout`,
+        method: "POST",
+      }),
     }),
-   
-    users:builder.mutation({
-      query:()=>({
-        url:`${TRAINER_URL}/trainerHome`,
-        method:'GET'
-      })
+
+    users: builder.mutation({
+      query: () => ({
+        url: `${TRAINER_URL}/users`,
+        method: "GET",
+      }),
     }),
 
   }),
-
-
 });
 
-export const {useTrainerLoginMutation,useTrainerLogoutMutation}=trainerApiSlice;
+export const {
+ useTrainerLoginMutation,
+ useTrainerLogoutMutation,
+ useUsersMutation,
+} = trainerApiSlice;

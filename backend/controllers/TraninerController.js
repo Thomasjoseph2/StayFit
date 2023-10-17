@@ -10,7 +10,7 @@ const { ObjectId } = mongooseTypes;
 //@route POST /api/trainer/auth
 //@access public
 
-const authTrainer= asyncHandler(async (req, res) => {
+ const authTrainer= asyncHandler(async (req, res) => {
 
     const { email, password } = req.body;
   
@@ -47,8 +47,13 @@ const authTrainer= asyncHandler(async (req, res) => {
 
 const logoutTrainer = asyncHandler(async (req, res) => {
 
+  console.log("hiiiiiiii");
+
     res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
   
     res.status(200).json({ message: "trainer logged out" });
   
   });
+
+
+  export { logoutTrainer,authTrainer };

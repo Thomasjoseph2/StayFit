@@ -20,6 +20,7 @@ import Sidebar from './components/adminComponents/SideBar';
 import TrainerPrivateRoute from './components/trainerComponent/TrainerPrivateRoute';
 import TrainerSideBar from './components/trainerComponent/TrainerSideBar';
 import TrainerLogin from './components/trainerComponent/TrainerLogin';
+import TrainerHome from './components/trainerComponent/trainerHome';
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -37,9 +38,10 @@ const routes = createRoutesFromElements(
     
     {/************Trainer side routes ***************/}
     <Route path='/trainer/login' element={<TrainerLogin/>}/>
-    <Route path='' element={<TrainerPrivateRoute />}>
-    <Route path='/trainer' element={<TrainerSideBar/>}/>
+    <Route path='' element={<TrainerPrivateRoute/>}>
+    <Route path='/trainer' element={<TrainerHome/>}/>
     </Route>
+    
 
   </Route>
 );

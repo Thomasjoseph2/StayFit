@@ -1,5 +1,5 @@
 import React from 'react';
-import image from '../../assets/5614625.jpg';
+import image from '../../assets/banners.jpeg';
 import WorkoutCard from './WorkoutCard';
 
 const UserBody = () => {

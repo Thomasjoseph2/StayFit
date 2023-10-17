@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../../slices/usersApiSlice";
 import { logout } from "../../slices/authSlice";
 import { toast } from "react-toastify";
 
+const isTrainerRoute=location.pathname.startsWith("/trainer")
 
 const UserNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
