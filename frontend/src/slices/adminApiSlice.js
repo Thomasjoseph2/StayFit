@@ -24,6 +24,12 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    trainers: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/trainers`,
+        method: "GET",
+      }),
+    }),
     blockUser: builder.mutation({
       query: (data) => ({
         url: `${ADMIN_URL}/block-user`,

@@ -6,11 +6,12 @@ const initialState = {
     : null,
 };
 
+
 const trainerAuthSlice = createSlice({
   name: "trainerAuth",
   initialState,
   reducers: {
-    setCredentials: (state, action) => {
+    setTrainerCredentials: (state, action) => {
       state.trainerInfo = action.payload;
       localStorage.setItem("trainerInfo", JSON.stringify(action.payload));
     },
@@ -22,6 +23,6 @@ const trainerAuthSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout } = trainerAuthSlice.actions;
+export const { setTrainerCredentials, logout } = trainerAuthSlice.actions;
 
 export default trainerAuthSlice.reducer;

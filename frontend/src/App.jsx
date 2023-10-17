@@ -19,14 +19,13 @@ const isLoginTrainer=location.pathname.includes("/trainer/login")
   return (
     <div className="app bg-black flex flex-col h-screen  ">
       
-      {!isAdminlogin || !isLoginTrainer && ( isAdminRoute|| isTrainerRoute ? "" : <UserNavbar />)}
+      {!isAdminlogin && !isLoginTrainer && ( isAdminRoute|| isTrainerRoute ? "" : <UserNavbar />)}
       <Outlet />
       <Footer />
       <ToastContainer/>
     </div>
   );
 };
-
 
 
 export default App;

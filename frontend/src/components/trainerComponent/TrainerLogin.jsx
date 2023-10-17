@@ -1,9 +1,9 @@
 import React, { useState,useEffect } from "react";
 import { Link,useNavigate } from "react-router-dom";
 import { useDispatch,useSelector } from "react-redux";
-import { useAdminLoginMutation } from "../../slices/adminApiSlice";
-import { setCredentials } from "../../slices/adminAuthSlice";
-import  {toast} from 'react-toastify'
+import { setTrainerCredentials} from "../../slices/trainerAuthSlice";
+import { useTrainerLoginMutation } from "../../slices/trainerApiSlice";
+import {toast} from 'react-toastify'
 
 const TrainerLogin = () => {
     const [email,setEmail]=useState('');
@@ -12,20 +12,23 @@ const TrainerLogin = () => {
     const navigate=useNavigate();
     const dispatch=useDispatch();
 
-    const [login,{isLoading}]=useAdminLoginMutation();
-    const {adminInfo} =useSelector((state)=>state.adminAuth);
+    const [login,{isLoading}]=useTrainerLoginMutation();
+    const {trainerInfo} =useSelector((state)=>state.trainerAuth) || {};
+
+    console.log(trainerInfo);
    
     useEffect(() => {
-        if (adminInfo) {
-          navigate("/admin");
-        }
-      }, [navigate, adminInfo]);
-    const submitHandler = async (e) => {
+       console.log("Trainer Info:", trainerInfo);
+  if (trainerInfo) {
+    navigate("/trainer");
+  }
+      }, [navigate, trainerInfo]);
+   const submitHandler = async (e) => {
         e.preventDefault(); // Corrected typo here
         try {
             const res=await login({email,password}).unwrap();
-            dispatch(setCredentials({...res}));
-            navigate('/admin');
+            dispatch( setTrainerCredentials({...res}));
+            navigate('/trainer');
         } catch (err) {
             toast.error(err?.data?.message || err?.error);
         }
