@@ -33,6 +33,7 @@ const LoginPage = () => {
       }
   return (
     <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-black mt-12">
+      <h1 className="text-white">Admin Login</h1>
       <div>
         <a href="/">
           <h3 className="text-4xl font-bold">

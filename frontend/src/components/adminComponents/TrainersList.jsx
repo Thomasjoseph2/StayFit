@@ -55,11 +55,11 @@ const TrainersList = () => {
           <tbody>
             {actualData.map((trainer, index) => (
               <tr key={trainer._id} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
-                <td className="py-2 px-4">{trainer.firstName} {trainer.lastName}</td>
-                <td className="py-2 px-4">{trainer.email}</td>
-                <td className="py-2 px-4">{trainer.phone}</td>
-                <td className="py-2 px-4">{trainer.experience}</td>
-                <td className="py-2 px-4">{trainer.specialties}</td>
+                <td className="py-2 px-4 text-center">{trainer.firstName} {trainer.lastName}</td>
+                <td className="py-2 px-4 text-center">{trainer.email}</td>
+                <td className="py-2 px-4 text-center">{trainer.phone}</td>
+                <td className="py-2 px-4 text-center">{trainer.experience}</td>
+                <td className="py-2 px-4 text-center">{trainer.specialties}</td>
               </tr>
             ))}
           </tbody>

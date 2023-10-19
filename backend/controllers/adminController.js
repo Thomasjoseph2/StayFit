@@ -1,34 +1,35 @@
 import asyncHandler from "express-async-handler";
-import Admin from "../models/adminModel.js";
-import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
-import { Types as mongooseTypes } from "mongoose";
+import mongoose from "mongoose";
 import Trainer from "../models/TrainerModel.js";
-const { ObjectId } = mongooseTypes;
+import AdminRepository from "../repositorys/AdminRepository.js";
+
+const { ObjectId } = mongoose.Types;
+
 
 
 //@desc Auth user/set token
 //@route POST /api/admin/auth
 //@access public
 
+
 const authAdmin = asyncHandler(async (req, res) => {
 
   const { email, password } = req.body;
 
-  const admin = await Admin.findOne({ email });
+   const admin =await AdminRepository.findAdminByEmail(email)
 
-  if (admin && (await admin.matchPasswords(password))) {
+  if (admin && (await AdminRepository.matchPasswords(password, admin.password))) {
 
     generateToken(res, admin._id);
 
     res.status(201).json({
+
       _id: admin._id,
 
       name: admin.name,
 
       email: admin.email,
-
-      image: admin.imagePath,
 
     });
 
@@ -39,7 +40,9 @@ const authAdmin = asyncHandler(async (req, res) => {
     throw new Error("Invalid email or password");
 
   }
+  
 });
+
 
 //@admin logout
 //@ route post api/admin/logout
@@ -55,7 +58,7 @@ const logoutAdmin = asyncHandler(async (req, res) => {
 
 const users = asyncHandler(async (req, res) => {
 
-    const users = await User.find({}); // Fetch all users from the database
+    const users = await AdminRepository.getUsers() // Fetch all users from the database
 
     if(users){
 
@@ -73,7 +76,7 @@ const users = asyncHandler(async (req, res) => {
 
 const getTrainers=asyncHandler(async(req,res)=>{
 
-  const trainers = await Trainer.find({}); // Fetch all trainers from the database
+  const trainers = await AdminRepository.getTrainers() // Fetch all trainers from the database
 
   if(trainers){
 
@@ -89,16 +92,16 @@ const getTrainers=asyncHandler(async(req,res)=>{
 })
 
 const blockUser = asyncHandler(async (req, res) => {
-  
+ 
     const userId = new ObjectId(req.body.userId);
 
-    const user = await User.findById(userId);
+    const user = await AdminRepository.findUserById(userId)
 
     if (user) {
 
       user.blocked = true;
 
-      await user.save();
+      await AdminRepository.updateUser(user)
 
       res.status(200).json({ message: "User blocked successfully" });
 
@@ -116,13 +119,13 @@ const unblockUser = asyncHandler(async (req, res) => {
 
   const userId = new ObjectId(req.body.userId);
 
-  const user = await User.findById(userId);
+  const user = await AdminRepository.findUserById(userId)
 
   if (user) {
 
     user.blocked = false;
 
-    await user.save();
+    await AdminRepository.updateUser(user);
 
     res.status(200).json({ message: "user unblocked" });
 
@@ -151,7 +154,7 @@ const addTrainer = asyncHandler(async (req, res) => {
     gender,
   } = req.body;
 
-  const TrainerExists = await Trainer.findOne({ email });
+  const TrainerExists = await AdminRepository.findTrainerByEmail(email)
 
   if (TrainerExists) {
 
@@ -177,7 +180,7 @@ const addTrainer = asyncHandler(async (req, res) => {
   });
 
   // Save the new trainer to the database
-  await newTrainer.save();
+  await AdminRepository.updateTrainer(newTrainer);
 
   res.status(201).json("Trainer created successfully");
 });

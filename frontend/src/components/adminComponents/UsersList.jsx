@@ -19,7 +19,6 @@ const UsersList = () => {
     try {
       const response = await axios.get("/api/admin/users");
       setActualData(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching user data:", error);
       toast.error("Error fetching user data");

@@ -11,6 +11,7 @@ import {
   FaComment,
   FaUtensils,
   FaPlayCircle,
+  FaDumbbell
 } from "react-icons/fa"; // Import appropriate icons
 
 const TrainerNavbar = () => {
@@ -49,6 +50,7 @@ const TrainerNavbar = () => {
   return (
     <nav className="bg-red-700 bg-opacity-75 p-4 flex justify-between items-center z-10 fixed w-full ">
       <div className="text-white font-bold text-xl">
+      <FaDumbbell className="text-white text-2xl ml-5" />
         <Link to="/">Stayfit</Link>
       </div>
       <div className="flex items-center space-x-4">

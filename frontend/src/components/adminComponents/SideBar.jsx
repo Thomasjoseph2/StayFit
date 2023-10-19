@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RiLightbulbFlashLine } from "react-icons/ri";
+import { FaDumbbell } from 'react-icons/fa';
 import {
   FaUsers,
   FaRunning,
@@ -50,8 +50,8 @@ const Sidebar = () => {
         <div className="w-full lg:w-1/5 bg-gray-800 h-screen">
           <div className="p-4 text-white">
             <div className="flex items-center mb-4">
-              <RiLightbulbFlashLine className="text-white text-2xl" />
-              <h1 className="text-2xl font-bold">Stayfit</h1>
+              < FaDumbbell className="text-white text-2xl" />
+              <h1 className=" ml-1 text-2xl font-bold">Stayfit</h1>
               <span className="text-sm text-white p-3 ml-2">Admin</span>
             </div>
 
