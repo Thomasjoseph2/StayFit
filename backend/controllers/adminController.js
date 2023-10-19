@@ -155,7 +155,7 @@ const addTrainer = asyncHandler(async (req, res) => {
   } = req.body;
 
   const TrainerExists = await AdminRepository.findTrainerByEmail(email)
-
+  
   if (TrainerExists) {
 
     res.status(400).json("trainer already exists");

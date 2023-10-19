@@ -1,8 +1,13 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
+import UserRepository from "../repositorys/UserRepository.js";
+
+
+
 
 const protect = asyncHandler(async (req, res, next) => {
+
   let token;
 
   token = req.cookies.jwt;
@@ -12,8 +17,8 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
         const decoded=jwt.verify(token,process.env.JWT_SECRET);
 
-        req.user=await User.findById(decoded.userId).select('-password');
-        
+        req.user=await UserRepository.findUserByIdForMiddleWare(decoded.userId);
+
         next();
 
     } catch (error) {
@@ -30,4 +35,39 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-export {protect }
+const isBlocked = asyncHandler(async (req, res, next) => {
+
+  if (req.user && req.user.blocked) {
+
+    res.status(403); // Forbidden
+
+    throw new Error("User is blocked. Please contact support for assistance.");
+ 
+  }
+
+  next();
+
+});
+
+const loginBlockCheck=asyncHandler(async(req,res,next)=>{
+
+  const email=req.body.email;
+
+  const user = await UserRepository.findByEmail({email})
+
+  if(user.blocked===true){
+
+    res.status(403); // Forbidden
+
+    throw new Error("User is blocked. Please contact support for assistance.");
+
+  }
+
+  next();
+
+})
+
+
+
+
+export {protect ,isBlocked,loginBlockCheck }

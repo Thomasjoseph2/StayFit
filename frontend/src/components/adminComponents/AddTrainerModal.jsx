@@ -125,8 +125,9 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
         toast.success("Trainer added successfully!");
       } catch (err) {
         // Handle API errors
+
         const apiError = err?.data?.message || err?.error;
-        toast.error(apiError);
+        toast.error(err.data);
       }
     }
   };

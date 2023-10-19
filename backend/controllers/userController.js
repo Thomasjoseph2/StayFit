@@ -1,19 +1,18 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import UserRepository from "../repositorys/UserRepository.js";
 //@desc Auth user/set token
 //@route POST /api/users/auth
 //@access public
 
 const authUser = asyncHandler(async (req, res) => {
 
-console.log('reached here');
-
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email });
+  const user = UserRepository.findByEmail(email);
 
-  if (user && (await user.matchPasswords(password))) {
+  if (user && (await UserRepository.matchPasswords(user,password))) {
 
     generateToken(res, user._id);
 
@@ -36,6 +35,7 @@ console.log('reached here');
   }
 });
 
+
 //@desc new user registration
 //route POST api/users
 //@access public
@@ -44,7 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { name, email, password } = req.body;
 
-  const userExists = await User.findOne({ email });
+  const userExists = await UserRepository.findByEmail({email})
 
   if (userExists) {
 
@@ -54,7 +54,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   }
 
-  const user = await User.create({ name, email, password, blocked: false }); 
+  const user = await UserRepository.createUser({ name, email, password, blocked: false }); 
 
   if (user) {
 
@@ -68,10 +68,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
       email: user.email,
 
-      blocked: user.blocked, // Include the 'blocked' field in the response
-
+      blocked: user.blocked,
+  
     });
-
   } else {
 
     res.status(401);

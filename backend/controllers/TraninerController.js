@@ -1,8 +1,8 @@
 import asyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 import { Types as mongooseTypes } from "mongoose";
-import Trainer from "../models/TrainerModel.js";
+import TrainerRepository from "../repositorys/TrainerRepository.js";
+
 const { ObjectId } = mongooseTypes;
 
 
@@ -14,9 +14,9 @@ const { ObjectId } = mongooseTypes;
 
     const { email, password } = req.body;
   
-    const trainer = await Trainer.findOne({ email });
+    const trainer = await TrainerRepository.findByEmail({ email });
   
-    if (trainer && (await trainer.matchPasswords(password))) {
+    if (trainer && (await TrainerRepository.matchPasswords(trainer,password))) {
   
       generateToken(res, trainer._id);
   

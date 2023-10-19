@@ -4,21 +4,27 @@ import mongoose from "mongoose";
 
 class UserRepository {
   async findByEmail(email) {
-    return await User.findOne({ email });
+    return await User.findOne(email );
+  }
+
+  async findUserByIdForMiddleWare(userId){
+    
+    return await User.findById(userId).select('-password');
   }
 
   async createUser(userData) {
     return await User.create(userData);
   }
 
-  async updateUser(userId, updateData) {
-    return await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+  async findUserById(userId){
+    
+    return await User.findById(userId)
   }
 
 
-  async matchPasswords(email,enteredPassword) {
+  async matchPasswords(user,enteredPassword) {
 
-    const user= await this.findByEmail(email)
 
     return await user.matchPasswords(enteredPassword);
     

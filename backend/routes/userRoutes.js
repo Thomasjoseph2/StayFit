@@ -8,12 +8,12 @@ import {
   logoutUser,
 } from "../controllers/userController.js";
 
-import { protect } from "../middleware/authMiddleware.js";
+import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
 
 
 
-router.post("/", registerUser); 
-router.post("/auth", authUser);
+router.post("/",  registerUser); 
+router.post("/auth",loginBlockCheck, authUser);
 router.post("/logout",logoutUser);
 
 export default router;
