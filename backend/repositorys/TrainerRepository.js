@@ -14,6 +14,13 @@ class TrainerRepository{
     
   }
 
+  async findById(trainerId) {
+
+    return await Trainer.findById(trainerId);
+    
+  }
+  
+
 //   async findUserByIdForMiddleWare(userId){
     
 //     return await User.findById(userId).select('-password');

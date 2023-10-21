@@ -15,6 +15,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
   const [specialties, setSpecialties] = useState("");
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
+  const [profileImage, setProfileImage] = useState(null);
 
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
@@ -27,8 +28,14 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
   const [GenderError, setGenderError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [imageError, setImageError] = useState("");
 
   const [addTrainer] = useAddTrainerMutation();
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setProfileImage(file);
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -93,21 +100,28 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
       setGenderError("gender required");
       isValid = false;
     }
+
+    if (!profileImage) {
+      setGenderError("image required");
+      isValid = false;
+    }
     if (isValid) {
       try {
+        const formData = new FormData();
+        formData.append("firstName", firstName);
+        formData.append("lastName", lastName);
+        formData.append("email", email);
+        formData.append("phone", phone);
+        formData.append("password", password);
+        formData.append("qualifications", qualifications);
+        formData.append("experience", experience);
+        formData.append("specialties", specialties);
+        formData.append("dob", dob);
+        formData.append("gender", gender);
+        formData.append("profileImage", profileImage);
+
         // Make API call to add trainer
-        await addTrainer({
-          firstName,
-          lastName,
-          email,
-          phone,
-          password,
-          qualifications,
-          experience,
-          specialties,
-          dob,
-          gender,
-        }).unwrap();
+        await addTrainer(formData).unwrap();
 
         // Clear form fields
         setFirstName("");
@@ -119,6 +133,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
         setSpecialties("");
         setDob("");
         setGender("");
+        setProfileImage(null);
 
         // Close the modal
         onRequestClose();
@@ -154,6 +169,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
                   <form
                     onSubmit={submitHandler}
                     className="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 w-full"
+                    encType="multipart/form-data"
                   >
                     {/* First Row */}
                     <div className="flex mb-4">
@@ -417,6 +433,17 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
                             {GenderError}
                           </p>
                         )}
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-black text-sm font-bold mb-1">
+                          Profile Image
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="mb-2"
+                        />
                       </div>
                     </div>
 

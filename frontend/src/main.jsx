@@ -12,15 +12,16 @@ import ErrorPage from "./components/ErrorPage";
 import UserBody from "./components/userComponents/UserBody";
 import Registration from "./components/userComponents/Registration";
 import LoginPage from "./components/userComponents/LoginPage";
+import UserTrainerView from './screens/UserTrainerView';
 
 import AdminLogin from "./components/adminComponents/AdminLogin";
 import PrivateRoute from './components/adminComponents/PrivateRoutes';
 import Sidebar from './components/adminComponents/SideBar';
 
 import TrainerPrivateRoute from './components/trainerComponent/TrainerPrivateRoute';
-import TrainerSideBar from './components/trainerComponent/TrainerSideBar';
 import TrainerLogin from './components/trainerComponent/TrainerLogin';
 import TrainerHome from './components/trainerComponent/trainerHome';
+import TrainerProfile from './components/trainerComponent/TrainerProfile';
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -28,6 +29,7 @@ const routes = createRoutesFromElements(
     <Route index={true} element={<UserBody />} />
     <Route path="/registration" element={<Registration />} />
     <Route path="/login" element={<LoginPage />} />
+    <Route path='/user-trainers' element={<UserTrainerView />}/>
 
     {/************Admin side routes ***************/}
     <Route path='/admin/login' element={<AdminLogin/>}/>
@@ -38,8 +40,11 @@ const routes = createRoutesFromElements(
     
     {/************Trainer side routes ***************/}
     <Route path='/trainer/login' element={<TrainerLogin/>}/>
+   
     <Route path='' element={<TrainerPrivateRoute/>}>
+    <Route path='/trainer/profile' element={<TrainerProfile/>}/>
     <Route path='/trainer' element={<TrainerHome/>}/>
+    
     </Route>
     
 

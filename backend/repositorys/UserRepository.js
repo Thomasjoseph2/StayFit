@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import Trainer from "../models/TrainerModel.js";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
@@ -27,6 +28,12 @@ class UserRepository {
 
 
     return await user.matchPasswords(enteredPassword);
+    
+  }
+
+  async getTrainers(){
+
+    return await Trainer.find({});
     
   }
 

@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import userRoutes from "./routes/userRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
@@ -8,7 +9,7 @@ import adminRoutes from "./routes/adminRoutes.js";
 import trainerRoutes from "./routes/trainerRoutes.js"; // Add the missing semicolon here
 
 import cors from "cors";
-dotenv.config();
+
 const port = process.env.PORT || 5000;
 connectDB();
 const app = express();

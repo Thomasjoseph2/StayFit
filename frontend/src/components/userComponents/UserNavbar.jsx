@@ -43,9 +43,9 @@ const UserNavbar = () => {
       <div className="flex items-center space-x-4">
         <div className="md:hidden flex-grow"></div>
         <div className="hidden md:flex flex-grow justify-center space-x-4">
-          <a href="#" className="text-white hover:text-gray-300">
+          <Link to='/user-trainers' className="text-white hover:text-gray-300">
             Trainers
-          </a>
+          </Link>
           <a href="#" className="text-white hover:text-gray-300">
             Diet
           </a>

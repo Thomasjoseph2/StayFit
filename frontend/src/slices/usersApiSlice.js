@@ -24,10 +24,16 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method:'POST'
       })
     }),
+     getTrainers: builder.mutation({
+      query: () => ({
+        url: `${TRAINER_URL}/trainers`,
+        method: "GET",
+      }),
+    }),
 
   }),
 
 
 });
 
-export const {useLoginMutation,useLogoutMutation,useRegisterMutation}=usersApiSlice;
+export const {useLoginMutation,useLogoutMutation,useRegisterMutation,useGetTrainersMutation}=usersApiSlice;

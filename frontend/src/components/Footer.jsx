@@ -19,7 +19,7 @@ const LINKS = [
 const Footer = () => {
     
   return (
-    <footer className="relative w-full  bg-gray-800">
+    <footer className="relative w-full  bg-gray-800 ">
       <div className="mx-auto w-full max-w-7xl px-8 mt-3">
         <div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
           <Typography variant="h5" className="mb-6 text-white">

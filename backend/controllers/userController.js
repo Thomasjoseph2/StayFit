@@ -1,5 +1,4 @@
 import asyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 import UserRepository from "../repositorys/UserRepository.js";
 //@desc Auth user/set token
@@ -10,7 +9,9 @@ const authUser = asyncHandler(async (req, res) => {
 
   const { email, password } = req.body;
 
-  const user = UserRepository.findByEmail(email);
+  const user = await UserRepository.findByEmail({email})
+
+  
 
   if (user && (await UserRepository.matchPasswords(user,password))) {
 
@@ -113,4 +114,20 @@ const profile = asyncHandler(async (req, res) => {
 
 });
 
-export { authUser, registerUser, logoutUser, profile };
+const getTrainers=asyncHandler(async(req,res)=>{
+
+  const trainers=await UserRepository.getTrainers();
+
+  if(trainers){
+
+    res.status(200).json({trainers})
+  }else{
+
+    res.status(401);
+
+    throw new Error("Invalid user data");
+
+  }
+})
+
+export { authUser, registerUser, logoutUser, profile,getTrainers };

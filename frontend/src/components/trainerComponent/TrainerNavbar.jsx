@@ -89,7 +89,7 @@ const TrainerNavbar = () => {
               </button>
             </Link>
             <Link
-              to="/profile"
+              to="trainer/profile"
               className="text-white hover:text-gray-300 w-full block"
             >
               <CgProfile />

@@ -1,9 +1,12 @@
 import adminJwt  from "jsonwebtoken";
 
+
+
+
 const generateAdminTokken =(res,userId)=>{
+   
 
     const token =adminJwt.sign({userId},process.env.JWT_SECRET_FOR_ADMIN,{expiresIn:'30d'})
-    
     res.cookie('adminJwt',token,{
         httpOnly:true,
         secure: process.env.NODE_ENV !== "development",
@@ -15,4 +18,4 @@ const generateAdminTokken =(res,userId)=>{
 
 
 
-export default generateAdminTokken
+export default generateAdminTokken;

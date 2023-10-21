@@ -24,6 +24,12 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getProfile: builder.mutation({
+      query: (trainerId) => ({
+        url: `${TRAINER_URL}/getProfile/${trainerId}`, // Assuming your endpoint accepts the trainer's ID in the URL
+        method: "GET",
+      }),
+    }),
 
   }),
 });
@@ -32,4 +38,5 @@ export const {
  useTrainerLoginMutation,
  useTrainerLogoutMutation,
  useUsersMutation,
+ useGetProfileMutation
 } = trainerApiSlice;
