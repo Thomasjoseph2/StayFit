@@ -37,6 +37,18 @@ class UserRepository {
     
   }
 
+  async getTrainer(trainerId) {
+    try {
+      const trainer = await Trainer.findById(trainerId);
+      return trainer;
+    } catch (error) {
+      // Handle errors, for example, return a custom error message
+      throw new Error("Trainer not found");
+    }
+  }
+  
+  
+
   
 }
 

@@ -13,8 +13,6 @@ const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
 
-
-
 router.post("/login", authAdmin);
 router.post("/logout",logoutAdmin);
 router.post("/block-user",blockUser)

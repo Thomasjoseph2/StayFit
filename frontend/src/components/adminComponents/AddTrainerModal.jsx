@@ -16,6 +16,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("");
   const [profileImage, setProfileImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [firstNameError, setFirstNameError] = useState("");
   const [lastNameError, setLastNameError] = useState("");
@@ -39,7 +40,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true); 
     // Validation logic
     let isValid = true;
 
@@ -134,9 +135,11 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
         setDob("");
         setGender("");
         setProfileImage(null);
-
+        
+        setIsLoading(false);
         // Close the modal
         onRequestClose();
+
         toast.success("Trainer added successfully!");
       } catch (err) {
         // Handle API errors

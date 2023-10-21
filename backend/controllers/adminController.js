@@ -4,7 +4,9 @@ import mongoose from "mongoose";
 import Trainer from "../models/TrainerModel.js";
 import AdminRepository from "../repositorys/AdminRepository.js";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import s3Obj from "../utils/s3.js";
 import crypto from 'crypto';
+import sharp from "sharp";
 const { ObjectId } = mongoose.Types;
 
 //@desc Auth user/set token
@@ -106,6 +108,9 @@ const unblockUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+
 const addTrainer = asyncHandler(async (req, res) => {
   const {
     firstName,
@@ -128,31 +133,29 @@ const addTrainer = asyncHandler(async (req, res) => {
     throw new Error("User already exists");
   }
 
-  const randomImageName = (bytes = 32) => {
+  const buffer = await (async (img) => {
+    const resizedImg = await sharp(img).resize({ height: 1500, width: 1080, fit: "contain" }).toBuffer();
+    return resizedImg;
+  })(req.file.buffer);
+  
+  const randomImageName =(bytes = 32) => {
     const randomBytes = crypto.randomBytes(bytes);
     return randomBytes.toString('hex');
-  };
+  }
 
-  const imageName=randomImageName();
+  const imageName= randomImageName();
 
   const params = {
     Bucket: process.env.BUCKET_NAME,
     Key: imageName,
-    Body: req.file.buffer,
+    Body: buffer,
     ContentType: req.file.mimetype,
   };
 
-  const s3 = new S3Client({
-    region: process.env.AWS_REGION,
-    credentials: {
-      accessKeyId: process.env.ACCESS_KEY,
-      secretAccessKey: process.env.SECREAT_ACCESS_KEY,
-    },
-  });
 
   const command = new PutObjectCommand(params);
 
-  await s3.send(command);
+  await s3Obj.send(command);
 
   // Create a new Trainer instance using the Trainer model
   const newTrainer = new Trainer({

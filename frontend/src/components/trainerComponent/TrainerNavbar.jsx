@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
+import { IoMdMedal } from 'react-icons/io';
 import { useSelector, useDispatch } from "react-redux";
 import { useTrainerLogoutMutation } from "../../slices/trainerApiSlice";
 import { logout } from "../../slices/trainerAuthSlice";
@@ -51,7 +52,7 @@ const TrainerNavbar = () => {
     <nav className="bg-red-700 bg-opacity-75 p-4 flex justify-between items-center z-10 fixed w-full ">
       <div className="text-white font-bold text-xl">
       <FaDumbbell className="text-white text-2xl ml-5" />
-        <Link to="/">Stayfit</Link>
+        <Link to="/trainer">Stayfit</Link>
       </div>
       <div className="flex items-center space-x-4">
         <div className="md:hidden flex-grow"></div>
@@ -74,6 +75,9 @@ const TrainerNavbar = () => {
           <Link to="#" className="text-white hover:text-gray-300 text-xl">
             <FaUtensils size={24} />
           </Link>
+          <Link to="/trainer/add-results" className="text-white hover:text-gray-300 text-xl">
+            <IoMdMedal size={24} />
+          </Link>
         </div>
       </div>
 
@@ -90,7 +94,7 @@ const TrainerNavbar = () => {
             </Link>
             <Link
               to="trainer/profile"
-              className="text-white hover:text-gray-300 w-full block"
+              className="text-white hover:text-gray-300 w-full block text-xl"
             >
               <CgProfile />
             </Link>

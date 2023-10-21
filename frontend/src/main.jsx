@@ -13,6 +13,7 @@ import UserBody from "./components/userComponents/UserBody";
 import Registration from "./components/userComponents/Registration";
 import LoginPage from "./components/userComponents/LoginPage";
 import UserTrainerView from './screens/UserTrainerView';
+import TrainerView from './components/userComponents/TrainerView';
 
 import AdminLogin from "./components/adminComponents/AdminLogin";
 import PrivateRoute from './components/adminComponents/PrivateRoutes';
@@ -22,6 +23,7 @@ import TrainerPrivateRoute from './components/trainerComponent/TrainerPrivateRou
 import TrainerLogin from './components/trainerComponent/TrainerLogin';
 import TrainerHome from './components/trainerComponent/trainerHome';
 import TrainerProfile from './components/trainerComponent/TrainerProfile';
+import AddPostScreen from './screens/AddPostScreen';
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -30,6 +32,7 @@ const routes = createRoutesFromElements(
     <Route path="/registration" element={<Registration />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path='/user-trainers' element={<UserTrainerView />}/>
+    <Route path='/user-trainer-view/:trainerId' element={<TrainerView/>}/>
 
     {/************Admin side routes ***************/}
     <Route path='/admin/login' element={<AdminLogin/>}/>
@@ -44,6 +47,7 @@ const routes = createRoutesFromElements(
     <Route path='' element={<TrainerPrivateRoute/>}>
     <Route path='/trainer/profile' element={<TrainerProfile/>}/>
     <Route path='/trainer' element={<TrainerHome/>}/>
+    <Route path='/trainer/add-results' element={<AddPostScreen/>}/>
     
     </Route>
     

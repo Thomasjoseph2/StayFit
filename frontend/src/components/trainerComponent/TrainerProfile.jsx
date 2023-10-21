@@ -23,8 +23,8 @@ const TrainerProfile = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white mt-4">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full">
+        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white ">
+            <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full mt-24">
                 <img
                     src={trainerData?.plainTrainer?.imageUrl}
                     alt="Profile"

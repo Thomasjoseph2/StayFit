@@ -6,7 +6,8 @@ import {
   authUser,
   registerUser,
   logoutUser,
-  getTrainers
+  getTrainers,
+  getTrainer
 } from "../controllers/userController.js";
 
 import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
@@ -16,6 +17,7 @@ import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.
 router.post("/",  registerUser); 
 router.post("/auth",loginBlockCheck, authUser);
 router.post("/logout",logoutUser);
-router.get('/trainers',protect,isBlocked,getTrainers)
+router.get('/trainers',getTrainers)
+router.get('/getTrainer/:trainerId',getTrainer)
 
 export default router;

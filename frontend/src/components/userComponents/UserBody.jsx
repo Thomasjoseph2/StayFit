@@ -27,7 +27,7 @@ const UserBody = () => {
           “The body <span className='text-red-700'>achieves</span> what the <span className='text-red-700'>mind believes</span>”.
         </p>
       </div>
-      <div className="flex flex-wrap justify-center p-4 w-full">
+      <div className="flex flex-wrap justify-center p-20 w-full">
         <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 p-2">
           <WorkoutCard />
         </div>

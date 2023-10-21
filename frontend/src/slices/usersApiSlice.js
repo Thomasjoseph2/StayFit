@@ -26,7 +26,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
      getTrainers: builder.mutation({
       query: () => ({
-        url: `${TRAINER_URL}/trainers`,
+        url: `${USERS_URL}/trainers`,
+        method: "GET",
+      }),
+    }),
+    getTrainer: builder.mutation({
+      query: (trainerId) => ({
+        url: `${USERS_URL}/getTrainer/${trainerId }`,
         method: "GET",
       }),
     }),
@@ -36,4 +42,4 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 
 });
 
-export const {useLoginMutation,useLogoutMutation,useRegisterMutation,useGetTrainersMutation}=usersApiSlice;
+export const {useLoginMutation,useLogoutMutation,useRegisterMutation,useGetTrainersMutation,useGetTrainerMutation}=usersApiSlice;
