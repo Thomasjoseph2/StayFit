@@ -1,40 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useGetPostsMutation } from '../../slices/trainerApiSlice';
+import { useSelector } from 'react-redux/es/hooks/useSelector';
 
-const staticPosts = [
-  {
-    id: 1,
-    imageUrl: 'https://via.placeholder.com/150',
-    description: 'Sample Post 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  },
-  {
-    id: 2,
-    imageUrl: 'https://via.placeholder.com/150',
-    description: 'Sample Post 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  },
-  {
-    id: 3,
-    imageUrl: 'https://via.placeholder.com/150',
-    description: 'Sample Post 3: Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
-  },
-  {
-    id: 4,
-    imageUrl: 'https://via.placeholder.com/150',
-    description: 'Sample Post 4: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-  },
-  // Add more static posts as needed
-];
 
-const ResultPosts = ({ posts }) => {
+
+const ResultPosts = ({refreshTrigger}) => {
   // Ensure posts is an array, default to an empty array if not
-  const validPosts = Array.isArray(posts) ? posts : [];
+  // const validPosts = Array.isArray(posts) ? posts : [];
+  const { trainerInfo } = useSelector((state) => state.trainerAuth);
+  
+
+  const [posts,setPosts]=useState([])
+  const [refresher,setRefresher]=('')
+
+
+  const [getPosts]=useGetPostsMutation();
+
+
+  useEffect(()=>{
+     fetchData(trainerInfo._id)
+  },[refreshTrigger,trainerInfo._id])
+  const fetchData =async(trainerId)=>{
+
+    try {
+
+      const response=await getPosts(trainerId);
+      setPosts(response.data)
+      
+    } catch (error) {
+      console.error('Error fetching post data', error);
+      toast.error('Error fetching post data');
+    }
+  }
+    // Function to trigger data fetching when needed
+    const handleRefresher = () => {
+      setRefresher(Date.now()); // Update refresher state with a new value to trigger useEffect
+    };
 
   return (
     <div className="container mx-auto mt-8 mb-20">
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-        {[...staticPosts, ...validPosts].map((post) => (
-          <div key={post.id} className="bg-white p-4 rounded shadow-lg">
-            <img src={post.imageUrl} alt="Post" className="w-full h-40 object-cover mb-4" />
-            <p className="text-gray-700 text-sm">{post.description}</p>
+        {posts.map((post) => (
+          <div key={post.id} className="bg-gray-900 p-4 rounded shadow-lg">
+            <img src={post.imageUrl} alt="Post" className="w-full h-56 object-cover mb-4" />
+            <p className="text-gray-300 text-sm">{post.description}</p>
           </div>
         ))}
       </div>

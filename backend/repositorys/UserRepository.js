@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
-import bcrypt from "bcryptjs";
-import mongoose from "mongoose";
+import Result from "../models/resultsModel.js";
 
 class UserRepository {
   async findByEmail(email) {
@@ -47,7 +46,27 @@ class UserRepository {
     }
   }
   
-  
+  async getPosts(trainerId) {
+    try {
+      // Find the Result document by trainer ID
+      const result = await Result.findOne({ trainer: trainerId });
+
+      if (result) {
+        // If the Result document exists, return the posts as an array of objects
+        return result.posts.map(post => {
+          return {
+            imageName: post.imageName,
+            description: post.description,
+          };
+        });
+      } else {
+        // If the Result document doesn't exist, return an empty array
+        return [];
+      }
+    } catch (error) {
+      throw error; // Handle any errors that occur during the database operation
+    }
+  }
 
   
 }

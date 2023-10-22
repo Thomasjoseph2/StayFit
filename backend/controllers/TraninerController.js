@@ -1,20 +1,24 @@
+import "dotenv/config.js";
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import { Types as mongooseTypes } from "mongoose";
 import TrainerRepository from "../repositorys/TrainerRepository.js";
 import s3Obj from "../utils/s3.js";
+import crypto from "crypto";
+import sharp from "sharp";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 
 const { ObjectId } = mongooseTypes;
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import {GetObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 //@desc Auth trainer/set token
 //@route POST /api/trainer/auth
 //@access public
 
 const authTrainer = asyncHandler(async (req, res) => {
-  
+
   const { email, password } = req.body;
 
   const trainer = await TrainerRepository.findByEmail({ email });
@@ -31,11 +35,15 @@ const authTrainer = asyncHandler(async (req, res) => {
       email: trainer.email,
 
       blocked: trainer.blocked,
+
     });
+
   } else {
+
     res.status(401);
 
     throw new Error("Invalid email or password");
+
   }
 });
 
@@ -48,6 +56,7 @@ const logoutTrainer = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
 
   res.status(200).json({ message: "trainer logged out" });
+
 });
 
 const getProfile = asyncHandler(async (req, res) => {
@@ -58,14 +67,13 @@ const getProfile = asyncHandler(async (req, res) => {
 
   if (trainer) {
 
-    s3Obj.destroy()
+    s3Obj.destroy();
 
     const getObjectParams = {
 
       Bucket: process.env.BUCKET_NAME,
 
       Key: trainer.imageName,
-
     };
 
     const command = new GetObjectCommand(getObjectParams);
@@ -75,17 +83,112 @@ const getProfile = asyncHandler(async (req, res) => {
     const plainTrainer = trainer.toObject();
 
     plainTrainer.imageUrl = url;
-  
+
     res.status(200).json({ plainTrainer });
-    
-  }else{
+
+  } else {
 
     res.status(401);
 
     throw new Error("trainer not found");
-  }
 
+  }
 
 });
 
-export { logoutTrainer, authTrainer, getProfile };
+
+const addPost = asyncHandler(async (req, res) => {
+
+  const { description, trainerId } = req.body;
+
+  const buffer = await (async (img) => {
+
+    const resizedImg = await sharp(img)
+
+      .resize({ height: 1500, width: 1400, fit: "contain" })
+
+      .toBuffer();
+
+    return resizedImg;
+
+  })(req.file.buffer);
+
+  const randomImageName = (bytes = 32) => {
+
+    const randomBytes = crypto.randomBytes(bytes);
+
+    return randomBytes.toString("hex");
+
+  };
+
+  const imageName = randomImageName();
+
+  const params = {
+    Bucket: process.env.BUCKET_NAME,
+    Key: imageName,
+    Body: buffer,
+    ContentType: req.file.mimetype,
+  };
+
+  const command = new PutObjectCommand(params);
+
+  await s3Obj.send(command);
+
+  // Create a new Trainer instance using the Trainer model
+
+  const newPost = {
+    trainer: trainerId,
+    posts: [
+      {
+        imageName: imageName,
+        description: description,
+      },
+    ],
+  };
+
+  await TrainerRepository.updatePost(trainerId, newPost);
+
+  res.status(201).json("post created successfully");
+});
+
+const getPosts = asyncHandler(async (req, res) => {
+
+  const trainerId = new ObjectId(req.params.trainerId);
+
+  const posts = await TrainerRepository.getPosts(trainerId);
+
+  if (posts) {
+
+    const postsWithUrl = await Promise.all(
+
+      posts.map(async (post) => {
+        
+        const getObjectParams = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: post.imageName,
+        };
+
+        const command = new GetObjectCommand(getObjectParams);
+
+        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+
+        return {
+          ...post, 
+          imageUrl: url,
+        };
+
+      })
+
+    );
+
+    res.status(200).json(postsWithUrl);
+
+  } else {
+    res.status(401);
+
+    throw new Error("posts not found"); // Send error response as JSON
+  }
+});
+
+
+export { logoutTrainer, authTrainer, getProfile, addPost, getPosts };

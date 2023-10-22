@@ -25,17 +25,7 @@ const Trainer = () => {
         }
     };
 
-  const transformations = [
-    {
-      imageUrl: img,
-      description: "Description for Transformation 1",
-    },
-    {
-      imageUrl: img,
-      description: "Description for Transformation 2",
-    },
-    // Add more transformations as needed
-  ];
+
 
   return (
     <div className="trainer bg-black p-4 rounded-lg shadow-md md:w-96 lg:w-full mx-auto container">
@@ -56,18 +46,16 @@ const Trainer = () => {
           Message
         </button>
       </div>
-      <div className="transformation-photos grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-10 mt-10">
-        {transformations.map((transformation, index) => (
-          <div key={index} className="flex flex-col items-center text-center">
-            <img
-              src={transformation.imageUrl}
-              alt={`Before and After Photo ${index + 1}`}
-              className="rounded mb-2"
-            />
-            <p className="text-white">{transformation.description}</p>
+      <div className="container mx-auto mt-8 mb-20">
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+        {trainer?.postsWithUrl?.map((post) => (
+          <div key={post.id} className="bg-gray-900 p-4 rounded shadow-lg">
+            <img src={post.imageUrl} alt="Post" className="w-full h-56 object-cover mb-4" />
+            <p className="text-gray-300 text-sm">{post.description}</p>
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 };

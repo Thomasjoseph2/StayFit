@@ -158,35 +158,48 @@ const getTrainers = asyncHandler(async (req, res) => {
 });
 
 const getTrainer = asyncHandler(async (req, res) => {
+  let plainTrainer; // Declare plainTrainer variable outside the if block
 
   const trainerId = new ObjectId(req.params.trainerId);
-
   const trainer = await UserRepository.getTrainer(trainerId);
 
-    if (trainer) {
-      
-      s3Obj.destroy()
+  if (trainer) {
+    s3Obj.destroy();
 
     const getObjectParams = {
-
       Bucket: process.env.BUCKET_NAME,
-
       Key: trainer.imageName,
     };
     const command = new GetObjectCommand(getObjectParams);
 
     const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
 
-    const plainTrainer = trainer.toObject();
-
+    plainTrainer = trainer.toObject();
     plainTrainer.imageUrl = url;
 
-    res.status(200).json({ plainTrainer });
+    const posts = await UserRepository.getPosts(trainerId);
 
+    const postsWithUrl = await Promise.all(
+      posts.map(async (post) => {
+        const getObjectParams = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: post.imageName,
+        };
+
+        const command = new GetObjectCommand(getObjectParams);
+
+        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+
+        return {
+          ...post,
+          imageUrl: url,
+        };
+      })
+    );
+
+    res.status(200).json({ plainTrainer, postsWithUrl });
   } else {
-
-    res.status(500).json({ message: error.message });
-
+    res.status(404).json({ message: "Trainer not found" });
   }
 });
 
