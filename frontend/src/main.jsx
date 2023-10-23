@@ -14,6 +14,7 @@ import Registration from "./components/userComponents/Registration";
 import LoginPage from "./components/userComponents/LoginPage";
 import UserTrainerView from './screens/UserTrainerView';
 import TrainerView from './components/userComponents/TrainerView';
+import BmiCalculator from './components/userComponents/BmiCalculator.jsx';
 
 import AdminLogin from "./components/adminComponents/AdminLogin";
 import PrivateRoute from './components/adminComponents/PrivateRoutes';
@@ -24,6 +25,7 @@ import TrainerLogin from './components/trainerComponent/TrainerLogin';
 import TrainerHome from './components/trainerComponent/trainerHome';
 import TrainerProfile from './components/trainerComponent/TrainerProfile';
 import AddPostScreen from './screens/AddPostScreen';
+import VideoScreen from './screens/VideoScreen';
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -33,6 +35,7 @@ const routes = createRoutesFromElements(
     <Route path="/login" element={<LoginPage />} />
     <Route path='/user-trainers' element={<UserTrainerView />}/>
     <Route path='/user-trainer-view/:trainerId' element={<TrainerView/>}/>
+    <Route path='/bmi' element={<BmiCalculator/>}/>
 
     {/************Admin side routes ***************/}
     <Route path='/admin/login' element={<AdminLogin/>}/>
@@ -48,6 +51,7 @@ const routes = createRoutesFromElements(
     <Route path='/trainer/profile' element={<TrainerProfile/>}/>
     <Route path='/trainer' element={<TrainerHome/>}/>
     <Route path='/trainer/add-results' element={<AddPostScreen/>}/>
+    <Route path='/trainer/videos' element={<VideoScreen/>}/>
     
     </Route>
     

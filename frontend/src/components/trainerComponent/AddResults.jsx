@@ -59,19 +59,21 @@ const handleSubmit = async (e) => {
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="modal-container bg-white w-96 p-4 rounded-lg shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Add New Post</h2>
-            <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <form onSubmit={handleSubmit} encType="multipart/form-data bg-black ">
               <input
                 type="file"
                 onChange={handleImageChange}
                 name='postImage'
-                className="mb-4 p-2 w-full border rounded"
+                className="mb-4 p-2 w-full border rounded border-black"
+                required
               />
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter description..."
-                className="mb-4 p-2 w-full border rounded"
+                className="mb-4 p-2 w-full border rounded border-black "
                 rows="4"
+                required
               />
               <div className="flex justify-end">
                 <button
@@ -82,7 +84,7 @@ const handleSubmit = async (e) => {
                 </button>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="ml-2 text-gray-500 hover:text-gray-700"
+                  className="ml-2 text-gray-800 hover:text-gray-900"
                 >
                   Cancel
                 </button>

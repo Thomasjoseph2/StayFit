@@ -52,9 +52,9 @@ const UserNavbar = () => {
           <a href="#" className="text-white hover:text-gray-300">
             Videos
           </a>
-          <a href="#" className="text-white hover:text-gray-300">
+          <Link to="/bmi" className="text-white hover:text-gray-300">
             BMI Calculator
-          </a>
+            </Link>
         </div>
       </div>
       <div className="md:hidden flex-grow"></div>

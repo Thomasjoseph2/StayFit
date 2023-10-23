@@ -68,7 +68,7 @@ const TrainerNavbar = () => {
             <FaComment size={24} />
           </Link>{" "}
           {/* Messages Icon */}
-          <Link to="#" className="text-white hover:text-gray-300 text-xl">
+          <Link to="/trainer/videos" className="text-white hover:text-gray-300 text-xl">
             <FaPlayCircle size={24} />
           </Link>{" "}
           {/* Videos Icon */}

@@ -43,6 +43,19 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    addVideo: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/addVideo`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getVideos: builder.mutation({
+      query: (trainerId) => ({
+        url: `${TRAINER_URL}/getVideos/${trainerId}`, // Assuming your endpoint accepts the trainer's ID in the URL
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -52,5 +65,7 @@ export const {
  useUsersMutation,
  useGetProfileMutation,
  useAddPostMutation,
- useGetPostsMutation
+ useGetPostsMutation,
+ useAddVideoMutation,
+ useGetVideosMutation
 } = trainerApiSlice;

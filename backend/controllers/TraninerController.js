@@ -190,5 +190,100 @@ const getPosts = asyncHandler(async (req, res) => {
   }
 });
 
+const addVideos=asyncHandler(async (req,res)=>{
 
-export { logoutTrainer, authTrainer, getProfile, addPost, getPosts };
+
+  try {
+    s3Obj.destroy();
+
+    const {description,trainerId}=req.body;
+
+
+    console.log(description,trainerId,'trakjg;k');
+    const buffer = req.file.buffer; // Video buffer from Multer
+  
+    const videoName = req.file.originalname; // Use the original file name
+  
+    const params = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: videoName,
+      Body: buffer,
+      ContentType: req.file.mimetype,
+    };
+  
+    const command = new PutObjectCommand(params);
+  
+    await s3Obj.send(command);
+  
+    const newVideo = {
+      trainer: trainerId,
+      videos: [
+        {
+          videoName: videoName,
+          description: description,
+        },
+      ],
+    };
+
+    console.log(newVideo,'video ibdh');
+  
+    await TrainerRepository.updateVideo(trainerId, newVideo);
+  
+    res.status(201).json("video uploaded successfully");
+    
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500);
+
+    throw new Error("failed to add video"); // Send error response as JSON
+  }
+
+})
+
+const getVideos=asyncHandler(async (req,res)=>{
+
+  const trainerId = new ObjectId(req.params.trainerId);
+
+  const videos = await TrainerRepository.getVideos(trainerId);
+
+  if (videos) {
+
+    const videosWithUrl = await Promise.all(
+
+      videos.map(async (video) => {
+        
+        const getObjectParams = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: video.videoName,
+        };
+
+        const command = new GetObjectCommand(getObjectParams);
+
+        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+
+        return {
+          ...video, 
+          videoUrl: url,
+        };
+
+      })
+
+    );
+
+    res.status(200).json(videosWithUrl);
+
+  } else {
+
+
+    res.status(401);
+
+    throw new Error("posts not found"); // Send error response as JSON
+  }
+
+})
+
+
+
+export { logoutTrainer, authTrainer, getProfile, addPost, getPosts,addVideos,getVideos };

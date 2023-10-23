@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
-
+import Videos from "../models/videosModel.js";
 class TrainerRepository{
 
   async findByEmail(email) {
@@ -69,6 +69,54 @@ class TrainerRepository{
       throw error; // Handle any errors that occur during the database operation
     }
   }
+
+  async updateVideo(trainerId, newVideo) {
+    try {
+
+      // Find the existing video document by trainer ID
+      let videos = await Videos.findOne({ trainer: trainerId });
+
+  
+      if (videos) {
+        videos.videos.push(...newVideo.videos);
+      } else {
+        // If the video document doesn't exist, create a new one with the new video
+        videos = new Videos({ trainer: trainerId, videos: [newVideo] });
+      }
+  
+      // Save the updated or new video document to the videos collection
+      await videos.save();
+  
+      return videos; // Return the updated or newly created video document if needed
+    } catch (error) {
+      throw error; // Handle any errors that occur during the database operation
+    }
+  }
+  
+  async getVideos(trainerId) {
+    try {
+      // Find the videos document by trainer ID
+      const videos = await Videos.findOne({ trainer: trainerId });
+
+      if (videos) {
+        // If the videos document exists, return the posts as an array of objects
+        return videos.videos.map(post => {
+          return {
+            videoName: post.videoName,
+            description: post.description,
+            postId: post._id // Optionally include the post ID if needed
+          };
+        });
+      } else {
+        // If the videos document doesn't exist, return an empty array
+        return [];
+      }
+    } catch (error) {
+      throw error; // Handle any errors that occur during the database operation
+    }
+  }
+  
 }
+
 
 export default new TrainerRepository();
