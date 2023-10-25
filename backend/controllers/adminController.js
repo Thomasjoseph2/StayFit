@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import Trainer from "../models/TrainerModel.js";
 import AdminRepository from "../repositorys/AdminRepository.js";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 import s3Obj from "../utils/s3.js";
 import crypto from 'crypto';
 import sharp from "sharp";
@@ -179,6 +181,58 @@ const addTrainer = asyncHandler(async (req, res) => {
   res.status(201).json("Trainer created successfully");
 });
 
+const getAdminVideos = asyncHandler(async (req, res) => {
+  const postVideos = await AdminRepository.getAdminVideos();
+
+  const videosWithSignedUrls = await Promise.all(postVideos.map(async (trainer) => {
+    const videosWithUrls = await Promise.all(trainer.videos.map(async (video) => {
+      const getObjectParams = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: video.videoName,
+      };
+
+      const command = new GetObjectCommand(getObjectParams);
+
+      const signedUrl = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+      
+      // Append signed URL to the video object
+      return {
+        ...video.toObject(),
+        signedUrl: signedUrl,
+      };
+    }));
+
+    // Replace trainer's videos array with videos containing signed URLs
+    return {
+      ...trainer.toObject(),
+      videos: videosWithUrls,
+    };
+  }));
+
+
+  res.status(200).json({ postVideos: videosWithSignedUrls });
+});
+
+const approveVideo=asyncHandler(async(req,res)=>{
+
+  const trainerId = new ObjectId(req.body.trainerId);
+  const videoId = new ObjectId(req.body.videoId);
+
+  const status=await AdminRepository.approveVideo(trainerId,videoId)
+
+  res.status(200).json({status})
+
+})
+
+const rejectVideo=asyncHandler(async(req,res)=>{
+
+  const status=await AdminRepository.rejectVideo(req.body.trainerId,req.body.videoId)
+
+  res.status(200).json({status})
+
+})
+
+
 export {
   authAdmin,
   logoutAdmin,
@@ -187,4 +241,7 @@ export {
   unblockUser,
   addTrainer,
   getTrainers,
+  getAdminVideos,
+  rejectVideo,
+  approveVideo
 };

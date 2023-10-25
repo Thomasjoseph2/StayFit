@@ -15,6 +15,11 @@ const VideosSchema = mongoose.Schema({
           type: String,
           required: true,
         },
+        status: {
+          type: String,
+          required: true,
+          default: "pending", 
+        },
       }
     ],
   }, { timestamps: true });

@@ -198,8 +198,8 @@ const addVideos=asyncHandler(async (req,res)=>{
 
     const {description,trainerId}=req.body;
 
+    const trainersId = new ObjectId(trainerId);
 
-    console.log(description,trainerId,'trakjg;k');
     const buffer = req.file.buffer; // Video buffer from Multer
   
     const videoName = req.file.originalname; // Use the original file name
@@ -216,7 +216,7 @@ const addVideos=asyncHandler(async (req,res)=>{
     await s3Obj.send(command);
   
     const newVideo = {
-      trainer: trainerId,
+      trainer: trainersId,
       videos: [
         {
           videoName: videoName,
@@ -224,10 +224,11 @@ const addVideos=asyncHandler(async (req,res)=>{
         },
       ],
     };
+    
 
     console.log(newVideo,'video ibdh');
   
-    await TrainerRepository.updateVideo(trainerId, newVideo);
+    await TrainerRepository.updateVideo(trainersId, newVideo);
   
     res.status(201).json("video uploaded successfully");
     

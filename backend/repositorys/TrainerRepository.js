@@ -73,15 +73,19 @@ class TrainerRepository{
   async updateVideo(trainerId, newVideo) {
     try {
 
+      console.log(newVideo,'123',trainerId,'trainer id repo');
+
       // Find the existing video document by trainer ID
       let videos = await Videos.findOne({ trainer: trainerId });
+
+      console.log(videos);
 
   
       if (videos) {
         videos.videos.push(...newVideo.videos);
-      } else {
+      } else if(videos===null) {
         // If the video document doesn't exist, create a new one with the new video
-        videos = new Videos({ trainer: trainerId, videos: [newVideo] });
+        videos = new Videos(newVideo);
       }
   
       // Save the updated or new video document to the videos collection
@@ -97,6 +101,8 @@ class TrainerRepository{
     try {
       // Find the videos document by trainer ID
       const videos = await Videos.findOne({ trainer: trainerId });
+
+
 
       if (videos) {
         // If the videos document exists, return the posts as an array of objects

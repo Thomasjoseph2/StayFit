@@ -58,6 +58,26 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getAdminVideos: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/get-videos`,
+        method: "GET",
+      }),
+    }),
+    approveVideo: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/approve-video`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+   rejectVideo: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/reject-video`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -68,5 +88,8 @@ export const {
   useBlockUserMutation,
   useUpdateUserMutation,
   useUnblockUserMutation,
-  useAddTrainerMutation
+  useAddTrainerMutation,
+  useGetAdminVideosMutation,
+  useApproveVideoMutation,
+  useRejectVideoMutation
 } = adminApiSlice;
