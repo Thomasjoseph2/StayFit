@@ -215,10 +215,7 @@ const getAdminVideos = asyncHandler(async (req, res) => {
 
 const approveVideo=asyncHandler(async(req,res)=>{
 
-  const trainerId = new ObjectId(req.body.trainerId);
-  const videoId = new ObjectId(req.body.videoId);
-
-  const status=await AdminRepository.approveVideo(trainerId,videoId)
+  const status=await AdminRepository.approveVideo(req.body.trainerId,req.body.videoId)
 
   res.status(200).json({status})
 

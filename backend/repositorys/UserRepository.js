@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
+import Videos from "../models/videosModel.js";
 
 class UserRepository {
   async findByEmail(email) {
@@ -67,7 +68,11 @@ class UserRepository {
       throw error; // Handle any errors that occur during the database operation
     }
   }
+  async getUserVideos(){
 
+    return  await Videos.find({})
+  
+    }
   
 }
 

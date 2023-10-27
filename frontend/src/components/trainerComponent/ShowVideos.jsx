@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGetVideosMutation } from '../../slices/trainerApiSlice';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
-
+import { toast } from "react-toastify";
 const ShowVideos = ({ refreshTrigger }) => {
   const { trainerInfo } = useSelector((state) => state.trainerAuth);
   const [posts, setPosts] = useState([]);

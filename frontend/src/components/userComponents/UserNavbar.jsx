@@ -49,9 +49,9 @@ const UserNavbar = () => {
           <a href="#" className="text-white hover:text-gray-300">
             Diet
           </a>
-          <a href="#" className="text-white hover:text-gray-300">
+          <Link to="/videos" className="text-white hover:text-gray-300">
             Videos
-          </a>
+            </Link>
           <Link to="/bmi" className="text-white hover:text-gray-300">
             BMI Calculator
             </Link>

@@ -203,4 +203,37 @@ const getTrainer = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, registerUser, logoutUser, profile, getTrainers, getTrainer };
+const getUserVideos=asyncHandler(async(req,res)=>{
+   
+  const postVideos = await UserRepository.getUserVideos();
+
+  const videosWithSignedUrls = await Promise.all(postVideos.map(async (trainer) => {
+    const videosWithUrls = await Promise.all(trainer.videos.map(async (video) => {
+      const getObjectParams = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: video.videoName,
+      };
+
+      const command = new GetObjectCommand(getObjectParams);
+
+      const signedUrl = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+      
+      // Append signed URL to the video object
+      return {
+        ...video.toObject(),
+        signedUrl: signedUrl,
+      };
+    }));
+
+    // Replace trainer's videos array with videos containing signed URLs
+    return {
+      ...trainer.toObject(),
+      videos: videosWithUrls,
+    };
+  }));
+
+
+  res.status(200).json({ postVideos: videosWithSignedUrls });
+})
+
+export { authUser, registerUser, logoutUser, profile, getTrainers, getTrainer,getUserVideos };

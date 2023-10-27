@@ -121,6 +121,42 @@ class TrainerRepository{
       throw error; // Handle any errors that occur during the database operation
     }
   }
+
+  async deletePost(postId,trainerId){
+
+    console.log(postId,trainerId);
+    try {
+      // Find the video document with the trainer ID and video ID inside the videos array
+      const result = await Result.findOneAndUpdate(
+        {
+          "trainer": trainerId,
+          "posts._id": postId
+        },
+      // Use $pull operator to remove the specific post from the posts array
+      {
+        $pull: {
+          posts: {
+            _id: postId
+          }
+        }
+      },
+      // Add the option 'new: true' to return the modified document
+      { new: true }
+      );
+
+      if (!result) {
+        // Video not found
+        return { success: false, message: "post not found." };
+      }
+
+      return { success: true, message: "post deleted successfully." };
+
+    } catch (error) {
+      // Handle error
+      console.error(error);
+      return { success: false, message: "Internal server error." };
+    }
+  }
   
 }
 

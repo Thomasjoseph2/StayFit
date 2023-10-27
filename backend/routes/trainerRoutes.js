@@ -9,7 +9,8 @@ import {
     addPost,
     getPosts,
     addVideos,
-    getVideos
+    getVideos,
+    deletePost
 
 } from "../controllers/TraninerController.js";
 
@@ -43,6 +44,8 @@ router.get('/getPosts/:trainerId', protect, getPosts);
 router.post('/addVideo',protect,upload.single("postFile"),addVideos)
 
 router.get('/getVideos/:trainerId', protect,getVideos);
+
+router.post('/deletePost',protect,deletePost)
 
 
 export default router;

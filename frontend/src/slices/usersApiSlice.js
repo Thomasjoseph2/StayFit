@@ -36,6 +36,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getUserVideos: builder.mutation({
+      query: () => ({
+        url: `${USERS_URL}/get-user-videos`,
+        method: "GET",
+      }),
+    }),
     
 
   }),
@@ -43,4 +49,4 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 
 });
 
-export const {useLoginMutation,useLogoutMutation,useRegisterMutation,useGetTrainersMutation,useGetTrainerMutation}=usersApiSlice;
+export const {useLoginMutation,useLogoutMutation,useRegisterMutation,useGetTrainersMutation,useGetTrainerMutation,useGetUserVideosMutation}=usersApiSlice;

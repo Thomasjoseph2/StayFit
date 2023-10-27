@@ -51,26 +51,25 @@ class AdminRepository {
     }
     async approveVideo(trainerId, videoId) {
       try {
-
-        console.log(trainerId,videoId);
-        const trainer = await Trainer.findById(trainerId);
-        if (!trainer) {
-          // Trainer not found
-          return { success: false, message: "Trainer not found." };
-        }
-
-        
-    
-        const videoIndex = trainer.videos.findIndex((video) => video._id.toString() === videoId);
-        if (videoIndex === -1) {
+        // Find the video document with the trainer ID and video ID inside the videos array
+        const video = await Videos.findOneAndUpdate(
+          {
+            "trainer": trainerId,
+            "videos._id": videoId
+          },
+          {
+            $set: {
+              "videos.$.status": "approved"
+            }
+          },
+          { new: true }
+        );
+  
+        if (!video) {
           // Video not found
           return { success: false, message: "Video not found." };
         }
-    
-        // Update video status to 'approved'
-        trainer.videos[videoIndex].status = "approved";
-        await trainer.save();
-    
+  
         return { success: true, message: "Video approved successfully." };
       } catch (error) {
         // Handle error
@@ -78,25 +77,28 @@ class AdminRepository {
         return { success: false, message: "Internal server error." };
       }
     }
-    
+  
     async rejectVideo(trainerId, videoId) {
       try {
-        const trainer = await Trainer.findById(trainerId);
-        if (!trainer) {
-          // Trainer not found
-          return { success: false, message: "Trainer not found." };
-        }
-    
-        const videoIndex = trainer.videos.findIndex((video) => video._id.toString() === videoId);
-        if (videoIndex === -1) {
+        // Find the video document with the trainer ID and video ID inside the videos array
+        const video = await Videos.findOneAndUpdate(
+          {
+            "trainer": trainerId,
+            "videos._id": videoId
+          },
+          {
+            $set: {
+              "videos.$.status": "rejected"
+            }
+          },
+          { new: true }
+        );
+  
+        if (!video) {
           // Video not found
           return { success: false, message: "Video not found." };
         }
-    
-        // Update video status to 'rejected'
-        trainer.videos[videoIndex].status = "rejected";
-        await trainer.save();
-    
+  
         return { success: true, message: "Video rejected successfully." };
       } catch (error) {
         // Handle error

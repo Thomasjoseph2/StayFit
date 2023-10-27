@@ -1,0 +1,16 @@
+/* CSS for ConfirmationDialog component */
+.confirmation-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(27, 26, 26);
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color:#ccc
+  }
+  
+
+  
