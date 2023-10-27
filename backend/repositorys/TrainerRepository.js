@@ -72,15 +72,9 @@ class TrainerRepository{
 
   async updateVideo(trainerId, newVideo) {
     try {
-
-      console.log(newVideo,'123',trainerId,'trainer id repo');
-
       // Find the existing video document by trainer ID
       let videos = await Videos.findOne({ trainer: trainerId });
 
-      console.log(videos);
-
-  
       if (videos) {
         videos.videos.push(...newVideo.videos);
       } else if(videos===null) {
@@ -124,7 +118,6 @@ class TrainerRepository{
 
   async deletePost(postId,trainerId){
 
-    console.log(postId,trainerId);
     try {
       // Find the video document with the trainer ID and video ID inside the videos array
       const result = await Result.findOneAndUpdate(
@@ -150,6 +143,40 @@ class TrainerRepository{
       }
 
       return { success: true, message: "post deleted successfully." };
+
+    } catch (error) {
+      // Handle error
+      console.error(error);
+      return { success: false, message: "Internal server error." };
+    }
+  }
+  async deleteVideo(videoId,trainerId){
+
+    try {
+      // Find the video document with the trainer ID and video ID inside the videos array
+      const videos = await Videos.findOneAndUpdate(
+        {
+          "trainer": trainerId,
+          "videos._id": videoId
+        },
+      // Use $pull operator to remove the specific post from the posts array
+      {
+        $pull: {
+          videos: {
+            _id: videoId
+          }
+        }
+      },
+      // Add the option 'new: true' to return the modified document
+      { new: true }
+      );
+
+      if (!videos) {
+        // Video not found
+        return { success: false, message: "video not found." };
+      }
+
+      return { success: true, message: "video deleted successfully." };
 
     } catch (error) {
       // Handle error

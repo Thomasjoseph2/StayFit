@@ -195,8 +195,6 @@ const addVideos = asyncHandler(async (req, res) => {
       ],
     };
 
-    console.log(newVideo, "video ibdh");
-
     await TrainerRepository.updateVideo(trainersId, newVideo);
 
     res.status(201).json("video uploaded successfully");
@@ -274,9 +272,41 @@ else{
 
 
 }
-
-  
 )
+
+
+const deleteVideo = asyncHandler(async(req,res)=>{
+
+  const response=await TrainerRepository.deleteVideo(req.body.postId,req.body.trainer);
+
+  if(response.success===true){
+
+    const deleteParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: req.body.videoName, 
+    };
+
+    const deleteCommand = new DeleteObjectCommand(deleteParams);
+
+    await s3Obj.send(deleteCommand);
+
+    res.status(201).json({message:'video deleted successfully'})
+
+  }
+
+  else if (response.success===false) {
+
+    res.status(401).json({message:'video not found'})
+    
+  }
+else{
+
+  res.status(401);
+
+  throw new Error("posts not found"); // Send error response as JSON
+}
+  
+})
 
 export {
   logoutTrainer,
@@ -287,4 +317,5 @@ export {
   addVideos,
   getVideos,
   deletePost,
+  deleteVideo
 };

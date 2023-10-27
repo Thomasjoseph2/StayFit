@@ -63,6 +63,13 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    deleteVideo: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/deleteVideo`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -75,5 +82,6 @@ export const {
  useGetPostsMutation,
  useAddVideoMutation,
  useGetVideosMutation,
- useDeletePostMutation
+ useDeletePostMutation,
+ useDeleteVideoMutation
 } = trainerApiSlice;

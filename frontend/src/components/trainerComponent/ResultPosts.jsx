@@ -15,15 +15,15 @@ const ResultPosts = ({ refreshTrigger }) => {
   const [posts, setPosts] = useState([]);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
-  const [imageName,setImageName]=useState(null)
-  const [refresher,setRefresher]=useState(false)
+  const [imageName, setImageName] = useState(null);
+  const [refresher, setRefresher] = useState(false);
   const [getPosts] = useGetPostsMutation();
 
   const [deletePost] = useDeletePostMutation();
 
   useEffect(() => {
     fetchData(trainerInfo._id);
-  }, [refreshTrigger, trainerInfo._id,refresher]);
+  }, [refreshTrigger, trainerInfo._id, refresher]);
   const fetchData = async (trainerId) => {
     try {
       const response = await getPosts(trainerId);
@@ -34,23 +34,20 @@ const ResultPosts = ({ refreshTrigger }) => {
     }
   };
 
-  const handleDeleteClick = (postId,imageName) => {
+  const handleDeleteClick = (postId, imageName) => {
     setIsConfirmationVisible(true);
-    setSelectedPostId(postId)
-    setImageName(imageName)
-  
+    setSelectedPostId(postId);
+    setImageName(imageName);
   };
 
   const handleConfirmDelete = async () => {
-  
-    const trainer =trainerInfo._id
-    
-    await deletePost({ selectedPostId, trainer,imageName })
+    const trainer = trainerInfo._id;
+
+    await deletePost({ selectedPostId, trainer, imageName })
       .then((response) => {
         setIsConfirmationVisible(false);
-        setRefresher(true)
+        setRefresher(true);
         toast.success(response.data.message);
-
       })
       .catch((error) => {
         console.error("Error deleting post", error);
@@ -66,7 +63,7 @@ const ResultPosts = ({ refreshTrigger }) => {
         {posts.map((post) => (
           <div key={post.postId} className="bg-gray-900 p-4 rounded shadow-lg">
             <button
-              onClick={() => handleDeleteClick(post.postId,post.imageName)}
+              onClick={() => handleDeleteClick(post.postId, post.imageName)}
               className="align-top text-red-900"
             >
               <ImCross />
