@@ -5,36 +5,27 @@ import Videos from "../models/videosModel.js";
 
 class UserRepository {
   async findByEmail(email) {
-    return await User.findOne(email );
+    return await User.findOne(email);
   }
 
-  async findUserByIdForMiddleWare(userId){
-    
-    return await User.findById(userId).select('-password');
+  async findUserByIdForMiddleWare(userId) {
+    return await User.findById(userId).select("-password");
   }
 
   async createUser(userData) {
     return await User.create(userData);
   }
 
-
-  async findUserById(userId){
-    
-    return await User.findById(userId)
+  async findUserById(userId) {
+    return await User.findById(userId);
   }
 
-
-  async matchPasswords(user,enteredPassword) {
-
-
+  async matchPasswords(user, enteredPassword) {
     return await user.matchPasswords(enteredPassword);
-    
   }
 
-  async getTrainers(){
-
+  async getTrainers() {
     return await Trainer.find({});
-    
   }
 
   async getTrainer(trainerId) {
@@ -46,7 +37,7 @@ class UserRepository {
       throw new Error("Trainer not found");
     }
   }
-  
+
   async getPosts(trainerId) {
     try {
       // Find the Result document by trainer ID
@@ -54,7 +45,7 @@ class UserRepository {
 
       if (result) {
         // If the Result document exists, return the posts as an array of objects
-        return result.posts.map(post => {
+        return result.posts.map((post) => {
           return {
             imageName: post.imageName,
             description: post.description,
@@ -68,12 +59,13 @@ class UserRepository {
       throw error; // Handle any errors that occur during the database operation
     }
   }
-  async getUserVideos(){
+  async getUserVideos() {
+    return await Videos.find({});
+  }
 
-    return  await Videos.find({})
-  
-    }
-  
+  async getUser(userId) {
+    return await User.findById(userId);
+  }
 }
 
 export default new UserRepository();

@@ -3,6 +3,7 @@ import { useGetPostsMutation } from "../../slices/trainerApiSlice";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { ImCross } from "react-icons/im";
 import ConfirmationDialog from "../Confirmation";
+import ShimmerTrainerCard from "../Shimmers/ShimmerTrainerCard";
 
 import { useDeletePostMutation } from "../../slices/trainerApiSlice";
 import { toast } from "react-toastify";
@@ -17,7 +18,7 @@ const ResultPosts = ({ refreshTrigger }) => {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [imageName, setImageName] = useState(null);
   const [refresher, setRefresher] = useState(false);
-  const [getPosts] = useGetPostsMutation();
+  const [getPosts,{isLoading}] = useGetPostsMutation();
 
   const [deletePost] = useDeletePostMutation();
 
@@ -59,7 +60,9 @@ const ResultPosts = ({ refreshTrigger }) => {
   };
   return (
     <div className="container mx-auto mt-8 mb-20">
-      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+
+
+      {isLoading? (<ShimmerTrainerCard/>):(      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
         {posts.map((post) => (
           <div key={post.postId} className="bg-gray-900 p-4 rounded shadow-lg">
             <button
@@ -76,7 +79,8 @@ const ResultPosts = ({ refreshTrigger }) => {
             <p className="text-gray-300 text-sm">{post.description}</p>
           </div>
         ))}
-      </div>
+      </div>)}
+
       {isConfirmationVisible && (
         <ConfirmationDialog
           message="Are you sure you want to delete this post?"

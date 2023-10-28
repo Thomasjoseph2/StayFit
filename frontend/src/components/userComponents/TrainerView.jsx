@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "tailwindcss/tailwind.css";
-import img from '../../assets/after.jpeg';
 import { useParams } from "react-router-dom";
 import { useGetTrainerMutation } from "../../slices/usersApiSlice";
+import ShimmerTrainerCard from "../Shimmers/ShimmerTrainerCard";
 
 
 const Trainer = () => {
 
-  const [getTrainer]=useGetTrainerMutation();
+  const [getTrainer,{isLoading}]=useGetTrainerMutation();
   const [trainer,setTrainer]=useState({})
   const { trainerId } = useParams();
 
@@ -28,7 +28,8 @@ const Trainer = () => {
 
 
   return (
-    <div className="trainer bg-black p-4 rounded-lg shadow-md md:w-96 lg:w-full mx-auto container">
+    <>
+    {isLoading?(<ShimmerTrainerCard/>):(<div className="trainer bg-black p-4 rounded-lg shadow-md md:w-96 lg:w-full mx-auto container">
       <img
         src={trainer?.plainTrainer?.imageUrl}
         alt="{trainer.name}"
@@ -56,7 +57,9 @@ const Trainer = () => {
         ))}
       </div>
     </div>
-    </div>
+    </div>)}
+    
+    </>
   );
 };
 

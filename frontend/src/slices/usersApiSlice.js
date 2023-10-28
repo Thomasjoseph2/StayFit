@@ -18,13 +18,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    logout:builder.mutation({
-      query:()=>({
-        url:`${USERS_URL}/logout`,
-        method:'POST'
-      })
+    logout: builder.mutation({
+      query: () => ({
+        url: `${USERS_URL}/logout`,
+        method: "POST",
+      }),
     }),
-     getTrainers: builder.mutation({
+    getTrainers: builder.mutation({
       query: () => ({
         url: `${USERS_URL}/trainers`,
         method: "GET",
@@ -32,7 +32,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
     getTrainer: builder.mutation({
       query: (trainerId) => ({
-        url: `${USERS_URL}/getTrainer/${trainerId }`,
+        url: `${USERS_URL}/getTrainer/${trainerId}`,
         method: "GET",
       }),
     }),
@@ -42,11 +42,29 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    
-
+    getUserProfile: builder.mutation({
+      query: (userId) => ({
+        url: `${USERS_URL}/get-userprofile/${userId}`,
+        method: "GET",
+      }),
+    }),
+    addProfileImage: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/add-profile-image`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
-
-
 });
 
-export const {useLoginMutation,useLogoutMutation,useRegisterMutation,useGetTrainersMutation,useGetTrainerMutation,useGetUserVideosMutation}=usersApiSlice;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useRegisterMutation,
+  useGetTrainersMutation,
+  useGetTrainerMutation,
+  useGetUserVideosMutation,
+  useGetUserProfileMutation,
+  useAddProfileImageMutation
+} = usersApiSlice;

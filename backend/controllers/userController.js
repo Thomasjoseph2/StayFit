@@ -1,11 +1,11 @@
-import 'dotenv/config.js'
+import "dotenv/config.js";
 import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import UserRepository from "../repositorys/UserRepository.js";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 
-import s3Obj from '../utils/s3.js';
+import s3Obj from "../utils/s3.js";
 
 import mongoose from "mongoose";
 const { ObjectId } = mongoose.Types;
@@ -15,13 +15,11 @@ const { ObjectId } = mongoose.Types;
 //@access public
 
 const authUser = asyncHandler(async (req, res) => {
-
   const { email, password } = req.body;
 
   const user = await UserRepository.findByEmail({ email });
 
   if (user && (await UserRepository.matchPasswords(user, password))) {
-
     generateToken(res, user._id);
 
     res.status(201).json({
@@ -45,7 +43,6 @@ const authUser = asyncHandler(async (req, res) => {
 //@access public
 
 const registerUser = asyncHandler(async (req, res) => {
-
   const { name, email, password } = req.body;
 
   const userExists = await UserRepository.findByEmail({ email });
@@ -87,7 +84,6 @@ const registerUser = asyncHandler(async (req, res) => {
 //@access public
 
 const logoutUser = asyncHandler(async (req, res) => {
-
   res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
 
   res.status(200).json({ message: "user logged out" });
@@ -98,9 +94,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 //@access private(need to have access and the valid tokken)
 
 const profile = asyncHandler(async (req, res) => {
-
   const user = {
-
     _id: req.user._id,
 
     name: req.user.name,
@@ -112,49 +106,37 @@ const profile = asyncHandler(async (req, res) => {
 });
 
 const getTrainers = asyncHandler(async (req, res) => {
+  const trainers = await UserRepository.getTrainers();
 
-    const trainers = await UserRepository.getTrainers();
+  if (trainers) {
+    s3Obj.destroy();
 
-    if (trainers) {
+    const trainersWithUrls = await Promise.all(
+      trainers.map(async (trainer) => {
+        const getObjectParams = {
+          Bucket: process.env.BUCKET_NAME,
 
-      s3Obj.destroy()
-  
-      const trainersWithUrls = await Promise.all(
+          Key: trainer.imageName,
+        };
 
-        trainers.map(async (trainer) => {
+        const command = new GetObjectCommand(getObjectParams);
 
-          const getObjectParams = {
+        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
 
-            Bucket: process.env.BUCKET_NAME,
+        return {
+          ...trainer.toObject(),
 
-            Key: trainer.imageName,
-          };
+          imageUrl: url,
+        };
+      })
+    );
 
-          const command = new GetObjectCommand(getObjectParams);
+    res.status(200).json(trainersWithUrls);
+  } else {
+    res.status(401);
 
-          const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
-
-          return {
-            ...trainer.toObject(),
-
-            imageUrl: url,
-
-          };
-
-        })
-
-      );
-
-      res.status(200).json(trainersWithUrls);
-
-    } else {
-
-      res.status(401);
-
-      throw new Error("Invalid user data");
-
-    }
-
+    throw new Error("Invalid user data");
+  }
 });
 
 const getTrainer = asyncHandler(async (req, res) => {
@@ -203,37 +185,70 @@ const getTrainer = asyncHandler(async (req, res) => {
   }
 });
 
-const getUserVideos=asyncHandler(async(req,res)=>{
-   
+const getUserVideos = asyncHandler(async (req, res) => {
   const postVideos = await UserRepository.getUserVideos();
 
-  const videosWithSignedUrls = await Promise.all(postVideos.map(async (trainer) => {
-    const videosWithUrls = await Promise.all(trainer.videos.map(async (video) => {
-      const getObjectParams = {
-        Bucket: process.env.BUCKET_NAME,
-        Key: video.videoName,
-      };
+  const videosWithSignedUrls = await Promise.all(
+    postVideos.map(async (trainer) => {
+      const videosWithUrls = await Promise.all(
+        trainer.videos.map(async (video) => {
+          const getObjectParams = {
+            Bucket: process.env.BUCKET_NAME,
+            Key: video.videoName,
+          };
 
-      const command = new GetObjectCommand(getObjectParams);
+          const command = new GetObjectCommand(getObjectParams);
 
-      const signedUrl = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
-      
-      // Append signed URL to the video object
+          const signedUrl = await getSignedUrl(s3Obj, command, {
+            expiresIn: 600,
+          });
+
+          // Append signed URL to the video object
+          return {
+            ...video.toObject(),
+            signedUrl: signedUrl,
+          };
+        })
+      );
+
+      // Replace trainer's videos array with videos containing signed URLs
       return {
-        ...video.toObject(),
-        signedUrl: signedUrl,
+        ...trainer.toObject(),
+        videos: videosWithUrls,
       };
-    }));
-
-    // Replace trainer's videos array with videos containing signed URLs
-    return {
-      ...trainer.toObject(),
-      videos: videosWithUrls,
-    };
-  }));
-
+    })
+  );
 
   res.status(200).json({ postVideos: videosWithSignedUrls });
+});
+
+const getUserProfile = asyncHandler(async (req, res) => {
+
+  const user = await UserRepository.getUser(req.params.userId);
+
+  if (user) {
+    res.status(200).json({ user })
+    
+  } else {
+    res.status(401);
+
+    throw new Error("user not found");
+  }
+});
+
+const addProfileImage=asyncHandler(async(req,res)=>{
+  console.log(req.body);
+  console.log(req.file);
 })
 
-export { authUser, registerUser, logoutUser, profile, getTrainers, getTrainer,getUserVideos };
+export {
+  authUser,
+  registerUser,
+  getUserProfile,
+  logoutUser,
+  profile,
+  getTrainers,
+  getTrainer,
+  getUserVideos,
+  addProfileImage
+};

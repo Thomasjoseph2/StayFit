@@ -19,6 +19,16 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       required: true,
     },
+    subscription_status: {
+      type: String,
+      required: true,
+      default: "Inactive", 
+    },
+    subscribed_plan: {
+      type: String,
+      required: true,
+      default: "no current plans", 
+    },
     imagePath:{
       type:String,
     },
