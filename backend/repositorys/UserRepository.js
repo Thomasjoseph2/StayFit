@@ -66,6 +66,25 @@ class UserRepository {
   async getUser(userId) {
     return await User.findById(userId);
   }
+
+  async addProfileImage(imageName, userId) {
+    try {
+      const user = await User.findById(userId);
+      
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const exists=user.imagePath;
+
+      user.imagePath = imageName;
+      
+      await user.save();
+      return exists
+    } catch (error) {
+      throw new Error(`Error adding profile image: ${error.message}`);
+    }
+  }
+  
 }
 
 export default new UserRepository();

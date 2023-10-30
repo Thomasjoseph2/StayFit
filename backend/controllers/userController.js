@@ -1,21 +1,33 @@
 import "dotenv/config.js";
+import mongoose from "mongoose";
+const { ObjectId } = mongoose.Types;
 import asyncHandler from "express-async-handler";
+
+import { OAuth2Client } from "google-auth-library";
+
 import generateToken from "../utils/generateToken.js";
 import UserRepository from "../repositorys/UserRepository.js";
+
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 import s3Obj from "../utils/s3.js";
 
-import mongoose from "mongoose";
-const { ObjectId } = mongoose.Types;
+import { randomImageName } from "../utils/randomName.js";
+import { goodSizeResize } from "../utils/buffer.js";
 
+const googleClient = new OAuth2Client(
+  "714641682565-959gsh23k6n5qflfoeb419s7g3pntjrk.apps.googleusercontent.com"
+);
 //@desc Auth user/set token
 //@route POST /api/users/auth
 //@access public
 
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log(user,'ondo');
 
   const user = await UserRepository.findByEmail({ email });
 
@@ -57,7 +69,6 @@ const registerUser = asyncHandler(async (req, res) => {
     name,
     email,
     password,
-    blocked: false,
   });
 
   if (user) {
@@ -79,6 +90,56 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+const googleLogin = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  const ticket = await googleClient.verifyIdToken({
+    idToken: token,
+    audience:
+      "714641682565-959gsh23k6n5qflfoeb419s7g3pntjrk.apps.googleusercontent.com",
+  });
+  const payload = ticket.getPayload();
+
+  const name = payload.name;
+  const email = payload.email;
+
+  console.log(name, email);
+
+  const userExists = await UserRepository.findByEmail({ email });
+
+  if (userExists !== null) {
+    generateToken(res, userExists._id);
+
+    res.status(201).json({
+      _id: userExists._id,
+
+      name: userExists.name,
+
+      email: userExists.email,
+
+      blocked: userExists.blocked,
+    });
+  } else {
+    const user = await UserRepository.createUser({ name, email });
+
+    if (user) {
+      generateToken(res, user._id);
+
+      res.status(201).json({
+        _id: user._id,
+
+        name: user.name,
+
+        email: user.email,
+
+        blocked: user.blocked,
+      });
+    } else {
+      res.status(400);
+      throw new Error("cant create user");
+    }
+  }
+});
 //@user logout
 //@ route post api/users/logout
 //@access public
@@ -140,9 +201,10 @@ const getTrainers = asyncHandler(async (req, res) => {
 });
 
 const getTrainer = asyncHandler(async (req, res) => {
-  let plainTrainer; // Declare plainTrainer variable outside the if block
+  let plainTrainer;
 
   const trainerId = new ObjectId(req.params.trainerId);
+
   const trainer = await UserRepository.getTrainer(trainerId);
 
   if (trainer) {
@@ -150,6 +212,7 @@ const getTrainer = asyncHandler(async (req, res) => {
 
     const getObjectParams = {
       Bucket: process.env.BUCKET_NAME,
+
       Key: trainer.imageName,
     };
     const command = new GetObjectCommand(getObjectParams);
@@ -157,6 +220,7 @@ const getTrainer = asyncHandler(async (req, res) => {
     const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
 
     plainTrainer = trainer.toObject();
+
     plainTrainer.imageUrl = url;
 
     const posts = await UserRepository.getPosts(trainerId);
@@ -223,12 +287,31 @@ const getUserVideos = asyncHandler(async (req, res) => {
 });
 
 const getUserProfile = asyncHandler(async (req, res) => {
+  const finduser = await UserRepository.getUser(req.params.userId);
 
-  const user = await UserRepository.getUser(req.params.userId);
+  if (finduser) {
+    if (finduser.imagePath) {
+      s3Obj.destroy();
 
-  if (user) {
-    res.status(200).json({ user })
-    
+      const getObjectParams = {
+        Bucket: process.env.BUCKET_NAME,
+
+        Key: finduser.imagePath,
+      };
+      const command = new GetObjectCommand(getObjectParams);
+
+      const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+
+      const user = finduser.toObject();
+
+      user.imageUrl = url;
+
+      res.status(200).json({ user });
+    } else {
+      const user = finduser.toObject();
+
+      res.status(200).json({ user });
+    }
   } else {
     res.status(401);
 
@@ -236,10 +319,39 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-const addProfileImage=asyncHandler(async(req,res)=>{
-  console.log(req.body);
-  console.log(req.file);
-})
+const addProfileImage = asyncHandler(async (req, res) => {
+  const buffer = await goodSizeResize(req.file.buffer);
+
+  const imageName = randomImageName();
+
+  const exists = await UserRepository.addProfileImage(
+    imageName,
+    req.body.userId
+  );
+  console.log(exists);
+
+  if (exists) {
+    const deleteParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: exists,
+    };
+    const deleteCommand = new DeleteObjectCommand(deleteParams);
+
+    await s3Obj.send(deleteCommand);
+  }
+  const params = {
+    Bucket: process.env.BUCKET_NAME,
+    Key: imageName,
+    Body: buffer,
+    ContentType: req.file.mimetype,
+  };
+
+  const command = new PutObjectCommand(params);
+
+  await s3Obj.send(command);
+
+  res.status(200).json({ message: "profile photo updated " });
+});
 
 export {
   authUser,
@@ -250,5 +362,6 @@ export {
   getTrainers,
   getTrainer,
   getUserVideos,
-  addProfileImage
+  addProfileImage,
+  googleLogin,
 };

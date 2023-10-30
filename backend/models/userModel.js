@@ -13,11 +13,11 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
     blocked: {
       type: Boolean,
       required: true,
+      default:'false'
     },
     subscription_status: {
       type: String,

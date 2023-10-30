@@ -10,7 +10,8 @@ import {
   getTrainer,
   getUserVideos,
   getUserProfile,
-  addProfileImage
+  addProfileImage,
+  googleLogin
 } from "../controllers/userController.js";
 
 import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
@@ -20,6 +21,7 @@ const uploadProfile = multer({ storage: storage })
 
 router.post("/",  registerUser); 
 router.post("/auth",loginBlockCheck, authUser);
+router.post("/google-login", googleLogin);
 router.post("/logout",logoutUser);
 router.get('/trainers',getTrainers)
 router.get('/getTrainer/:trainerId',getTrainer)

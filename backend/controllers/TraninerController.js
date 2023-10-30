@@ -4,11 +4,10 @@ import generateToken from "../utils/generateToken.js";
 import { Types as mongooseTypes } from "mongoose";
 import TrainerRepository from "../repositorys/TrainerRepository.js";
 import s3Obj from "../utils/s3.js";
-import crypto from "crypto";
-import sharp from "sharp";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-
+import { resize } from "../utils/buffer.js";
+import { randomImageName } from "../utils/randomName.js";
 const { ObjectId } = mongooseTypes;
 
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -83,22 +82,10 @@ const getProfile = asyncHandler(async (req, res) => {
 });
 
 const addPost = asyncHandler(async (req, res) => {
+
   const { description, trainerId } = req.body;
 
-  const buffer = await (async (img) => {
-    const resizedImg = await sharp(img)
-      .resize({ height: 1500, width: 1400, fit: "contain" })
-
-      .toBuffer();
-
-    return resizedImg;
-  })(req.file.buffer);
-
-  const randomImageName = (bytes = 32) => {
-    const randomBytes = crypto.randomBytes(bytes);
-
-    return randomBytes.toString("hex");
-  };
+  const buffer= await resize(req.file.buffer);
 
   const imageName = randomImageName();
 
@@ -131,13 +118,17 @@ const addPost = asyncHandler(async (req, res) => {
 });
 
 const getPosts = asyncHandler(async (req, res) => {
+
   const trainerId = new ObjectId(req.params.trainerId);
 
   const posts = await TrainerRepository.getPosts(trainerId);
 
   if (posts) {
+
     const postsWithUrl = await Promise.all(
+
       posts.map(async (post) => {
+
         const getObjectParams = {
           Bucket: process.env.BUCKET_NAME,
           Key: post.imageName,
@@ -151,6 +142,7 @@ const getPosts = asyncHandler(async (req, res) => {
           ...post,
           imageUrl: url,
         };
+
       })
     );
 
@@ -214,10 +206,15 @@ const getVideos = asyncHandler(async (req, res) => {
 
   if (videos) {
     const videosWithUrl = await Promise.all(
+
       videos.map(async (video) => {
+
         const getObjectParams = {
+
           Bucket: process.env.BUCKET_NAME,
+
           Key: video.videoName,
+
         };
 
         const command = new GetObjectCommand(getObjectParams);

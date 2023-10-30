@@ -3,12 +3,12 @@ import generateToken from "../utils/generateToken.js";
 import mongoose from "mongoose";
 import Trainer from "../models/TrainerModel.js";
 import AdminRepository from "../repositorys/AdminRepository.js";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {  PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import s3Obj from "../utils/s3.js";
-import crypto from 'crypto';
-import sharp from "sharp";
+import { randomImageName } from "../utils/randomName.js";
+import { goodSizeResize } from "../utils/buffer.js";
 const { ObjectId } = mongoose.Types;
 
 //@desc Auth user/set token
@@ -135,15 +135,7 @@ const addTrainer = asyncHandler(async (req, res) => {
     throw new Error("User already exists");
   }
 
-  const buffer = await (async (img) => {
-    const resizedImg = await sharp(img).resize({ height: 1500, width: 1080, fit: "contain" }).toBuffer();
-    return resizedImg;
-  })(req.file.buffer);
-  
-  const randomImageName =(bytes = 32) => {
-    const randomBytes = crypto.randomBytes(bytes);
-    return randomBytes.toString('hex');
-  }
+  const buffer= await goodSizeResize(req.file.buffer);
 
   const imageName= randomImageName();
 
