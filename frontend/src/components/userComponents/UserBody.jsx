@@ -12,11 +12,11 @@ const UserBody = () => {
     textAlign: 'left',
   };
   return (
-    <div className="object-cover h-fit w-fit max-w-full flex flex-col items-center bg-black">
+    <div className="object-cover h-fit w-fit max-w-full flex flex-col items-center bg-black ">
           <img
         src={image}
         alt="Description of the image"
-        className="object-cover h-fit w-full"
+        className="object-cover  w-full h-[100vh]"
       />
       <div style={quoteStyle}>
         <h3 className='text-red-700 text-4xl'>It's <span className='text-white'>All About</span> Staying Fit</h3>

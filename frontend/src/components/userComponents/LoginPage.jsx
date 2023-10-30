@@ -1,36 +1,53 @@
-import React, { useState,useEffect } from "react";
-import { Link,useNavigate } from "react-router-dom";
-import { useDispatch,useSelector } from "react-redux";
-import { useLoginMutation } from "../../slices/usersApiSlice";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLoginMutation,useGoogleLoginMutation } from "../../slices/usersApiSlice";
 import { setCredentials } from "../../slices/authSlice";
-import  {toast} from 'react-toastify'
+import { toast } from "react-toastify";
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginPage = () => {
-    const [email,setEmail]=useState('');
-    const [password,setPassword]=useState('');
-    
-    const navigate=useNavigate();
-    const dispatch=useDispatch();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [login,{isLoading}]=useLoginMutation();
-    const {userInfo} =useSelector((state)=>state.auth);
-   
-    useEffect(() => {
-        if (userInfo) {
-          navigate("/");
-        }
-      }, [navigate, userInfo]);
-    const submitHandler = async (e) => {
-        e.preventDefault(); // Corrected typo here
-        try {
-            const res=await login({email,password}).unwrap();
-            dispatch(setCredentials({...res}));
-            navigate('/');
-        } catch (err) {
-            toast.error(err?.data?.message || err?.error);
-        }
-        
-      }
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [login, { isLoading }] = useLoginMutation();
+  const [googleLogin] = useGoogleLoginMutation();
+  const { userInfo } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userInfo]);
+  const submitHandler = async (e) => {
+    e.preventDefault(); // Corrected typo here
+    try {
+      const res = await login({ email, password }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate("/");
+    } catch (err) {
+      toast.error(err?.data?.message || err?.error);
+    }
+  };
+
+
+  const googleSubmitHandler = async (value) => {
+    try {
+      const res = await googleLogin({ token: value }).unwrap();
+      dispatch(
+        setCredentials({
+          ...res,
+        })
+      );
+      navigate("/");
+    } catch (err) {
+      setError("Invalid email or password");
+    }
+  };
+
   return (
     <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-black mt-12">
       <div>
@@ -55,7 +72,9 @@ const LoginPage = () => {
                 type="email"
                 name="email"
                 value={email}
-                onChange={(e)=>{setEmail(e.target.value)}}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
                 className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10"
               />
             </div>
@@ -72,7 +91,9 @@ const LoginPage = () => {
                 type="password"
                 name="password"
                 value={password}
-                onChange={(e)=>{setPassword(e.target.value)}}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
                 className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10"
               />
             </div>
@@ -82,7 +103,10 @@ const LoginPage = () => {
             Forget Password?
           </a>
           <div className="flex items-center mt-4">
-            <button type="submit"  className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-800 rounded-md hover:bg-green-600 focus:outline-none focus:bg-purple-600">
+            <button
+              type="submit"
+              className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-800 rounded-md hover:bg-green-600 focus:outline-none focus:bg-purple-600"
+            >
               Login
             </button>
           </div>
@@ -90,8 +114,11 @@ const LoginPage = () => {
         <div className="mt-4 text-white ">
           Dont have an account?{" "}
           <span>
-            <Link  className="text-light-blue-800 hover:underline" to="/registration">
-              Sign Up 
+            <Link
+              className="text-light-blue-800 hover:underline"
+              to="/registration"
+            >
+              Sign Up
             </Link>
           </span>
         </div>
@@ -100,8 +127,8 @@ const LoginPage = () => {
           <p className="px-3 text-white ">OR</p>
           <hr className="w-full" />
         </div>
-        <div className="my-6 space-y-2">
-          <button
+        <div className="my-6 space-y-2 mt-10 ">
+          {/* <button
             aria-label="Login with Google"
             type="button"
             className="flex items-center justify-center w-full p-2 space-x-4 border rounded-md focus:ring-2 focus:ring-offset-1 dark:border-gray-400 focus:ring-violet-400"
@@ -114,7 +141,17 @@ const LoginPage = () => {
               <path d="M16.318 13.714v5.484h9.078c-0.37 2.354-2.745 6.901-9.078 6.901-5.458 0-9.917-4.521-9.917-10.099s4.458-10.099 9.917-10.099c3.109 0 5.193 1.318 6.38 2.464l4.339-4.182c-2.786-2.599-6.396-4.182-10.719-4.182-8.844 0-16 7.151-16 16s7.156 16 16 16c9.234 0 15.365-6.49 15.365-15.635 0-1.052-0.115-1.854-0.255-2.651z"></path>
             </svg>
             <p className="text-light-blue-800">Login with Google</p>
-          </button>
+          </button> */}
+          <GoogleLogin 
+            onSuccess={(response) => {
+              googleSubmitHandler(response.credential);
+              console.log(credentialResponse);
+            }}
+            onError={() => {
+              console.log("Login Failed");
+            }}
+          />
+          ;
         </div>
       </div>
     </div>
