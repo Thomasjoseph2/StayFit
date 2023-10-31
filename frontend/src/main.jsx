@@ -35,6 +35,7 @@ import TrainerHome from "./components/trainerComponent/trainerHome";
 import TrainerProfile from "./components/trainerComponent/TrainerProfile";
 import AddPostScreen from "./screens/AddPostScreen";
 import VideoScreen from "./screens/VideoScreen";
+import DietScreen from "./screens/DietScreen";
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -65,6 +66,7 @@ const routes = createRoutesFromElements(
       <Route path="/trainer" element={<TrainerHome />} />
       <Route path="/trainer/add-results" element={<AddPostScreen />} />
       <Route path="/trainer/videos" element={<VideoScreen />} />
+      <Route path="/trainer/diet" element={<DietScreen />} />
     </Route>
   </Route>
 );

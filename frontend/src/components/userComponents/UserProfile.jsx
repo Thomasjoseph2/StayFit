@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useGetUserProfileMutation } from '../../slices/usersApiSlice';
+import { useGetUserProfileMutation,useUpdateProfileMutation } from '../../slices/usersApiSlice';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 import ImageUploadModal from './ImageUploadModal';
+import EditProfileModal from './EditProfileModal';
 import avatar from '../../assets/no-avatar.webp'
 const UserProfile = () => {
 
   const [userData,setUserData]=useState({})
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [profileEditModal,setProfileEditModal]=useState(false)
   const [refresher,setRefresher]=useState(false)
   const [getUser]=useGetUserProfileMutation();
+  const [updateUser]=useUpdateProfileMutation();
   const {userInfo}=useSelector((state)=>state.auth);
 
   useEffect(()=>{
     fetchData(userInfo._id);
-  },[userInfo._id,refresher])
+  },[userInfo._id,refresher,userInfo.name, userInfo.email])
 
   const fetchData = async(userId)=>{
     try {
@@ -30,6 +33,13 @@ const UserProfile = () => {
   const openModal = () => {
     setIsModalOpen(true);
   };
+  const openProfileModal=()=>{
+    setProfileEditModal(true)
+  }
+
+  const closeProfilemodal=()=>{
+    setProfileEditModal(false)
+  }
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -65,7 +75,10 @@ const UserProfile = () => {
                 <label className='text-white block mb-2'>Subscribed Plan:</label>
                 <span className='text-blue-500 ml-3'>{userData?.user?.subscribed_plan}</span>
               </div>
-              <button className='bg-red-600 w-full text-white rounded-2xl '>Edit Profile</button>
+
+              <button type="button" onClick={openProfileModal} className='bg-red-600 w-full text-white rounded-2xl '>Edit Profile</button>
+
+            <EditProfileModal isOpen={profileEditModal} onClose={closeProfilemodal} setRefresher={setRefresher} userId={userInfo._id} currentName={userData?.user?.name} currentEmail={userData?.user?.email}/>
             </form>
           </div>
         

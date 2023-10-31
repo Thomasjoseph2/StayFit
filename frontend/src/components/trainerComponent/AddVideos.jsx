@@ -6,11 +6,12 @@ import LoadingModal from "./LoadingModal";
 
 const AddVideos = ({ refreshPosts }) => {
   const { trainerInfo } = useSelector((state) => state.trainerAuth);
-  const [addVideo,{isLoading}] = useAddVideoMutation();
+  const [addVideo, { isLoading }] = useAddVideoMutation();
 
   const [showModal, setShowModal] = useState(false);
   const [postFile, setPostFile] = useState(null);
   const [description, setDescription] = useState("");
+  const [specification,setSpecification]=useState("")
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setPostFile(file);
@@ -25,6 +26,7 @@ const AddVideos = ({ refreshPosts }) => {
         const formData = new FormData();
         formData.append("postFile", postFile);
         formData.append("description", description);
+        formData.append("specification",specification);
         formData.append("trainerId", trainerInfo._id);
 
         // Call the addPost mutation with the FormData object
@@ -38,10 +40,13 @@ const AddVideos = ({ refreshPosts }) => {
         // Reset form and close modal
         setPostFile(null);
         setDescription("");
+        setSpecification("")
         setShowModal(false);
+        
       } catch (error) {
         // Handle error, show a toast message or other error handling logic
-        console.error("Error adding post:", error);
+        console.error("Error adding video:", error);
+        toast.error('error adding video')
       }
     } else {
       // Handle validation errors if needed
@@ -59,8 +64,8 @@ const AddVideos = ({ refreshPosts }) => {
 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-           {/* Show LoadingModal component while isLoading is true */}
-           {isLoading && <LoadingModal />}
+          {/* Show LoadingModal component while isLoading is true */}
+          {isLoading && <LoadingModal />}
           <div className="modal-container bg-white w-96 p-4 rounded-lg shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Add New Post</h2>
             <form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -70,6 +75,14 @@ const AddVideos = ({ refreshPosts }) => {
                 onChange={handleFileChange}
                 name="postFile"
                 className="mb-4 p-2 w-full border rounded"
+              />
+
+              <input
+                type="text"
+                className="border p-2 w-full"
+                value={specification}
+                placeholder="enter specification..."
+                onChange={(e) => setSpecification(e.target.value)}
               />
 
               <textarea

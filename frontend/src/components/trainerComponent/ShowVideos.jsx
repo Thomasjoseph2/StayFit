@@ -68,7 +68,8 @@ const ShowVideos = ({ refreshTrigger }) => {
               <source src={post.videoUrl} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-            <p className="text-gray-300 text-sm">{post.description}</p>
+            <p className="text-white text-lg">{post.specification}</p>
+            <p className="text-gray-300 text-sm mt-3">{post.description}</p>
           </div>
         ))}
       </div>

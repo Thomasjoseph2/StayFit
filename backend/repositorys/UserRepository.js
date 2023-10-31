@@ -84,7 +84,23 @@ class UserRepository {
       throw new Error(`Error adding profile image: ${error.message}`);
     }
   }
-  
+  async editUser(userId,name,email){
+    try {
+      const user = await User.findById(userId);
+      console.log(user,'useer');
+      if (!user) {
+        throw new Error("User not found");
+      }
+      user.name=name;
+      user.email=email;
+      await user.save();
+      return user;
+    } catch (error) {
+      console.log(error.message);
+      throw new Error (`editing failed:${error.message}`)
+      
+    }
+  }
 }
 
 export default new UserRepository();

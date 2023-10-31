@@ -46,9 +46,9 @@ const UserNavbar = () => {
           <Link to='/user-trainers' className="text-white hover:text-gray-300">
             Trainers
           </Link>
-          <a href="#" className="text-white hover:text-gray-300">
+          <Link to="/diet" className="text-white hover:text-gray-300">
             Diet
-          </a>
+          </Link>
           <Link to="/videos" className="text-white hover:text-gray-300">
             Videos
             </Link>

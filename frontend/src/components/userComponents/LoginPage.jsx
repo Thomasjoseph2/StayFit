@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useLoginMutation,useGoogleLoginMutation } from "../../slices/usersApiSlice";
+import {
+  useLoginMutation,
+  useGoogleLoginMutation,
+} from "../../slices/usersApiSlice";
 import { setCredentials } from "../../slices/authSlice";
 import { toast } from "react-toastify";
 import { GoogleLogin } from "@react-oauth/google";
@@ -9,6 +12,8 @@ import { GoogleLogin } from "@react-oauth/google";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,16 +28,26 @@ const LoginPage = () => {
     }
   }, [navigate, userInfo]);
   const submitHandler = async (e) => {
-    e.preventDefault(); // Corrected typo here
-    try {
-      const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      navigate("/");
-    } catch (err) {
-      toast.error(err?.data?.message || err?.error);
+    e.preventDefault();
+    let isValid = true;
+    if (!email) {
+      setEmailError("Email is required.");
+      isValid = false;
+    }
+    if (!password) {
+      setPasswordError("Password is required.");
+      isValid = false;
+    }
+    if (isValid) {
+      try {
+        const res = await login({ email, password }).unwrap();
+        dispatch(setCredentials({ ...res }));
+        navigate("/");
+      } catch (err) {
+        toast.error(err?.data?.message || err?.error);
+      }
     }
   };
-
 
   const googleSubmitHandler = async (value) => {
     try {
@@ -74,9 +89,13 @@ const LoginPage = () => {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
+                  setEmailError("");
                 }}
                 className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10"
               />
+              {emailError && (
+                <p className="text-red-500 text-xs italic">{emailError}</p>
+              )}
             </div>
           </div>
           <div className="mt-4">
@@ -93,9 +112,13 @@ const LoginPage = () => {
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
+                  setPasswordError("");
                 }}
                 className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-10"
               />
+              {passwordError && (
+                <p className="text-red-500 text-xs italic">{passwordError}</p>
+              )}
             </div>
           </div>
 
@@ -142,13 +165,12 @@ const LoginPage = () => {
             </svg>
             <p className="text-light-blue-800">Login with Google</p>
           </button> */}
-          <GoogleLogin 
+          <GoogleLogin
             onSuccess={(response) => {
               googleSubmitHandler(response.credential);
-              console.log(credentialResponse);
             }}
             onError={() => {
-              console.log("Login Failed");
+              toast.error('login failed')
             }}
           />
           ;

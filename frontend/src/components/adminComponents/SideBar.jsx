@@ -16,6 +16,7 @@ import { logout } from "../../slices/adminAuthSlice";
 import TutorsList from "./TrainersList";
 import UsersList from "./UsersList";
 import AdminVideos from "./AdminVideos";
+import AdminVideoScreen from "../../screens/AdminVideoScreen";
 
 const Sidebar = () => {
 
@@ -112,7 +113,7 @@ const Sidebar = () => {
             {content === "Dashboard" && <AdminHomePage />}
             {content === "trainer" && <TutorsList />}
             {content === "users" && <UsersList />}
-            {content === "videos" && <AdminVideos/> }
+            {content === "videos" && <AdminVideoScreen/> }
             {content === "diet" && "Diet Content"}
             {content === "logout" && "Logout Content"}
           </div>

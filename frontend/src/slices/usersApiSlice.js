@@ -62,6 +62,14 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    updateProfile: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/update-profile`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    
   }),
 });
 
@@ -74,5 +82,6 @@ export const {
   useGetUserVideosMutation,
   useGetUserProfileMutation,
   useAddProfileImageMutation,
-  useGoogleLoginMutation
+  useGoogleLoginMutation,
+  useUpdateProfileMutation
 } = usersApiSlice;

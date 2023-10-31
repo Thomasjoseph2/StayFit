@@ -27,8 +27,7 @@ const googleClient = new OAuth2Client(
 
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log(user,'ondo');
-
+  
   const user = await UserRepository.findByEmail({ email });
 
   if (user && (await UserRepository.matchPasswords(user, password))) {
@@ -328,8 +327,6 @@ const addProfileImage = asyncHandler(async (req, res) => {
     imageName,
     req.body.userId
   );
-  console.log(exists);
-
   if (exists) {
     const deleteParams = {
       Bucket: process.env.BUCKET_NAME,
@@ -353,6 +350,21 @@ const addProfileImage = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "profile photo updated " });
 });
 
+const editProfile=asyncHandler(async (req,res)=>{
+
+  const {userId,name,email}=req.body
+
+  const user=await UserRepository.editUser(userId,name,email)
+
+  if(user){
+     res.status(200).json({ user});
+  }else{
+    res.status(401);
+
+    throw new Error("something went wrong");
+  }
+})
+
 export {
   authUser,
   registerUser,
@@ -364,4 +376,5 @@ export {
   getUserVideos,
   addProfileImage,
   googleLogin,
+  editProfile
 };

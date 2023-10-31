@@ -15,6 +15,10 @@ const VideosSchema = mongoose.Schema({
           type: String,
           required: true,
         },
+        specification: {
+          type: String,
+          required: true,
+        },
         status: {
           type: String,
           required: true,

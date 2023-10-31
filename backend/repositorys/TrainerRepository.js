@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
+import Diet from "../models/dietModel.js";
 class TrainerRepository{
 
   async findByEmail(email) {
@@ -45,6 +46,32 @@ class TrainerRepository{
       return result; // Return the updated or newly created Result document if needed
     } catch (error) {
       throw error; // Handle any errors that occur during the database operation
+    }
+  }
+  async updateDiet(trainerId, newDiet) {
+
+    console.log(newDiet);
+    try {
+      // Find the existing Result document by trainer ID
+      let result = await Diet.findOne({ trainer: trainerId });
+
+      console.log(result);
+
+      if (result) {
+        // If the Result document exists, add the new post to the existing posts array
+        result.diets.push(...newDiet.diets);
+      } else {
+        // If the Result document doesn't exist, create a new one with the new post
+        result = new Diet(newDiet);
+      }
+
+      // Save the updated or new Result document to the results collection
+      await result.save();
+
+      return result; // Return the updated or newly created Result document if needed
+    } catch (error) {
+      //throw error; // Handle any errors that occur during the database operation
+      console.log(error);
     }
   }
   async getPosts(trainerId) {
@@ -103,6 +130,7 @@ class TrainerRepository{
         return videos.videos.map(post => {
           return {
             videoName: post.videoName,
+            specification:post.specification,
             description: post.description,
             postId: post._id // Optionally include the post ID if needed
           };

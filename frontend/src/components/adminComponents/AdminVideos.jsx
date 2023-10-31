@@ -88,7 +88,7 @@ const AdminVideos = () => {
             trainer.videos.map((video) => (
               <tr key={video._id} className="bg-white">
                 <td className="py-2 px-4 text-center">
-                  <video width="350" height="200" controls>
+                  <video width="400" height="200" controls>
                     <source src={video.signedUrl} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>

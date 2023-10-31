@@ -158,7 +158,7 @@ const addVideos = asyncHandler(async (req, res) => {
   try {
     s3Obj.destroy();
 
-    const { description, trainerId } = req.body;
+    const { description,specification, trainerId } = req.body;
 
     const trainersId = new ObjectId(trainerId);
 
@@ -182,6 +182,7 @@ const addVideos = asyncHandler(async (req, res) => {
       videos: [
         {
           videoName: videoName,
+          specification:specification,
           description: description,
         },
       ],
@@ -267,7 +268,6 @@ else{
   throw new Error("posts not found"); // Send error response as JSON
 }
 
-
 }
 )
 
@@ -305,6 +305,46 @@ else{
   
 })
 
+const addDiet=asyncHandler(async(req,res)=>{
+
+  const { description, trainerId,category,dietType} = req.body;
+
+  console.log(description,trainerId,category,dietType);
+
+  const buffer= await resize(req.file.buffer);
+
+  const imageName = randomImageName();
+
+  const params = {
+    Bucket: process.env.BUCKET_NAME,
+    Key: imageName,
+    Body: buffer,
+    ContentType: req.file.mimetype,
+  };
+
+  const command = new PutObjectCommand(params);
+
+  await s3Obj.send(command);
+
+  // Create a new Trainer instance using the Trainer model
+
+  const newDiet = {
+    trainer: trainerId,
+    diets: [
+      {
+        imageName: imageName,
+        description: description,
+        category:category,
+        dietType:dietType
+      },
+    ],
+  };
+
+  await TrainerRepository.updateDiet(trainerId, newDiet);
+
+  res.status(201).json("dietcreated successfully");
+})
+
 export {
   logoutTrainer,
   authTrainer,
@@ -314,5 +354,6 @@ export {
   addVideos,
   getVideos,
   deletePost,
-  deleteVideo
+  deleteVideo,
+  addDiet
 };

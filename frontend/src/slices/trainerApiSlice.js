@@ -70,6 +70,13 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    addDiet: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/add-diet`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -83,5 +90,6 @@ export const {
  useAddVideoMutation,
  useGetVideosMutation,
  useDeletePostMutation,
- useDeleteVideoMutation
+ useDeleteVideoMutation,
+ useAddDietMutation
 } = trainerApiSlice;

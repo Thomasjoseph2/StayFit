@@ -45,7 +45,8 @@ const SeeVideos = () => {
                       <source src={video.signedUrl} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
-                    <p className="text-gray-300 text-sm">{video.description}</p>
+                    <p className="text-white text-lg ">{video.specification}</p>
+                    <p className="text-gray-300 text-sm mt-3">{video.description}</p>
                   </div>
                 )
             )
