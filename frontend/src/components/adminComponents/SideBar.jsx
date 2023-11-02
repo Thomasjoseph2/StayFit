@@ -15,9 +15,8 @@ import { useAdminLogoutMutation } from "../../slices/adminApiSlice";
 import { logout } from "../../slices/adminAuthSlice";
 import TutorsList from "./TrainersList";
 import UsersList from "./UsersList";
-import AdminVideos from "./AdminVideos";
 import AdminVideoScreen from "../../screens/AdminVideoScreen";
-
+import AdminDietScreen from "../../screens/AdminDietScreen";
 const Sidebar = () => {
 
   const [content, setContent] = useState("Dashboard");
@@ -114,7 +113,7 @@ const Sidebar = () => {
             {content === "trainer" && <TutorsList />}
             {content === "users" && <UsersList />}
             {content === "videos" && <AdminVideoScreen/> }
-            {content === "diet" && "Diet Content"}
+            {content === "diet" && <AdminDietScreen/>}
             {content === "logout" && "Logout Content"}
           </div>
         </div>

@@ -78,6 +78,26 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getAdminDiets: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/get-diets`,
+        method: "GET",
+      }),
+    }),
+    approveDiet: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/approve-diet`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+   rejectDiet: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/reject-diet`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -91,5 +111,8 @@ export const {
   useAddTrainerMutation,
   useGetAdminVideosMutation,
   useApproveVideoMutation,
-  useRejectVideoMutation
+  useRejectVideoMutation,
+  useGetAdminDietsMutation,
+  useApproveDietMutation,
+  useRejectDietMutation
 } = adminApiSlice;

@@ -69,6 +69,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getUserDiets: builder.mutation({
+      query: () => ({
+        url: `${USERS_URL}/get-user-diets`,
+        method: "GET",
+      }),
+    }),
     
   }),
 });
@@ -83,5 +89,6 @@ export const {
   useGetUserProfileMutation,
   useAddProfileImageMutation,
   useGoogleLoginMutation,
-  useUpdateProfileMutation
+  useUpdateProfileMutation,
+  useGetUserDietsMutation
 } = usersApiSlice;

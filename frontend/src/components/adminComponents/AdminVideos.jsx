@@ -48,7 +48,7 @@ const AdminVideos = () => {
       // Call the rejectVideo mutation
        await rejectVideo({ trainerId, videoId }).then(()=>{
         toast.error('video rejected')
-        setRefresher('approved')
+        setRefresher('rejected')
       })
      
     } catch (error) {

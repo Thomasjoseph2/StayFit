@@ -2,7 +2,7 @@ import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
-
+import Diet from "../models/dietModel.js"
 class UserRepository {
   async findByEmail(email) {
     return await User.findOne(email);
@@ -26,6 +26,12 @@ class UserRepository {
 
   async getTrainers() {
     return await Trainer.find({});
+  }
+  async getUserVideos() {
+    return await Videos.find({});
+  }
+  async getUserDiets() {
+    return await Diet.find({});
   }
 
   async getTrainer(trainerId) {
@@ -59,10 +65,9 @@ class UserRepository {
       throw error; // Handle any errors that occur during the database operation
     }
   }
-  async getUserVideos() {
-    return await Videos.find({});
-  }
 
+  
+  
   async getUser(userId) {
     return await User.findById(userId);
   }
@@ -87,7 +92,7 @@ class UserRepository {
   async editUser(userId,name,email){
     try {
       const user = await User.findById(userId);
-      console.log(user,'useer');
+
       if (!user) {
         throw new Error("User not found");
       }
@@ -97,6 +102,7 @@ class UserRepository {
       return user;
     } catch (error) {
       console.log(error.message);
+      
       throw new Error (`editing failed:${error.message}`)
       
     }

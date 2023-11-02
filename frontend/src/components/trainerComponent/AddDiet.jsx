@@ -33,6 +33,7 @@ const AddDiet = ({ refreshPosts }) => {
         formData.append("category", category);
         formData.append("dietType", dietType);
         formData.append("trainerId", trainerInfo._id);
+        formData.append('trainerName',trainerInfo.name);
 
         // Call the addPost mutation with the FormData object
         await addDiet(formData)

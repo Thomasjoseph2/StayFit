@@ -110,9 +110,6 @@ const unblockUser = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
 const addTrainer = asyncHandler(async (req, res) => {
   const {
     firstName,
@@ -221,7 +218,51 @@ const rejectVideo=asyncHandler(async(req,res)=>{
 
 })
 
+const getDiet=asyncHandler(async(req,res)=>{
 
+  const diets = await AdminRepository.getDiets();
+
+  const dietsWithSignedUrls = await Promise.all(diets.map(async (trainer) => {
+    const dietsWithUrls = await Promise.all(trainer.diets.map(async (diet) => {
+      const getObjectParams = {
+        Bucket: process.env.BUCKET_NAME,
+        Key: diet.imageName,
+      };
+
+      const command = new GetObjectCommand(getObjectParams);
+
+      const signedUrl = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+      
+      // Append signed URL to the video object
+      return {
+        ...diet.toObject(),
+        signedUrl: signedUrl,
+        trainer:trainer.trainerName
+      };
+    }));
+
+    // Replace trainer's videos array with videos containing signed URLs
+    return {
+      ...trainer.toObject(),
+      diets: dietsWithUrls,
+    };
+  }));
+
+
+  res.status(200).json({ diets: dietsWithSignedUrls });
+
+})
+const approveDiet=asyncHandler(async(req,res)=>{
+
+  const status=await AdminRepository.approveDiet(req.body.trainerId,req.body.dietId)
+
+  res.status(200).json({status})
+})
+const rejectDiet=asyncHandler(async(req,res)=>{
+  const status=await AdminRepository.rejectDiet(req.body.trainerId,req.body.dietId)
+
+  res.status(200).json({status})
+})
 export {
   authAdmin,
   logoutAdmin,
@@ -232,5 +273,8 @@ export {
   getTrainers,
   getAdminVideos,
   rejectVideo,
-  approveVideo
+  approveVideo,
+  getDiet,
+  rejectDiet,
+  approveDiet
 };

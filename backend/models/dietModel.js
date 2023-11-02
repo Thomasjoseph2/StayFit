@@ -5,6 +5,10 @@ const DietSchema = mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Trainer",
     },
+    trainerName: {
+      type: String,
+      required: true,
+    },
     diets: [
       {
         imageName: {
@@ -22,6 +26,11 @@ const DietSchema = mongoose.Schema({
           dietType: {
             type: String,
             required: true,
+          },
+          status: {
+            type: String,
+            required: true,
+            default:'pending'
           },
       }
     ],

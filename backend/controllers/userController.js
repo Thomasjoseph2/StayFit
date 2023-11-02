@@ -319,6 +319,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 const addProfileImage = asyncHandler(async (req, res) => {
+  
   const buffer = await goodSizeResize(req.file.buffer);
 
   const imageName = randomImageName();
@@ -364,7 +365,42 @@ const editProfile=asyncHandler(async (req,res)=>{
     throw new Error("something went wrong");
   }
 })
+const getUserDiets = asyncHandler(async (req, res) => {
+  const postDiets = await UserRepository.getUserDiets();
 
+  const dietsWithSignedUrls = await Promise.all(
+    postDiets.map(async (trainer) => {
+      const dietsWithUrls = await Promise.all(
+        trainer.diets.map(async (diet) => {
+          const getObjectParams = {
+            Bucket: process.env.BUCKET_NAME,
+            Key: diet.imageName,
+          };
+
+          const command = new GetObjectCommand(getObjectParams);
+
+          const signedUrl = await getSignedUrl(s3Obj, command, {
+            expiresIn: 600,
+          });
+
+          // Append signed URL to the diet object
+          return {
+            ...diet.toObject(),
+            signedUrl: signedUrl,
+          };
+        })
+      );
+
+      // Replace trainer's diets array with diets containing signed URLs
+      return {
+        ...trainer.toObject(),
+        diets: dietsWithUrls,
+      };
+    })
+  );
+
+  res.status(200).json({ postDiets: dietsWithSignedUrls });
+});
 export {
   authUser,
   registerUser,
@@ -376,5 +412,6 @@ export {
   getUserVideos,
   addProfileImage,
   googleLogin,
-  editProfile
+  editProfile,
+  getUserDiets
 };

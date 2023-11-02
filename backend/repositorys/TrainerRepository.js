@@ -43,34 +43,31 @@ class TrainerRepository{
       // Save the updated or new Result document to the results collection
       await result.save();
 
-      return result; // Return the updated or newly created Result document if needed
+      return result; 
     } catch (error) {
-      throw error; // Handle any errors that occur during the database operation
+      throw error; 
     }
   }
   async updateDiet(trainerId, newDiet) {
 
-    console.log(newDiet);
     try {
-      // Find the existing Result document by trainer ID
+      // Find the existing Diet document by trainer ID
       let result = await Diet.findOne({ trainer: trainerId });
 
-      console.log(result);
-
       if (result) {
-        // If the Result document exists, add the new post to the existing posts array
+        // If the Diet document exists, add the new post to the existing posts array
         result.diets.push(...newDiet.diets);
       } else {
-        // If the Result document doesn't exist, create a new one with the new post
+        // If the Diet document doesn't exist, create a new one with the new post
         result = new Diet(newDiet);
       }
 
-      // Save the updated or new Result document to the results collection
+      // Save the updated or new Diet document to the results collection
       await result.save();
 
-      return result; // Return the updated or newly created Result document if needed
+      return result; 
     } catch (error) {
-      //throw error; // Handle any errors that occur during the database operation
+      //throw error; 
       console.log(error);
     }
   }
@@ -96,7 +93,32 @@ class TrainerRepository{
       throw error; // Handle any errors that occur during the database operation
     }
   }
+  async getDiets(trainerId) {
+    try {
+      // Find the Result document by trainer ID
+      const result = await Diet.findOne({ trainer: trainerId });
 
+      if (result) {
+        // If the Result document exists, return the posts as an array of objects
+        return result.diets.map(diet => {
+          return {
+            imageName: diet.imageName,
+            description: diet.description,
+            dietId: diet._id ,
+            category:diet.category,
+            dietType:diet.dietType
+            
+          };
+        });
+      } else {
+        // If the Result document doesn't exist, return an empty array
+        return [];
+      }
+    } catch (error) {
+      console.log(error);
+      throw error; // Handle any errors that occur during the database operation
+    }
+  }
   async updateVideo(trainerId, newVideo) {
     try {
       // Find the existing video document by trainer ID
@@ -205,6 +227,41 @@ class TrainerRepository{
       }
 
       return { success: true, message: "video deleted successfully." };
+
+    } catch (error) {
+      // Handle error
+      console.error(error);
+      return { success: false, message: "Internal server error." };
+    }
+  }
+
+  async deleteDiet(dietId,trainerId){
+
+    try {
+      // Find the diet document with the trainer ID and diet ID inside the diets array
+      const result = await Diet.findOneAndUpdate(
+        {
+          "trainer": trainerId,
+          "diets._id": dietId
+        },
+      // Use $pull operator to remove the specific diet from the diets array
+      {
+        $pull: {
+          diets: {
+            _id: dietId
+          }
+        }
+      },
+      // Add the option 'new: true' to return the modified document
+      { new: true }
+      );
+
+      if (!result) {
+        // diet not found
+        return { success: false, message: "diet not found." };
+      }
+
+      return { success: true, message: "diet deleted successfully." };
 
     } catch (error) {
       // Handle error

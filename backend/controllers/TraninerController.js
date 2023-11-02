@@ -28,7 +28,7 @@ const authTrainer = asyncHandler(async (req, res) => {
     res.status(201).json({
       _id: trainer._id,
 
-      name: trainer.name,
+      name: trainer.firstName+" "+trainer.lastName,
 
       email: trainer.email,
 
@@ -307,9 +307,7 @@ else{
 
 const addDiet=asyncHandler(async(req,res)=>{
 
-  const { description, trainerId,category,dietType} = req.body;
-
-  console.log(description,trainerId,category,dietType);
+  const { description, trainerId,category,dietType,trainerName} = req.body;
 
   const buffer= await resize(req.file.buffer);
 
@@ -328,8 +326,10 @@ const addDiet=asyncHandler(async(req,res)=>{
 
   // Create a new Trainer instance using the Trainer model
 
+
   const newDiet = {
     trainer: trainerId,
+    trainerName:trainerName,
     diets: [
       {
         imageName: imageName,
@@ -345,6 +345,75 @@ const addDiet=asyncHandler(async(req,res)=>{
   res.status(201).json("dietcreated successfully");
 })
 
+const getDiets=asyncHandler(async(req,res)=>{
+
+   const trainerId = new ObjectId(req.params.trainerId);
+
+  const diets = await TrainerRepository.getDiets(trainerId);
+
+  if (diets) {
+
+    const dietsWithUrl = await Promise.all(
+
+      diets.map(async (diet) => {
+
+        const getObjectParams = {
+          Bucket: process.env.BUCKET_NAME,
+          Key: diet.imageName,
+        };
+
+        const command = new GetObjectCommand(getObjectParams);
+
+        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+
+        return {
+          ...diet,
+          imageUrl: url,
+        };
+
+      })
+    );
+
+    res.status(200).json(dietsWithUrl);
+  } else {
+    res.status(401);
+
+    throw new Error("posts not found"); // Send error response as JSON
+  }
+})
+
+const deleteDiet=asyncHandler(async(req,res)=>{
+ 
+  const response=await TrainerRepository.deleteDiet(req.body.selectedDietId,req.body.trainer);
+
+  if(response.success===true){
+
+    const deleteParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: req.body.imageName, 
+    };
+
+    const deleteCommand = new DeleteObjectCommand(deleteParams);
+
+    await s3Obj.send(deleteCommand);
+
+    res.status(201).json({message:'post deleted successfully'})
+
+  }
+
+  else if (response.success===false) {
+
+    res.status(401).json({message:'post not found'})
+    
+  }
+else{
+
+  res.status(401);
+
+  throw new Error("posts not found"); // Send error response as JSON
+}
+})
+
 export {
   logoutTrainer,
   authTrainer,
@@ -355,5 +424,7 @@ export {
   getVideos,
   deletePost,
   deleteVideo,
-  addDiet
+  addDiet,
+  getDiets,
+  deleteDiet
 };

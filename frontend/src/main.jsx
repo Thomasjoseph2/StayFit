@@ -24,6 +24,7 @@ import BmiCalculator from "./components/userComponents/BmiCalculator.jsx";
 import SeeVideos from "./components/userComponents/SeeVideos.jsx";
 import UserPrivateRoute from "./components/userComponents/UserPrivateRoute";
 import UserProfile from "./components/userComponents/UserProfile";
+import DietView from "./components/userComponents/DietView";
 
 import AdminLogin from "./components/adminComponents/AdminLogin";
 import PrivateRoute from "./components/adminComponents/PrivateRoutes";
@@ -44,12 +45,14 @@ const routes = createRoutesFromElements(
     <Route path="/registration" element={<Registration />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path="/user-trainers" element={<UserTrainerView />} />
-    <Route path="/user-trainer-view/:trainerId" element={<TrainerView />} />
     <Route path="/bmi" element={<BmiCalculator />} />
     <Route path="/videos" element={<SeeVideos />} />
+    <Route path="/diets" element={<DietView/>}/>
 
     <Route path="" element={<UserPrivateRoute />}>
       <Route path="/profile" element={<UserProfile />} />
+      <Route path="/user-trainer-view/:trainerId" element={<TrainerView />} />
+
     </Route>
 
     {/************Admin side routes ***************/}

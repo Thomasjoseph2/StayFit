@@ -3,6 +3,7 @@ import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
 import bcrypt from "bcryptjs";
 import Videos from "../models/videosModel.js";
+import Diet from "../models/dietModel.js";
 
 class AdminRepository {
 
@@ -48,7 +49,11 @@ class AdminRepository {
 
     return  await Videos.find({})
   
+    } 
+     async getDiets() {
+      return await Diet.find({});
     }
+
     async approveVideo(trainerId, videoId) {
       try {
         // Find the video document with the trainer ID and video ID inside the videos array
@@ -71,6 +76,34 @@ class AdminRepository {
         }
   
         return { success: true, message: "Video approved successfully." };
+      } catch (error) {
+        // Handle error
+        console.error(error);
+        return { success: false, message: "Internal server error." };
+      }
+    }
+    async approveDiet(trainerId, dietId) {
+      try {
+        // Find the video document with the trainer ID and video ID inside the videos array
+        const diet = await Diet.findOneAndUpdate(
+          {
+            "trainer": trainerId,
+            "diets._id": dietId
+          },
+          {
+            $set: {
+              "diets.$.status": "approved"
+            }
+          },
+          { new: true }
+        );
+  
+        if (!diet) {
+          // Diet not found
+          return { success: false, message: "Diet not found." };
+        }
+  
+        return { success: true, message: "Diet approved successfully." };
       } catch (error) {
         // Handle error
         console.error(error);
@@ -100,6 +133,34 @@ class AdminRepository {
         }
   
         return { success: true, message: "Video rejected successfully." };
+      } catch (error) {
+        // Handle error
+        console.error(error);
+        return { success: false, message: "Internal server error." };
+      }
+    }
+    async rejectDiet(trainerId, dietId) {
+      try {
+        // Find the video document with the trainer ID and video ID inside the videos array
+        const diet = await Diet.findOneAndUpdate(
+          {
+            "trainer": trainerId,
+            "diets._id": dietId
+          },
+          {
+            $set: {
+              "diets.$.status": "rejected"
+            }
+          },
+          { new: true }
+        );
+  
+        if (!diet) {
+          // diet not found
+          return { success: false, message: "diet not found." };
+        }
+  
+        return { success: true, message: "Diet rejected successfully." };
       } catch (error) {
         // Handle error
         console.error(error);

@@ -9,8 +9,6 @@ import { useDeletePostMutation } from "../../slices/trainerApiSlice";
 import { toast } from "react-toastify";
 
 const ResultPosts = ({ refreshTrigger }) => {
-  // Ensure posts is an array, default to an empty array if not
-  // const validPosts = Array.isArray(posts) ? posts : [];
   const { trainerInfo } = useSelector((state) => state.trainerAuth);
 
   const [posts, setPosts] = useState([]);
@@ -18,6 +16,7 @@ const ResultPosts = ({ refreshTrigger }) => {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [imageName, setImageName] = useState(null);
   const [refresher, setRefresher] = useState(false);
+  
   const [getPosts,{isLoading}] = useGetPostsMutation();
 
   const [deletePost] = useDeletePostMutation();

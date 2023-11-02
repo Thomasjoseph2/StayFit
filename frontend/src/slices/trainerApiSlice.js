@@ -77,6 +77,19 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getDiets: builder.mutation({
+      query: (trainerId) => ({
+        url: `${TRAINER_URL}/get-diets/${trainerId}`, 
+        method: "GET",
+      }),
+    }),
+    deleteDiet: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/delete-diet`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -91,5 +104,8 @@ export const {
  useGetVideosMutation,
  useDeletePostMutation,
  useDeleteVideoMutation,
- useAddDietMutation
+ useAddDietMutation,
+ useGetDietsMutation,
+ useDeleteDietMutation
+
 } = trainerApiSlice;

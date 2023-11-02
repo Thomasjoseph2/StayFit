@@ -1,5 +1,6 @@
 import React,{useState} from 'react'
 import AddDiet from '../components/trainerComponent/AddDiet'
+import ShowDiets from '../components/trainerComponent/ShowDiets';
 
 const DietScreen = () => {
   const [refreshPosts, setRefreshPosts] = useState(false);
@@ -9,7 +10,7 @@ const DietScreen = () => {
         <AddDiet refreshPosts={() => setRefreshPosts(prev => !prev)} />
       </div>
       <div>
-        
+        <ShowDiets refreshTrigger={refreshPosts}/>
       </div>
     </>
   );

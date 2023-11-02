@@ -12,7 +12,9 @@ import {
     getVideos,
     deletePost,
     deleteVideo,
-    addDiet
+    addDiet,
+    getDiets,
+    deleteDiet
 
 } from "../controllers/TraninerController.js";
 
@@ -52,6 +54,10 @@ router.post('/deletePost',protect,deletePost)
 router.post('/deleteVideo',protect,deleteVideo)
 
 router.post('/add-diet',protect,upload.single("dietImage"),addDiet)
+
+router.get('/get-diets/:trainerId', protect, getDiets);
+
+router.post('/delete-diet',protect,deleteDiet)
 
 
 export default router;
