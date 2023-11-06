@@ -13,7 +13,6 @@ const UserProfile = () => {
   const [profileEditModal,setProfileEditModal]=useState(false)
   const [refresher,setRefresher]=useState(false)
   const [getUser]=useGetUserProfileMutation();
-  const [updateUser]=useUpdateProfileMutation();
   const {userInfo}=useSelector((state)=>state.auth);
 
   useEffect(()=>{

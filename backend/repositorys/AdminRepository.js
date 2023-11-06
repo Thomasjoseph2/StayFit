@@ -27,9 +27,10 @@ class AdminRepository {
     return await User.find({});
   }
 
-  async getTrainers(){
-    return await Trainer.find({});
-  }
+async getTrainers() {
+  return await Trainer.find({}).sort({ _id: -1 });
+}
+
 
   async findUserById(userId){
     

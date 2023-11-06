@@ -1,16 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useGetProfileMutation } from '../../slices/trainerApiSlice';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux'
+
+import ChangeImageModal from './ChangeImageModal';
+import EditTrainerModal from './EditTrainer';
 
 const TrainerProfile = () => {
     const [trainerData, setTrainerData] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [profileEditModal,setProfileEditModal]=useState(false)
+    const [refresher,setRefresher]=useState(Date.now())
+
     const [getUser] = useGetProfileMutation();
     const { trainerInfo } = useSelector((state) => state.trainerAuth);
 
     useEffect(() => {
         fetchData(trainerInfo._id);
-    }, [trainerInfo._id]);
+    }, [trainerInfo._id,refresher]);
 
     const fetchData = async (trainerId) => {
         try {
@@ -21,16 +28,28 @@ const TrainerProfile = () => {
             toast.error('Error fetching trainer data');
         }
     };
-
+    const openModal = () => {
+        setIsModalOpen(true);
+      };
+    const closeModal = () => {
+        setIsModalOpen(false);
+      };
+      const openProfileModal=()=>{
+        setProfileEditModal(true)
+      }
+    
+      const closeProfilemodal=()=>{
+        setProfileEditModal(false)
+      }
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white ">
             <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full mt-24">
-                <img
+                <img onClick={openModal}
                     src={trainerData?.plainTrainer?.imageUrl}
                     alt="Profile"
-                    className="w-50 h-60 mx-auto rounded-full mb-6"
+                    className="w-50 h-60 mx-auto rounded-full mb-6 cursor-pointer"
                 />
-
+                 <ChangeImageModal isOpen={isModalOpen} onClose={closeModal} setRefresher={setRefresher} trainerId={trainerInfo._id}/>
                 <h2 className="text-2xl font-semibold text-center mb-2">
                     {trainerData?.plainTrainer?.firstName} {trainerData?.plainTrainer?.lastName}
                 </h2>
@@ -56,9 +75,11 @@ const TrainerProfile = () => {
                 </div>
 
                 <div className="flex justify-center space-x-4">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+                    <button onClick={openProfileModal} className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
                         Edit Profile
                     </button>
+                    <EditTrainerModal isOpen={profileEditModal} onClose={closeProfilemodal} setRefresher={setRefresher} trainerDetails={trainerData.plainTrainer}/>
+
                 
                 </div>
             </div>

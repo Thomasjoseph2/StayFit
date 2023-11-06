@@ -6,7 +6,7 @@ import TrainerRepository from "../repositorys/TrainerRepository.js";
 import s3Obj from "../utils/s3.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { resize } from "../utils/buffer.js";
+import { goodSizeResize, resize } from "../utils/buffer.js";
 import { randomImageName } from "../utils/randomName.js";
 const { ObjectId } = mongooseTypes;
 
@@ -414,6 +414,58 @@ else{
 }
 })
 
+const addTrainerProfileImage=asyncHandler(async(req,res)=>{
+
+  console.log(req.body);
+
+  const buffer = await goodSizeResize(req.file.buffer)
+
+  const imageName = randomImageName();
+
+  const exists = await TrainerRepository.addProfileImage(
+    imageName,
+    req.body.trainerId
+  );
+
+  if (exists) {
+    const deleteParams = {
+      Bucket: process.env.BUCKET_NAME,
+      Key: exists,
+    };
+    const deleteCommand = new DeleteObjectCommand(deleteParams);
+
+    await s3Obj.send(deleteCommand);
+  }
+  const params = {
+    Bucket: process.env.BUCKET_NAME,
+    Key: imageName,
+    Body: buffer,
+    ContentType: req.file.mimetype,
+  };
+
+  const command = new PutObjectCommand(params);
+
+  await s3Obj.send(command);
+
+  res.status(200).json({ message: "profile photo updated " });
+
+})
+
+const editTrainerProfile=asyncHandler(async (req,res)=>{
+
+  const trainerDetails=req.body;
+
+  const trainer=await TrainerRepository.editTrainer(trainerDetails)
+
+  if(trainer){
+     res.status(200).json({ trainer});
+  }else{
+    res.status(401);
+
+    throw new Error("something went wrong");
+  }
+})
+
 export {
   logoutTrainer,
   authTrainer,
@@ -426,5 +478,7 @@ export {
   deleteVideo,
   addDiet,
   getDiets,
-  deleteDiet
+  deleteDiet,
+  addTrainerProfileImage,
+  editTrainerProfile
 };

@@ -3,30 +3,22 @@ import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
-class TrainerRepository{
-
+class TrainerRepository {
   async findByEmail(email) {
-
-    return await Trainer.findOne(email );
+    return await Trainer.findOne(email);
   }
 
-  async matchPasswords(trainer,enteredPassword) {
-
+  async matchPasswords(trainer, enteredPassword) {
     return await trainer.matchPasswords(enteredPassword);
-    
   }
 
   async findById(trainerId) {
-
     return await Trainer.findById(trainerId);
-    
   }
   async getPost(trainerId) {
-
     const post = await Result.findById(trainerId);
-
   }
-  
+
   async updatePost(trainerId, newPost) {
     try {
       // Find the existing Result document by trainer ID
@@ -43,13 +35,12 @@ class TrainerRepository{
       // Save the updated or new Result document to the results collection
       await result.save();
 
-      return result; 
+      return result;
     } catch (error) {
-      throw error; 
+      throw error;
     }
   }
   async updateDiet(trainerId, newDiet) {
-
     try {
       // Find the existing Diet document by trainer ID
       let result = await Diet.findOne({ trainer: trainerId });
@@ -65,9 +56,9 @@ class TrainerRepository{
       // Save the updated or new Diet document to the results collection
       await result.save();
 
-      return result; 
+      return result;
     } catch (error) {
-      //throw error; 
+      //throw error;
       console.log(error);
     }
   }
@@ -78,11 +69,11 @@ class TrainerRepository{
 
       if (result) {
         // If the Result document exists, return the posts as an array of objects
-        return result.posts.map(post => {
+        return result.posts.map((post) => {
           return {
             imageName: post.imageName,
             description: post.description,
-            postId: post._id // Optionally include the post ID if needed
+            postId: post._id, // Optionally include the post ID if needed
           };
         });
       } else {
@@ -100,14 +91,13 @@ class TrainerRepository{
 
       if (result) {
         // If the Result document exists, return the posts as an array of objects
-        return result.diets.map(diet => {
+        return result.diets.map((diet) => {
           return {
             imageName: diet.imageName,
             description: diet.description,
-            dietId: diet._id ,
-            category:diet.category,
-            dietType:diet.dietType
-            
+            dietId: diet._id,
+            category: diet.category,
+            dietType: diet.dietType,
           };
         });
       } else {
@@ -126,35 +116,33 @@ class TrainerRepository{
 
       if (videos) {
         videos.videos.push(...newVideo.videos);
-      } else if(videos===null) {
+      } else if (videos === null) {
         // If the video document doesn't exist, create a new one with the new video
         videos = new Videos(newVideo);
       }
-  
+
       // Save the updated or new video document to the videos collection
       await videos.save();
-  
+
       return videos; // Return the updated or newly created video document if needed
     } catch (error) {
       throw error; // Handle any errors that occur during the database operation
     }
   }
-  
+
   async getVideos(trainerId) {
     try {
       // Find the videos document by trainer ID
       const videos = await Videos.findOne({ trainer: trainerId });
 
-
-
       if (videos) {
         // If the videos document exists, return the posts as an array of objects
-        return videos.videos.map(post => {
+        return videos.videos.map((post) => {
           return {
             videoName: post.videoName,
-            specification:post.specification,
+            specification: post.specification,
             description: post.description,
-            postId: post._id // Optionally include the post ID if needed
+            postId: post._id, // Optionally include the post ID if needed
           };
         });
       } else {
@@ -166,25 +154,24 @@ class TrainerRepository{
     }
   }
 
-  async deletePost(postId,trainerId){
-
+  async deletePost(postId, trainerId) {
     try {
       // Find the video document with the trainer ID and video ID inside the videos array
       const result = await Result.findOneAndUpdate(
         {
-          "trainer": trainerId,
-          "posts._id": postId
+          trainer: trainerId,
+          "posts._id": postId,
         },
-      // Use $pull operator to remove the specific post from the posts array
-      {
-        $pull: {
-          posts: {
-            _id: postId
-          }
-        }
-      },
-      // Add the option 'new: true' to return the modified document
-      { new: true }
+        // Use $pull operator to remove the specific post from the posts array
+        {
+          $pull: {
+            posts: {
+              _id: postId,
+            },
+          },
+        },
+        // Add the option 'new: true' to return the modified document
+        { new: true }
       );
 
       if (!result) {
@@ -193,84 +180,124 @@ class TrainerRepository{
       }
 
       return { success: true, message: "post deleted successfully." };
-
     } catch (error) {
       // Handle error
       console.error(error);
       return { success: false, message: "Internal server error." };
     }
   }
-  async deleteVideo(videoId,trainerId){
-
+  async deleteVideo(videoId, trainerId) {
     try {
-      // Find the video document with the trainer ID and video ID inside the videos array
       const videos = await Videos.findOneAndUpdate(
         {
-          "trainer": trainerId,
-          "videos._id": videoId
+          trainer: trainerId,
+          "videos._id": videoId,
         },
-      // Use $pull operator to remove the specific post from the posts array
-      {
-        $pull: {
-          videos: {
-            _id: videoId
-          }
-        }
-      },
-      // Add the option 'new: true' to return the modified document
-      { new: true }
+        {
+          $pull: {
+            videos: {
+              _id: videoId,
+            },
+          },
+        },
+        { new: true }
       );
 
       if (!videos) {
-        // Video not found
         return { success: false, message: "video not found." };
       }
 
       return { success: true, message: "video deleted successfully." };
-
     } catch (error) {
-      // Handle error
       console.error(error);
       return { success: false, message: "Internal server error." };
     }
   }
 
-  async deleteDiet(dietId,trainerId){
-
+  async deleteDiet(dietId, trainerId) {
     try {
-      // Find the diet document with the trainer ID and diet ID inside the diets array
       const result = await Diet.findOneAndUpdate(
         {
-          "trainer": trainerId,
-          "diets._id": dietId
+          trainer: trainerId,
+          "diets._id": dietId,
         },
-      // Use $pull operator to remove the specific diet from the diets array
-      {
-        $pull: {
-          diets: {
-            _id: dietId
-          }
-        }
-      },
-      // Add the option 'new: true' to return the modified document
-      { new: true }
+        {
+          $pull: {
+            diets: {
+              _id: dietId,
+            },
+          },
+        },
+        { new: true }
       );
 
       if (!result) {
-        // diet not found
         return { success: false, message: "diet not found." };
       }
 
       return { success: true, message: "diet deleted successfully." };
-
     } catch (error) {
-      // Handle error
       console.error(error);
       return { success: false, message: "Internal server error." };
     }
   }
-  
-}
 
+  async addProfileImage(imageName, trainerId) {
+    try {
+      const trainer = await Trainer.findById(trainerId);
+
+      if (!trainer) {
+        throw new Error("trainer not found");
+      }
+      const exists = trainer.imageName;
+
+      trainer.imageName = imageName;
+
+      await trainer.save();
+      return exists;
+    } catch (error) {
+      throw new Error(`Error adding profile image: ${error.message}`);
+    }
+  }
+  async editTrainer(trainerDetails) {
+    const {
+      trainerId,
+      firstName,
+      lastName,
+      phone,
+      qualifications,
+      experience,
+      specialties,
+      description,
+    } = trainerDetails;
+
+    try {
+      const updatedTrainer = await Trainer.findOneAndUpdate(
+        { _id: trainerId },
+        {
+          $set: {
+            firstName,
+            lastName,
+            phone,
+            qualifications,
+            experience,
+            specialties,
+            description,
+          },
+        },
+        { new: true }
+      );
+
+      if (updatedTrainer) {
+        return updatedTrainer;
+      } else {
+        throw new Error("Trainer not found");
+      }
+    } catch (error) {
+      console.error(error.message);
+      throw new Error(`Editing failed: ${error.message}`);
+    }
+  }
+}
 
 export default new TrainerRepository();

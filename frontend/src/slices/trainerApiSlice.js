@@ -90,6 +90,20 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    addTrainerProfileImage: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/add-trainer-profile-image`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateTrainerProfile: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/update-trainer-profile`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -106,6 +120,8 @@ export const {
  useDeleteVideoMutation,
  useAddDietMutation,
  useGetDietsMutation,
- useDeleteDietMutation
+ useDeleteDietMutation,
+ useAddTrainerProfileImageMutation,
+ useUpdateTrainerProfileMutation
 
 } = trainerApiSlice;

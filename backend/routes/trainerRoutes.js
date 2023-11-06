@@ -14,7 +14,9 @@ import {
     deleteVideo,
     addDiet,
     getDiets,
-    deleteDiet
+    deleteDiet,
+    addTrainerProfileImage,
+    editTrainerProfile
 
 } from "../controllers/TraninerController.js";
 
@@ -59,5 +61,8 @@ router.get('/get-diets/:trainerId', protect, getDiets);
 
 router.post('/delete-diet',protect,deleteDiet)
 
+router.post('/add-trainer-profile-image',upload.single("trainerImage"),protect,addTrainerProfileImage)
+
+router.post('/update-trainer-profile',protect,editTrainerProfile)
 
 export default router;
