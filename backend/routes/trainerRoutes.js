@@ -16,7 +16,8 @@ import {
     getDiets,
     deleteDiet,
     addTrainerProfileImage,
-    editTrainerProfile
+    editTrainerProfile,
+    editDiet
 
 } from "../controllers/TraninerController.js";
 
@@ -64,5 +65,7 @@ router.post('/delete-diet',protect,deleteDiet)
 router.post('/add-trainer-profile-image',upload.single("trainerImage"),protect,addTrainerProfileImage)
 
 router.post('/update-trainer-profile',protect,editTrainerProfile)
+
+router.post('/update-diet',protect,editDiet)
 
 export default router;

@@ -466,6 +466,22 @@ const editTrainerProfile=asyncHandler(async (req,res)=>{
   }
 })
 
+const editDiet=asyncHandler(async (req,res)=>{
+
+
+  const { trainer, dietId, category, dietType, description } = req.body;
+
+  const response=await TrainerRepository.editDiet(trainer, dietId, category, dietType, description)
+
+  if(response.success===true){
+     res.status(200).json({response});
+  }else{
+    res.status(401);
+
+    throw new Error("something went wrong");
+  }
+})
+
 export {
   logoutTrainer,
   authTrainer,
@@ -480,5 +496,6 @@ export {
   getDiets,
   deleteDiet,
   addTrainerProfileImage,
-  editTrainerProfile
+  editTrainerProfile,
+  editDiet
 };

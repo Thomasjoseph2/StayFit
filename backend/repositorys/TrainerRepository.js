@@ -188,11 +188,13 @@ class TrainerRepository {
   }
   async deleteVideo(videoId, trainerId) {
     try {
+      // Find the video document with the trainer ID and video ID inside the videos array
       const videos = await Videos.findOneAndUpdate(
         {
           trainer: trainerId,
           "videos._id": videoId,
         },
+        // Use $pull operator to remove the specific post from the posts array
         {
           $pull: {
             videos: {
@@ -296,6 +298,35 @@ class TrainerRepository {
     } catch (error) {
       console.error(error.message);
       throw new Error(`Editing failed: ${error.message}`);
+    }
+  }
+
+  
+  async editDiet(trainer, dietId, category, dietType, description) {
+    try {
+      const result = await Diet.findOneAndUpdate(
+        {
+          trainer: trainer,
+          "diets._id": dietId,
+        },
+        {
+          $set: {
+            "diets.$.category": category,
+            "diets.$.dietType": dietType,
+            "diets.$.description": description,
+          },
+        },
+        { new: true }
+      );
+
+      if (!result) {
+        return { success: false, message: "diet not found." };
+      }
+
+      return { success: true, message: "diet updated successfully." };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Internal server error." };
     }
   }
 }

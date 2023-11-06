@@ -47,7 +47,6 @@ const EditTrainerModal = ({
         description: description,
       });
 
-      console.log(res, "response");
       dispatch(setCredentials({ ...res.data.trainer }));
       onClose();
       setRefresher((prev) => !prev); // Trigger re-render
