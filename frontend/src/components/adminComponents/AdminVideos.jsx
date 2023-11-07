@@ -80,6 +80,7 @@ const AdminVideos = () => {
             >
               DESCRIPTION
             </th>
+            <th className="py-2 px-4">TRAINER</th>
             <th className="py-2 px-4">ACTIONS</th>
           </tr>
         </thead>
@@ -94,6 +95,7 @@ const AdminVideos = () => {
                   </video>
                 </td>
                 <td className="py-2 px-4 text-center">{video.description}</td>
+                <td className="py-2 px-4 text-center">{trainer.trainerName}</td>
                 <td className="py-2 px-4 text-center flex ml-3 justify-center mt-5 ">
                   {video.status === "pending" && (
                     <>

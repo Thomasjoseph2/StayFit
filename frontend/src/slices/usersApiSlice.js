@@ -75,7 +75,39 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    
+    getUserDiets: builder.mutation({
+      query: () => ({
+        url: `${USERS_URL}/get-user-diets`,
+        method: "GET",
+      }),
+    }),
+    otpVerification: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/otp-verification`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getUserPlans: builder.mutation({
+      query: () => ({
+        url: `${USERS_URL}/get-user-plans`,
+        method: "GET",
+      }),
+    }),
+    createOrder: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/create-order`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+   verifyPayment: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/verify-payment`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -90,5 +122,9 @@ export const {
   useAddProfileImageMutation,
   useGoogleLoginMutation,
   useUpdateProfileMutation,
-  useGetUserDietsMutation
+  useGetUserDietsMutation,
+  useOtpVerificationMutation,
+  useGetUserPlansMutation,
+  useCreateOrderMutation,
+  useVerifyPaymentMutation
 } = usersApiSlice;

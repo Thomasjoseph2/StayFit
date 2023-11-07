@@ -28,7 +28,7 @@ const AddVideos = ({ refreshPosts }) => {
         formData.append("description", description);
         formData.append("specification",specification);
         formData.append("trainerId", trainerInfo._id);
-
+        formData.append('trainerName',trainerInfo.name);
         // Call the addPost mutation with the FormData object
         await addVideo(formData)
           .unwrap()

@@ -47,6 +47,7 @@ const SeeVideos = () => {
                     </video>
                     <p className="text-white text-lg ">{video.specification}</p>
                     <p className="text-gray-300 text-sm mt-3">{video.description}</p>
+                    <p className="text-white mt-2 text-sm">Trainer:{trainer.trainerName}</p>
                   </div>
                 )
             )

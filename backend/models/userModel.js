@@ -11,13 +11,24 @@ const userSchema = mongoose.Schema(
       required: true,
       unique: true,
     },
+    otp: {
+      type: String,
+    },
+    otpExpirationTime: {
+      type: Date,
+    },
     password: {
       type: String,
     },
     blocked: {
       type: Boolean,
       required: true,
-      default:'false'
+      default:false
+    },
+    verified: {
+      type: Boolean,
+      required: true,
+      default:false
     },
     subscription_status: {
       type: String,

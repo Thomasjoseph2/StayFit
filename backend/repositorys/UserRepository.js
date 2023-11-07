@@ -2,7 +2,8 @@ import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
-import Diet from "../models/dietModel.js"
+import Diet from "../models/dietModel.js";
+import Plan from "../models/plans.js";
 class UserRepository {
   async findByEmail(email) {
     return await User.findOne(email);
@@ -27,6 +28,21 @@ class UserRepository {
   async getTrainers() {
     return await Trainer.find({});
   }
+  async findActivePlans() {
+    try {
+      
+      const activePlans = await Plan.find({
+        status: "active"
+      });
+  
+      return activePlans;
+    } catch (error) {
+      
+      console.error(error);
+      throw error; 
+    }
+  }
+  
   async getUserVideos() {
     return await Videos.find({});
   }
@@ -66,8 +82,6 @@ class UserRepository {
     }
   }
 
-  
-  
   async getUser(userId) {
     return await User.findById(userId);
   }
@@ -75,38 +89,97 @@ class UserRepository {
   async addProfileImage(imageName, userId) {
     try {
       const user = await User.findById(userId);
-      
+
       if (!user) {
         throw new Error("User not found");
       }
-      const exists=user.imagePath;
+      const exists = user.imagePath;
 
       user.imagePath = imageName;
-      
+
       await user.save();
-      return exists
+      return exists;
     } catch (error) {
       throw new Error(`Error adding profile image: ${error.message}`);
     }
   }
-  async editUser(userId,name,email){
+  async editUser(userId, name, email) {
     try {
       const user = await User.findById(userId);
 
       if (!user) {
         throw new Error("User not found");
       }
-      user.name=name;
-      user.email=email;
+      user.name = name;
+      user.email = email;
       await user.save();
       return user;
     } catch (error) {
       console.log(error.message);
-      
-      throw new Error (`editing failed:${error.message}`)
-      
+
+      throw new Error(`editing failed:${error.message}`);
     }
   }
+
+  async saveOtp(email, otp) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { email: email },
+        {
+          $set: {
+            otp: otp,
+            otpExpirationTime: Date.now() + 5 * 60 * 1000,
+          },
+        },
+        { new: true }
+      );
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user;
+    } catch (error) {
+      throw new Error(`Error saving OTP: ${error.message}`);
+    }
+  }
+  async verifyOtp(email, otp) {
+    try {
+      const user = await User.findOne({ email });
+
+      if (user && user.otp === otp) {
+        return user;
+      } else {
+        throw new Error("otp verification failed");
+      }
+    } catch (error) {
+      console.log(error);
+      throw new Error("otp verification failed");
+    }
+  }
+
+  async verifyUser(email) {
+    try {
+      const user = await User.findOneAndUpdate(
+        { email: email },
+        {
+          $set: {
+            verified:true
+          },
+        },
+        { new: true }
+      );
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user;
+    } catch (error) {
+      throw new Error(`Error saving OTP: ${error.message}`);
+    }
+  }
+
 }
 
 export default new UserRepository();

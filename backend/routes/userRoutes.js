@@ -13,7 +13,11 @@ import {
   addProfileImage,
   googleLogin,
   editProfile,
-  getUserDiets
+  getUserDiets,
+  verifyOtp,
+  getUserPlans,
+  createOrder,
+  paymentVerification
 } from "../controllers/userController.js";
 
 import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
@@ -43,5 +47,13 @@ router.post('/add-profile-image',protect,uploadProfile.single("profileImage"),ad
 router.post('/update-profile',protect,editProfile)
 
 router.get('/get-user-diets',getUserDiets)
+
+router.post('/otp-verification',verifyOtp)
+
+router.get('/get-user-plans',protect,getUserPlans)
+
+router.post('/create-order',protect,createOrder)
+
+router.post('/verify-payment',protect,paymentVerification)
 
 export default router;

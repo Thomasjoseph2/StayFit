@@ -6,6 +6,7 @@ import {
   FaVideo,
   FaUtensils,
   FaSignOutAlt,
+  FaCrown
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,6 +18,7 @@ import TutorsList from "./TrainersList";
 import UsersList from "./UsersList";
 import AdminVideoScreen from "../../screens/AdminVideoScreen";
 import AdminDietScreen from "../../screens/AdminDietScreen";
+import Subscriptions from "./Subscriptions";
 const Sidebar = () => {
 
   const [content, setContent] = useState("Dashboard");
@@ -98,6 +100,14 @@ const Sidebar = () => {
               </li>
               <li
                 className={`py-2 hover:bg-gray-700 flex items-center pl-4  ${
+                  activeMenuItem === "subscription" ? "bg-gray-700" : ""
+                }`}
+                onClick={() => changeContent("subscription")}
+              >
+                <FaCrown className="mr-2" /> Subscription
+              </li>
+              <li
+                className={`py-2 hover:bg-gray-700 flex items-center pl-4  ${
                   activeMenuItem === "logout" ? "bg-gray-700" : ""
                 }`}
                 onClick={logoutHandler}
@@ -114,6 +124,7 @@ const Sidebar = () => {
             {content === "users" && <UsersList />}
             {content === "videos" && <AdminVideoScreen/> }
             {content === "diet" && <AdminDietScreen/>}
+            {content === "subscription" && <Subscriptions/>}
             {content === "logout" && "Logout Content"}
           </div>
         </div>

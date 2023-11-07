@@ -2,12 +2,15 @@ import "dotenv/config.js";
 import mongoose from "mongoose";
 const { ObjectId } = mongoose.Types;
 import asyncHandler from "express-async-handler";
-
+import otpGenerator from "otp-generator";
+//import Razorpay from 'razorpay';
+import instance from "../utils/instance.js";
+import crypto from 'crypto';
 import { OAuth2Client } from "google-auth-library";
 
 import generateToken from "../utils/generateToken.js";
 import UserRepository from "../repositorys/UserRepository.js";
-
+import transporter from "../utils/transporter.js";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
@@ -30,7 +33,7 @@ const authUser = asyncHandler(async (req, res) => {
   
   const user = await UserRepository.findByEmail({ email });
 
-  if (user && (await UserRepository.matchPasswords(user, password))) {
+  if (user && (await UserRepository.matchPasswords(user, password)) && user.verified===true) {
     generateToken(res, user._id);
 
     res.status(201).json({
@@ -42,7 +45,12 @@ const authUser = asyncHandler(async (req, res) => {
 
       blocked: user.blocked,
     });
-  } else {
+  }else if(!user.verified===true){
+    res.status(401);
+
+    throw new Error("verify your email");
+  }
+   else {
     res.status(401);
 
     throw new Error("Invalid email or password");
@@ -71,17 +79,39 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    generateToken(res, user._id);
+  //  generateToken(res, user._id);
+  const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
 
-    res.status(201).json({
-      _id: user._id,
+  const mailOptions = {
+    from: process.env.USER_EMAIL,
+    to: email,
+    subject: 'OTP Verification',
+    text: `Your OTP for registration is: ${otp}`,
+  };
 
-      name: user.name,
+  transporter.sendMail(mailOptions, async (error, info) => {
+    if (error) {
+      console.error(error);
+       throw new Error("erro sendig otp");
+    } else {
+      // Save OTP in the user document for verification
+      await UserRepository.saveOtp(email, otp);
 
-      email: user.email,
+      res.status(200).json({
 
-      blocked: user.blocked,
-    });
+        message: 'OTP sent successfully. Please check your email for verification.',
+      });
+    }
+  });
+    // res.status(201).json({
+    //   _id: user._id,
+
+    //   name: user.name,
+
+    //   email: user.email,
+
+    //   blocked: user.blocked,
+    // });
   } else {
     res.status(401);
 
@@ -401,6 +431,90 @@ const getUserDiets = asyncHandler(async (req, res) => {
 
   res.status(200).json({ postDiets: dietsWithSignedUrls });
 });
+
+const verifyOtp=asyncHandler(async(req,res)=>{
+  
+  const {email,otp}=req.body;
+
+  const user=await UserRepository.verifyOtp(email,otp)
+
+  if(user){
+ 
+     const user=await UserRepository.verifyUser(email)
+     
+     generateToken(res, user._id);
+
+     res.status(201).json({
+
+      _id: user._id,
+
+      name: user.name,
+
+      email: user.email,
+
+      blocked: user.blocked,
+
+    });
+
+  }else{
+
+   res.status(401);
+
+    throw new Error("verification failed");
+  }
+
+})
+
+const getUserPlans=asyncHandler(async(req,res)=>{
+  const plans =await UserRepository.findActivePlans()
+  if(plans){
+    res.status(200).json(plans);
+  }else{
+    res.status(404);
+    throw new Error("Plans not found");
+  }
+  
+})
+
+const createOrder=asyncHandler(async(req,res)=>{
+  var options = {
+    amount: Number(req.body.price*100),  
+    currency: "INR",
+    receipt: "order_rcptid_11"+Date.now()
+  };
+  const order = await instance.orders.create(options);
+
+if(order){
+  res.status(200).json(order)
+}else{
+  res.status(404);
+  throw new Error("order creation failed ");
+}
+
+})
+
+const paymentVerification = async (req, res) => {
+  try {
+    const { order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const generated_signature = crypto
+      .createHmac('sha256', 'YOUR_KEY_SECRET')
+      .update(order_id + '|' + razorpay_payment_id)
+      .digest('hex');
+
+  
+    if (generated_signature === razorpay_signature) {
+     
+      res.status(200).json({ success: true, message: 'Payment verified successfully' });
+    } else {
+      
+      res.status(400).json({ success: false, message: 'Invalid payment signature' });
+    }
+  } catch (error) {
+  
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
 export {
   authUser,
   registerUser,
@@ -413,5 +527,9 @@ export {
   addProfileImage,
   googleLogin,
   editProfile,
-  getUserDiets
+  getUserDiets,
+  verifyOtp,
+  getUserPlans,
+  createOrder,
+  paymentVerification
 };

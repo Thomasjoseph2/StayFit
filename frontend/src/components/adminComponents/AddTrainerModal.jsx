@@ -121,10 +121,8 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
         formData.append("gender", gender);
         formData.append("profileImage", profileImage);
 
-        // Make API call to add trainer
         await addTrainer(formData).unwrap();
 
-        // Clear form fields
         setFirstName("");
         setLastName("");
         setEmail("");
@@ -137,13 +135,10 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
         setProfileImage(null);
         
         setIsLoading(false);
-        // Close the modal
         onRequestClose();
 
         toast.success("Trainer added successfully!");
       } catch (err) {
-        // Handle API errors
-
         const apiError = err?.data?.message || err?.error;
         toast.error(err.data);
       }

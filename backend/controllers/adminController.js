@@ -256,12 +256,52 @@ const approveDiet=asyncHandler(async(req,res)=>{
 
   const status=await AdminRepository.approveDiet(req.body.trainerId,req.body.dietId)
 
-  res.status(200).json({status})
+  if(status.success===true){
+    res.status(200).json({status})
+  }
+else{
+  res.status(400).json("failed to approve");
+
+  throw new Error("failed to approve");
+}
 })
 const rejectDiet=asyncHandler(async(req,res)=>{
+
   const status=await AdminRepository.rejectDiet(req.body.trainerId,req.body.dietId)
 
-  res.status(200).json({status})
+  if(status.success===true){
+    res.status(200).json({status})
+  }
+else{
+  res.status(400).json("failed to reject");
+
+  throw new Error("failed to reject");
+}
+ 
+})
+
+const addPlans=asyncHandler(async(req,res)=>{
+
+  const plan=req.body
+  
+  const addedPlan=await AdminRepository.addPlans(plan)
+
+  if(addedPlan){
+    res.status(200).json({success:true})
+  }else{
+    res.status(200).json({success:false})
+  }
+})
+
+const getPlans=asyncHandler(async(req,res)=>{
+  const plans =await AdminRepository.getPlans();
+  if(plans){
+    res.status(200).json(plans)
+  }else{
+    res.status(400).json("plans not found");
+
+    throw new Error("plans not found");
+  }
 })
 export {
   authAdmin,
@@ -276,5 +316,7 @@ export {
   approveVideo,
   getDiet,
   rejectDiet,
-  approveDiet
+  approveDiet,
+  addPlans,
+  getPlans
 };

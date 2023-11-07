@@ -179,6 +179,7 @@ const addVideos = asyncHandler(async (req, res) => {
 
     const newVideo = {
       trainer: trainersId,
+      trainerName:trainerName,
       videos: [
         {
           videoName: videoName,

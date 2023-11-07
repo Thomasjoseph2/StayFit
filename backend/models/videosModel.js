@@ -5,6 +5,10 @@ const VideosSchema = mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Trainer",
     },
+    trainerName: {
+      type: String,
+      required: true,
+    },
     videos: [
       {
         videoName: {

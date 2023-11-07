@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { useRegisterMutation } from "../../slices/usersApiSlice";
-import { setCredentials } from "../../slices/authSlice";
+// import { setCredentials } from "../../slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 const Registration = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,7 +18,7 @@ const Registration = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+ 
 
   const [register, { isLoading }] = useRegisterMutation();
   const { userInfo } = useSelector((state) => state.auth);
@@ -63,8 +62,7 @@ const Registration = () => {
     if (isValid) {
       try {
         const res = await register({ name, email, password }).unwrap();
-        dispatch(setCredentials({ ...res }));
-        navigate("/");
+        navigate(`/otp-verification/${email}`);
       } catch (err) {
         toast.error(err?.data?.message || err?.error);
       }
