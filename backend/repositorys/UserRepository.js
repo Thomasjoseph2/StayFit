@@ -4,6 +4,7 @@ import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
 import Plan from "../models/plans.js";
+import Payments from "../models/payments.js";
 class UserRepository {
   async findByEmail(email) {
     return await User.findOne(email);
@@ -15,6 +16,25 @@ class UserRepository {
 
   async createUser(userData) {
     return await User.create(userData);
+  }
+
+  async addPayment(paymentDetails) {
+    try {
+      const payment = {
+        razorpay_order_id: paymentDetails.razorpay_order_id,
+        razorpay_payment_id: paymentDetails.razorpay_payment_id,
+        razorpay_signature: paymentDetails.razorpay_signature,
+        user_id: paymentDetails.userId,
+        user_name: paymentDetails.user_name,
+        amount: paymentDetails.price,
+        subscribed_plan: paymentDetails.plan,
+        subscribed_plan_id: paymentDetails.planId,
+      };
+      await Payments.create(payment);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to save payment details");
+    }
   }
 
   async findUserById(userId) {
@@ -30,19 +50,17 @@ class UserRepository {
   }
   async findActivePlans() {
     try {
-      
       const activePlans = await Plan.find({
-        status: "active"
+        status: "active",
       });
-  
+
       return activePlans;
     } catch (error) {
-      
       console.error(error);
-      throw error; 
+      throw error;
     }
   }
-  
+
   async getUserVideos() {
     return await Videos.find({});
   }
@@ -74,18 +92,34 @@ class UserRepository {
           };
         });
       } else {
-        // If the Result document doesn't exist, return an empty array
         return [];
       }
     } catch (error) {
-      throw error; // Handle any errors that occur during the database operation
+      throw error;
     }
   }
 
   async getUser(userId) {
     return await User.findById(userId);
   }
+  async checkPlanStatus(userId) {
+    try {
+      const user = await User.findById(userId);
 
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      if (user.subscription_status === "active") {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      console.log(err);
+      throw new Error("something went wrong")
+    }
+  }
   async addProfileImage(imageName, userId) {
     try {
       const user = await User.findById(userId);
@@ -164,7 +198,7 @@ class UserRepository {
         { email: email },
         {
           $set: {
-            verified:true
+            verified: true,
           },
         },
         { new: true }
@@ -179,7 +213,33 @@ class UserRepository {
       throw new Error(`Error saving OTP: ${error.message}`);
     }
   }
+  async addSubscription(userId, plan, duration) {
+    try {
+      const currentDate = new Date();
+      const expiryDate = new Date();
+      expiryDate.setMonth(currentDate.getMonth() + duration);
 
+      const user = await User.findOneAndUpdate(
+        { _id: userId },
+        {
+          $set: {
+            subscribed_plan: plan,
+            subscription_status: "active",
+            subscription_expire: expiryDate,
+          },
+        },
+        { new: true }
+      );
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user;
+    } catch (error) {
+      throw new Error(`Error saving OTP: ${error.message}`);
+    }
+  }
 }
 
 export default new UserRepository();

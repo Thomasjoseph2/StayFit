@@ -18,7 +18,8 @@ import {
   approveDiet,
   rejectDiet,
   addPlans,
-  getPlans
+  getPlans,
+  getSubscriptions
 } from "../controllers/adminController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
@@ -55,6 +56,8 @@ router.post("/reject-diet", protect, rejectDiet);
 router.post ('/add-plans',protect,addPlans)
 
 router.get('/get-plans',protect,getPlans)
+
+router.get('/get-subscriptions',protect,getSubscriptions)
 
 // router.route('/profile').get(protect,profile).put(protect,upload.single('file'),updateUserProfile);
 

@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import image from '../../assets/banners.jpeg';
 import WorkoutCard from './WorkoutCard';
 
 const UserBody = () => {
+
   const quoteStyle = {
     position: 'absolute',
-    left: '5%', // adjust the left position as needed
-    top: '70%', // adjust the top position as needed
+    left: '5%', 
+    top: '70%', 
     color: 'white',
-    fontSize: '15px', // adjust the font size as needed
+    fontSize: '15px', 
     textAlign: 'left',
   };
   return (

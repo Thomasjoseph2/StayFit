@@ -40,6 +40,9 @@ const userSchema = mongoose.Schema(
       required: true,
       default: "no current plans", 
     },
+    subscription_expire: {
+      type: Date, 
+    },
     imagePath:{
       type:String,
     },
@@ -51,7 +54,12 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
-
+  userSchema.pre('save', function (next) {
+    if (this.isModified('subscription_expire') && this.subscription_expire < new Date()) {
+      this.subscription_status = 'inactive';
+    }
+    next();
+  });
   const salt = await bcrypt.genSalt(10);
 
   this.password = await bcrypt.hash(this.password, salt);

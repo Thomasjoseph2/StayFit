@@ -303,6 +303,18 @@ const getPlans=asyncHandler(async(req,res)=>{
     throw new Error("plans not found");
   }
 })
+
+const getSubscriptions=asyncHandler(async(req,res)=>{
+
+  const subscriptions =await AdminRepository.getSubscriptions();
+  if(subscriptions){
+    res.status(200).json(subscriptions)
+  }else{
+    res.status(400).json("subscriptions not found");
+
+    throw new Error("plans not found");
+  }
+})
 export {
   authAdmin,
   logoutAdmin,
@@ -318,5 +330,6 @@ export {
   rejectDiet,
   approveDiet,
   addPlans,
-  getPlans
+  getPlans,
+  getSubscriptions
 };

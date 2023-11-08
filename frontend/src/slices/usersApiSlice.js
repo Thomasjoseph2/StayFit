@@ -108,6 +108,27 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    addPayment: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/add-payment`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    addPayment: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/add-payment`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    checkPlanStatus: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/check-plan-status`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -126,5 +147,7 @@ export const {
   useOtpVerificationMutation,
   useGetUserPlansMutation,
   useCreateOrderMutation,
-  useVerifyPaymentMutation
+  useVerifyPaymentMutation,
+  useAddPaymentMutation,
+  useCheckPlanStatusMutation
 } = usersApiSlice;

@@ -18,7 +18,8 @@ import TutorsList from "./TrainersList";
 import UsersList from "./UsersList";
 import AdminVideoScreen from "../../screens/AdminVideoScreen";
 import AdminDietScreen from "../../screens/AdminDietScreen";
-import Subscriptions from "./Subscriptions";
+import SubscriptionPlans from "./SubscriptionPlans";
+import Subscriptions from "./Suscriptions";
 const Sidebar = () => {
 
   const [content, setContent] = useState("Dashboard");
@@ -100,11 +101,19 @@ const Sidebar = () => {
               </li>
               <li
                 className={`py-2 hover:bg-gray-700 flex items-center pl-4  ${
-                  activeMenuItem === "subscription" ? "bg-gray-700" : ""
+                  activeMenuItem === "subscription plans" ? "bg-gray-700" : ""
                 }`}
-                onClick={() => changeContent("subscription")}
+                onClick={() => changeContent("subscriptionPlans")}
               >
-                <FaCrown className="mr-2" /> Subscription
+                <FaCrown className="mr-2" /> Subscription Plans
+              </li>
+              <li
+                className={`py-2 hover:bg-gray-700 flex items-center pl-4  ${
+                  activeMenuItem === "subscriptions" ? "bg-gray-700" : ""
+                }`}
+                onClick={() => changeContent("subscriptions")}
+              >
+                <FaCrown className="mr-2" /> Subscriptions
               </li>
               <li
                 className={`py-2 hover:bg-gray-700 flex items-center pl-4  ${
@@ -124,7 +133,9 @@ const Sidebar = () => {
             {content === "users" && <UsersList />}
             {content === "videos" && <AdminVideoScreen/> }
             {content === "diet" && <AdminDietScreen/>}
-            {content === "subscription" && <Subscriptions/>}
+            {content === "subscriptionPlans" && <SubscriptionPlans/>}
+            {content === "subscriptions" && <Subscriptions/>}
+
             {content === "logout" && "Logout Content"}
           </div>
         </div>

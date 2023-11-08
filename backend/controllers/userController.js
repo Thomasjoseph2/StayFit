@@ -5,7 +5,7 @@ import asyncHandler from "express-async-handler";
 import otpGenerator from "otp-generator";
 //import Razorpay from 'razorpay';
 import instance from "../utils/instance.js";
-import crypto from 'crypto';
+import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
 
 import generateToken from "../utils/generateToken.js";
@@ -30,10 +30,14 @@ const googleClient = new OAuth2Client(
 
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  
+
   const user = await UserRepository.findByEmail({ email });
 
-  if (user && (await UserRepository.matchPasswords(user, password)) && user.verified===true) {
+  if (
+    user &&
+    (await UserRepository.matchPasswords(user, password)) &&
+    user.verified === true
+  ) {
     generateToken(res, user._id);
 
     res.status(201).json({
@@ -45,12 +49,11 @@ const authUser = asyncHandler(async (req, res) => {
 
       blocked: user.blocked,
     });
-  }else if(!user.verified===true){
+  } else if (!user.verified === true) {
     res.status(401);
 
     throw new Error("verify your email");
-  }
-   else {
+  } else {
     res.status(401);
 
     throw new Error("Invalid email or password");
@@ -79,30 +82,34 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-  //  generateToken(res, user._id);
-  const otp = otpGenerator.generate(6, { upperCase: false, specialChars: false, alphabets: false });
+    //  generateToken(res, user._id);
+    const otp = otpGenerator.generate(6, {
+      upperCase: false,
+      specialChars: false,
+      alphabets: false,
+    });
 
-  const mailOptions = {
-    from: process.env.USER_EMAIL,
-    to: email,
-    subject: 'OTP Verification',
-    text: `Your OTP for registration is: ${otp}`,
-  };
+    const mailOptions = {
+      from: process.env.USER_EMAIL,
+      to: email,
+      subject: "OTP Verification",
+      text: `Your OTP for registration is: ${otp}`,
+    };
 
-  transporter.sendMail(mailOptions, async (error, info) => {
-    if (error) {
-      console.error(error);
-       throw new Error("erro sendig otp");
-    } else {
-      // Save OTP in the user document for verification
-      await UserRepository.saveOtp(email, otp);
+    transporter.sendMail(mailOptions, async (error, info) => {
+      if (error) {
+        console.error(error);
+        throw new Error("erro sendig otp");
+      } else {
+        // Save OTP in the user document for verification
+        await UserRepository.saveOtp(email, otp);
 
-      res.status(200).json({
-
-        message: 'OTP sent successfully. Please check your email for verification.',
-      });
-    }
-  });
+        res.status(200).json({
+          message:
+            "OTP sent successfully. Please check your email for verification.",
+        });
+      }
+    });
     // res.status(201).json({
     //   _id: user._id,
 
@@ -349,7 +356,6 @@ const getUserProfile = asyncHandler(async (req, res) => {
 });
 
 const addProfileImage = asyncHandler(async (req, res) => {
-  
   const buffer = await goodSizeResize(req.file.buffer);
 
   const imageName = randomImageName();
@@ -381,20 +387,19 @@ const addProfileImage = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "profile photo updated " });
 });
 
-const editProfile=asyncHandler(async (req,res)=>{
+const editProfile = asyncHandler(async (req, res) => {
+  const { userId, name, email } = req.body;
 
-  const {userId,name,email}=req.body
+  const user = await UserRepository.editUser(userId, name, email);
 
-  const user=await UserRepository.editUser(userId,name,email)
-
-  if(user){
-     res.status(200).json({ user});
-  }else{
+  if (user) {
+    res.status(200).json({ user });
+  } else {
     res.status(401);
 
     throw new Error("something went wrong");
   }
-})
+});
 const getUserDiets = asyncHandler(async (req, res) => {
   const postDiets = await UserRepository.getUserDiets();
 
@@ -432,20 +437,17 @@ const getUserDiets = asyncHandler(async (req, res) => {
   res.status(200).json({ postDiets: dietsWithSignedUrls });
 });
 
-const verifyOtp=asyncHandler(async(req,res)=>{
-  
-  const {email,otp}=req.body;
+const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
 
-  const user=await UserRepository.verifyOtp(email,otp)
+  const user = await UserRepository.verifyOtp(email, otp);
 
-  if(user){
- 
-     const user=await UserRepository.verifyUser(email)
-     
-     generateToken(res, user._id);
+  if (user) {
+    const user = await UserRepository.verifyUser(email);
 
-     res.status(201).json({
+    generateToken(res, user._id);
 
+    res.status(201).json({
       _id: user._id,
 
       name: user.name,
@@ -453,68 +455,78 @@ const verifyOtp=asyncHandler(async(req,res)=>{
       email: user.email,
 
       blocked: user.blocked,
-
     });
-
-  }else{
-
-   res.status(401);
+  } else {
+    res.status(401);
 
     throw new Error("verification failed");
   }
+});
 
-})
-
-const getUserPlans=asyncHandler(async(req,res)=>{
-  const plans =await UserRepository.findActivePlans()
-  if(plans){
+const getUserPlans = asyncHandler(async (req, res) => {
+  const plans = await UserRepository.findActivePlans();
+  if (plans) {
     res.status(200).json(plans);
-  }else{
+  } else {
     res.status(404);
     throw new Error("Plans not found");
   }
-  
-})
+});
 
-const createOrder=asyncHandler(async(req,res)=>{
+const createOrder = asyncHandler(async (req, res) => {
+
   var options = {
-    amount: Number(req.body.price*100),  
+    amount: Number(req.body.price * 100),
     currency: "INR",
-    receipt: "order_rcptid_11"+Date.now()
+    receipt: "order_rcptid_11" + Date.now(),
   };
   const order = await instance.orders.create(options);
-
-if(order){
-  res.status(200).json(order)
-}else{
-  res.status(404);
-  throw new Error("order creation failed ");
-}
-
-})
+  if (order) {
+    res.status(200).json(order);
+  } else {
+    res.status(404);
+    throw new Error("order creation failed ");
+  }
+});
 
 const paymentVerification = async (req, res) => {
-  try {
-    const { order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature,plan,userId,duration} = req.body;
 
     const generated_signature = crypto
-      .createHmac('sha256', 'YOUR_KEY_SECRET')
-      .update(order_id + '|' + razorpay_payment_id)
-      .digest('hex');
+      .createHmac("sha256", process.env.KEY_SECRET)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
 
-  
     if (generated_signature === razorpay_signature) {
-     
-      res.status(200).json({ success: true, message: 'Payment verified successfully' });
+
+      await UserRepository.addPayment(req.body)
+      await UserRepository.addSubscription(userId,plan,duration)
+      res
+        .status(200)
+        .json({ success: true, message: "Payment verified successfully" });
     } else {
-      
-      res.status(400).json({ success: false, message: 'Invalid payment signature' });
+      res
+        .status(400)
+        .json({ success: false, message: "Invalid payment signature" });
     }
-  } catch (error) {
-  
-    res.status(500).json({ success: false, message: 'Internal server error' });
-  }
 };
+
+const checkPlanStatus=asyncHandler(async(req,res)=>{
+  const status=await UserRepository.checkPlanStatus(req.body.userId)
+
+  if(status){
+    res.status(200).json({status:true})
+  }else if(!status){
+    res.status(200).json({status:false})
+  }else{
+    res.status(404)
+    throw new Error('something went wrong ')
+  }
+
+ 
+})
+
 export {
   authUser,
   registerUser,
@@ -531,5 +543,7 @@ export {
   verifyOtp,
   getUserPlans,
   createOrder,
-  paymentVerification
+  paymentVerification,
+  checkPlanStatus
+
 };

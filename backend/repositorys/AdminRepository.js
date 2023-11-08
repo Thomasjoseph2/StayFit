@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
 import Plan from "../models/plans.js";
+import Payment from "../models/payments.js";
 class AdminRepository {
   async findAdminByEmail(email) {
     return await Admin.findOne({ email });
@@ -27,6 +28,9 @@ class AdminRepository {
   }
   async getPlans() {
     return await Plan.find({}).sort({ _id: -1 });
+  }
+  async getSubscriptions() {
+    return await Payment.find({}).sort({ _id: -1 });
   }
   async getTrainers() {
     return await Trainer.find({}).sort({ _id: -1 });

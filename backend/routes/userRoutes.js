@@ -17,7 +17,8 @@ import {
   verifyOtp,
   getUserPlans,
   createOrder,
-  paymentVerification
+  paymentVerification,
+  checkPlanStatus
 } from "../controllers/userController.js";
 
 import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
@@ -55,5 +56,8 @@ router.get('/get-user-plans',protect,getUserPlans)
 router.post('/create-order',protect,createOrder)
 
 router.post('/verify-payment',protect,paymentVerification)
+
+router.post('/check-plan-status',protect,checkPlanStatus)
+
 
 export default router;

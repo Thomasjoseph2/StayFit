@@ -3,7 +3,7 @@ import AddPlanModal from "./AddplanModal";
 import { useGetAdminPlansMutation } from "../../slices/adminApiSlice";
 import { toast } from "react-toastify";
 
-const Subscriptions = () => {
+const SubscriptionPlans = () => {
   const [plans, setPlans] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refresher, setRefresher] = useState("");
@@ -64,7 +64,7 @@ const Subscriptions = () => {
               <tr key={plan._id} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
                 <td className="py-2 px-4 text-center">{plan?.plan} {plan?.lastName}</td>
                 <td className="py-2 px-4 text-center">₹{plan?.price}</td>
-                <td className="py-2 px-4 text-center">{plan?.duration}</td>
+                <td className="py-2 px-4 text-center">{plan?.duration}months</td>
                 <td className="py-2 px-4 text-center">{plan?.description}</td>
               </tr>
             ))}
@@ -76,4 +76,4 @@ const Subscriptions = () => {
   );
 };
 
-export default Subscriptions;
+export default SubscriptionPlans;
