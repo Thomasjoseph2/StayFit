@@ -8,7 +8,6 @@ import { logout } from "../../slices/trainerAuthSlice";
 import { toast } from "react-toastify";
 import {
   FaHome,
-  FaVideo,
   FaComment,
   FaUtensils,
   FaPlayCircle,
@@ -57,13 +56,9 @@ const TrainerNavbar = () => {
       <div className="flex items-center space-x-4">
         <div className="md:hidden flex-grow"></div>
         <div className="hidden md:flex flex-grow justify-center space-x-4">
-          <Link to="#" className="text-white hover:text-gray-300 text-xl">
+          <Link to="/trainer" className="text-white hover:text-gray-300 text-xl">
             <FaHome size={24} />
           </Link>{" "}
-          {/* Dashboard Icon */}
-          <Link to="#" className="text-white hover:text-gray-300 text-xl">
-            <FaVideo size={24} />
-          </Link>
           <Link to="#" className="text-white hover:text-gray-300 text-xl">
             <FaComment size={24} />
           </Link>{" "}

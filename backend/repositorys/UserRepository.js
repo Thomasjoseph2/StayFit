@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+
 import User from "../models/userModel.js";
 import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
@@ -162,7 +164,6 @@ class UserRepository {
         {
           $set: {
             otp: otp,
-            otpExpirationTime: Date.now() + 5 * 60 * 1000,
           },
         },
         { new: true }
@@ -240,6 +241,23 @@ class UserRepository {
       throw new Error(`Error saving OTP: ${error.message}`);
     }
   }
+  async changePassword(email, password) {
+    try {
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        throw new Error("User not found");
+      }
+  
+      user.password = password;
+      await user.save();
+       return true;
+    } catch (error) {
+      console.error("Error resetting password:", error.message);
+        return false;
+    }
+  }
+  
 }
 
 export default new UserRepository();

@@ -18,7 +18,10 @@ import {
   getUserPlans,
   createOrder,
   paymentVerification,
-  checkPlanStatus
+  checkPlanStatus,
+  forgotPassword,
+  verifyForgotOtp,
+  changePassword
 } from "../controllers/userController.js";
 
 import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
@@ -41,7 +44,7 @@ router.get('/getTrainer/:trainerId',getTrainer)
 
 router.get('/get-user-videos',getUserVideos)
 
-router.get('/get-userprofile/:userId', protect, getUserProfile);
+router.get('/get-userprofile/:userId',protect, getUserProfile);
 
 router.post('/add-profile-image',protect,uploadProfile.single("profileImage"),addProfileImage)
 
@@ -59,5 +62,10 @@ router.post('/verify-payment',protect,paymentVerification)
 
 router.post('/check-plan-status',protect,checkPlanStatus)
 
+router.post('/forgot-password',forgotPassword)
+
+router.post('/forgot-otp-verification',verifyForgotOtp)
+
+router.post('/change-password',changePassword)
 
 export default router;

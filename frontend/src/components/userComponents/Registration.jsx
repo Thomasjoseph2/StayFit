@@ -50,19 +50,31 @@ const Registration = () => {
     }
 
     if (!password) {
+
       setPasswordError("Password is required");
+
       isValid = false;
+
     }
 
     if (password !== confirmPassword) {
+
       setConfirmPasswordError("Passwords do not match");
+
       isValid = false;
+
     }
 
     if (isValid) {
+
       try {
+
         const res = await register({ name, email, password }).unwrap();
+
         navigate(`/otp-verification/${email}`);
+
+        toast.success('verification email send successfully...')
+
       } catch (err) {
         toast.error(err?.data?.message || err?.error);
       }

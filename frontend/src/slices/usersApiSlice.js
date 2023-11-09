@@ -129,6 +129,27 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    forgotPasswors: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/forgot-password`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    forgotOtpVerification: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/forgot-otp-verification`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/change-password`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -149,5 +170,8 @@ export const {
   useCreateOrderMutation,
   useVerifyPaymentMutation,
   useAddPaymentMutation,
-  useCheckPlanStatusMutation
+  useCheckPlanStatusMutation,
+  useForgotPassworsMutation,
+  useForgotOtpVerificationMutation,
+  useChangePasswordMutation
 } = usersApiSlice;

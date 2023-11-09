@@ -15,7 +15,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-
+import { configureMailOptions ,generateOTP} from "../utils/mailoptions.js";
 import s3Obj from "../utils/s3.js";
 
 import { randomImageName } from "../utils/randomName.js";
@@ -82,26 +82,16 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    //  generateToken(res, user._id);
-    const otp = otpGenerator.generate(6, {
-      upperCase: false,
-      specialChars: false,
-      alphabets: false,
-    });
 
-    const mailOptions = {
-      from: process.env.USER_EMAIL,
-      to: email,
-      subject: "OTP Verification",
-      text: `Your OTP for registration is: ${otp}`,
-    };
-
+    const subject='registration';
+    const otp =  generateOTP(6);
+    const mailOptions = configureMailOptions(email, otp,subject);
+    
     transporter.sendMail(mailOptions, async (error, info) => {
       if (error) {
         console.error(error);
         throw new Error("erro sendig otp");
       } else {
-        // Save OTP in the user document for verification
         await UserRepository.saveOtp(email, otp);
 
         res.status(200).json({
@@ -110,15 +100,6 @@ const registerUser = asyncHandler(async (req, res) => {
         });
       }
     });
-    // res.status(201).json({
-    //   _id: user._id,
-
-    //   name: user.name,
-
-    //   email: user.email,
-
-    //   blocked: user.blocked,
-    // });
   } else {
     res.status(401);
 
@@ -523,10 +504,56 @@ const checkPlanStatus=asyncHandler(async(req,res)=>{
     res.status(404)
     throw new Error('something went wrong ')
   }
-
- 
 })
 
+const forgotPassword=asyncHandler(async(req,res)=>{
+  const email=req.body.email;
+  const status=await UserRepository.findByEmail({email})
+  if(status){
+    const subject='forgot password';
+    const otp =  generateOTP(6);
+    const mailOptions = configureMailOptions(email, otp,subject);
+    
+    transporter.sendMail(mailOptions, async (error, info) => {
+      if (error) {
+        console.error(error);
+        throw new Error("error sendig otp");
+      } else {
+        await UserRepository.saveOtp(email, otp);
+        res.status(200).json({status:true})
+      }
+    });
+
+  }else {
+    res.status(404).json({status:false})
+  }
+})
+const verifyForgotOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+
+  const user = await UserRepository.verifyOtp(email, otp);
+
+  if (user) {
+      res.status(200).json({status:'success'})
+  } else {
+    res.status(401);
+
+    throw new Error("verification failed");
+  }
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const response = await UserRepository.changePassword(email, password);
+   
+  if (response) {
+    res.status(200).json({ status: 'success' });
+  } else {
+    res.status(401);
+    throw new Error("password updation failed");
+  }
+});
 export {
   authUser,
   registerUser,
@@ -544,6 +571,9 @@ export {
   getUserPlans,
   createOrder,
   paymentVerification,
-  checkPlanStatus
+  checkPlanStatus,
+  forgotPassword,
+  verifyForgotOtp,
+  changePassword
 
 };

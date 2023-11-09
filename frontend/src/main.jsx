@@ -27,6 +27,8 @@ import UserProfile from "./components/userComponents/UserProfile";
 import DietView from "./components/userComponents/DietView";
 import OtpVerification from "./components/userComponents/OtpVerification.jsx";
 import SubscriptionPlans from "./components/userComponents/SubscriptionPlans.jsx";
+import ForgotOtpVerify from "./components/userComponents/ForgotOtpVerify.jsx";
+import PasswordResetForm from "./components/userComponents/PasswordResetForm.jsx";
 
 import AdminLogin from "./components/adminComponents/AdminLogin";
 import PrivateRoute from "./components/adminComponents/PrivateRoutes";
@@ -51,6 +53,9 @@ const routes = createRoutesFromElements(
     <Route path="/videos" element={<SeeVideos />} />
     <Route path="/diets" element={<DietView/>}/>
     <Route path='/otp-verification/:email' element={<OtpVerification />} />
+    <Route path='/forgot-password-otp-verification/:email' element={<ForgotOtpVerify />} />
+    <Route path="/password-reset-form/:email" element={<PasswordResetForm/>}/>
+
 
     <Route path="" element={<UserPrivateRoute />}>
       <Route path="/profile" element={<UserProfile />} />

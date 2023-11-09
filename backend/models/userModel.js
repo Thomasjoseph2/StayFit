@@ -54,26 +54,25 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
-  userSchema.pre('save', function (next) {
-    if (this.isModified('subscription_expire') && this.subscription_expire < new Date()) {
-      this.subscription_status = 'inactive';
-    }
-    next();
-  });
+
   const salt = await bcrypt.genSalt(10);
 
   this.password = await bcrypt.hash(this.password, salt);
 
-
-
 });
+
 
 userSchema.methods.matchPasswords =async function(enteredPassword){
 
      return await bcrypt.compare(enteredPassword,this.password)
 
 }
-
+  userSchema.pre('save', function (next) {
+    if (this.isModified('subscription_expire') && this.subscription_expire < new Date()) {
+      this.subscription_status = 'inactive';
+    }
+    next();
+  });
 const User = mongoose.model("User", userSchema);
 
 export default User;
