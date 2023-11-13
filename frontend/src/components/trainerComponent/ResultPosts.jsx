@@ -15,7 +15,7 @@ const ResultPosts = ({ refreshTrigger }) => {
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [imageName, setImageName] = useState(null);
-  const [refresher, setRefresher] = useState(false);
+  const [refresher, setRefresher] = useState(Date.now());
   
   const [getPosts,{isLoading}] = useGetPostsMutation();
 
@@ -46,8 +46,8 @@ const ResultPosts = ({ refreshTrigger }) => {
     await deletePost({ selectedPostId, trainer, imageName })
       .then((response) => {
         setIsConfirmationVisible(false);
-        setRefresher(true);
-        toast.success(response.data.message);
+        setRefresher(Date.now());
+        toast.success("post deleted successfully");
       })
       .catch((error) => {
         console.error("Error deleting post", error);

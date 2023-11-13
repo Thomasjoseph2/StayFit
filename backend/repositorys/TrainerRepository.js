@@ -264,8 +264,7 @@ class TrainerRepository {
   async editTrainer(trainerDetails) {
     const {
       trainerId,
-      firstName,
-      lastName,
+      name,
       phone,
       qualifications,
       experience,
@@ -278,8 +277,7 @@ class TrainerRepository {
         { _id: trainerId },
         {
           $set: {
-            firstName,
-            lastName,
+            name,
             phone,
             qualifications,
             experience,

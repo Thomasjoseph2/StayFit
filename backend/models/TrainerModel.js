@@ -3,11 +3,7 @@ import bcrypt from "bcryptjs";
 
 const TrainerSchema = mongoose.Schema(
   {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
+    name: {
       type: String,
       required: true,
     },

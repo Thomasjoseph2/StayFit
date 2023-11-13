@@ -3,12 +3,9 @@ import generateToken from "../utils/generateToken.js";
 import mongoose from "mongoose";
 import Trainer from "../models/TrainerModel.js";
 import AdminRepository from "../repositorys/AdminRepository.js";
-import {  PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import s3Obj from "../utils/s3.js";
 import { randomImageName } from "../utils/randomName.js";
 import { goodSizeResize } from "../utils/buffer.js";
+import generateUrl from "../utils/generateUrl.js";
 const { ObjectId } = mongoose.Types;
 
 //@desc Auth user/set token
@@ -112,8 +109,7 @@ const unblockUser = asyncHandler(async (req, res) => {
 
 const addTrainer = asyncHandler(async (req, res) => {
   const {
-    firstName,
-    lastName,
+    name,
     email,
     phone,
     password,
@@ -136,22 +132,10 @@ const addTrainer = asyncHandler(async (req, res) => {
 
   const imageName= randomImageName();
 
-  const params = {
-    Bucket: process.env.BUCKET_NAME,
-    Key: imageName,
-    Body: buffer,
-    ContentType: req.file.mimetype,
-  };
+  await putS3Obj(imageName,req.file.mimetype,buffer)
 
-
-  const command = new PutObjectCommand(params);
-
-  await s3Obj.send(command);
-
-  // Create a new Trainer instance using the Trainer model
   const newTrainer = new Trainer({
-    firstName,
-    lastName,
+    name,
     email,
     phone,
     password,
@@ -159,12 +143,11 @@ const addTrainer = asyncHandler(async (req, res) => {
     experience,
     specialties,
     imageName,
-    dob: new Date(dob), // Assuming dob is a string in the format 'YYYY-MM-DD'
+    dob: new Date(dob), 
     gender,
-    blocked: false, // Assuming blocked should be set to false by default
+    blocked: false, 
   });
 
-  // Save the new trainer to the database
   await AdminRepository.updateTrainer(newTrainer);
 
   res.status(201).json("Trainer created successfully");
@@ -175,16 +158,8 @@ const getAdminVideos = asyncHandler(async (req, res) => {
 
   const videosWithSignedUrls = await Promise.all(postVideos.map(async (trainer) => {
     const videosWithUrls = await Promise.all(trainer.videos.map(async (video) => {
-      const getObjectParams = {
-        Bucket: process.env.BUCKET_NAME,
-        Key: video.videoName,
-      };
-
-      const command = new GetObjectCommand(getObjectParams);
-
-      const signedUrl = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
       
-      // Append signed URL to the video object
+    const signedUrl= await generateUrl(video.videoName)
       return {
         ...video.toObject(),
         signedUrl: signedUrl,
@@ -224,16 +199,9 @@ const getDiet=asyncHandler(async(req,res)=>{
 
   const dietsWithSignedUrls = await Promise.all(diets.map(async (trainer) => {
     const dietsWithUrls = await Promise.all(trainer.diets.map(async (diet) => {
-      const getObjectParams = {
-        Bucket: process.env.BUCKET_NAME,
-        Key: diet.imageName,
-      };
 
-      const command = new GetObjectCommand(getObjectParams);
-
-      const signedUrl = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+      const signedUrl = await generateUrl(diet.imageName)
       
-      // Append signed URL to the video object
       return {
         ...diet.toObject(),
         signedUrl: signedUrl,
@@ -241,7 +209,6 @@ const getDiet=asyncHandler(async(req,res)=>{
       };
     }));
 
-    // Replace trainer's videos array with videos containing signed URLs
     return {
       ...trainer.toObject(),
       diets: dietsWithUrls,

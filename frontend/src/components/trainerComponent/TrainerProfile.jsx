@@ -51,7 +51,7 @@ const TrainerProfile = () => {
                 />
                  <ChangeImageModal isOpen={isModalOpen} onClose={closeModal} setRefresher={setRefresher} trainerId={trainerInfo._id}/>
                 <h2 className="text-2xl font-semibold text-center mb-2">
-                    {trainerData?.plainTrainer?.firstName} {trainerData?.plainTrainer?.lastName}
+                    {trainerData?.plainTrainer?.name}
                 </h2>
                 <p className="text-sm text-center mb-4">{trainerData?.plainTrainer?.email}</p>
 

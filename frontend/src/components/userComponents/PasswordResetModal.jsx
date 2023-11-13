@@ -31,7 +31,7 @@ const PasswordResetModal = ({ isOpen, onClose }) => {
         toast.error("user dosent exist");
       }
     } catch (error) {
-      toast.error("Something went wrong. Please try again later.");
+      toast.error("user dosent exist");
     }
 
   };

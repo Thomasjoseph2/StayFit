@@ -28,7 +28,7 @@ const TrainerCard = ({ trainer }) => {
       </CardHeader>
       <CardBody>
         <Typography variant="h4" color="white">
-          {trainer.firstName} {trainer.lastName}
+          {trainer.name}
         </Typography>
         <Typography variant="lead" color="white" className="mt-3 font-normal">
           Level: {trainer.qualifications}

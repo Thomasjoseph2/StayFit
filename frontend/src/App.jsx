@@ -30,7 +30,7 @@ const App = () => {
 
   return (
     <div className="app bg-black  flex flex-col h-full  ">
-      {navBar} {/* Render the determined navigation bar */}
+      {navBar} 
       <Outlet />
       <Footer />
       <ToastContainer />

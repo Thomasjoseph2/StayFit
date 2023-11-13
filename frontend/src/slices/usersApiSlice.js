@@ -150,6 +150,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getRooms: builder.mutation({
+      query: (userId) => ({
+        url: `${USERS_URL}/getrooms/${userId}`,
+        method: "GET",
+      }),
+    }),
+    getIndividualRoom: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/get-or-createroom`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -173,5 +186,7 @@ export const {
   useCheckPlanStatusMutation,
   useForgotPassworsMutation,
   useForgotOtpVerificationMutation,
-  useChangePasswordMutation
+  useChangePasswordMutation,
+  useGetRoomsMutation,
+  useGetIndividualRoomMutation
 } = usersApiSlice;

@@ -4,8 +4,8 @@ import { toast } from "react-toastify";
 import { useAddTrainerMutation } from "../../slices/adminApiSlice";
 
 const AddTrainerModal = ({ isOpen, onRequestClose }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
+  // const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -18,8 +18,8 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [firstNameError, setFirstNameError] = useState("");
-  const [lastNameError, setLastNameError] = useState("");
+  const [NameError, setNameError] = useState("");
+  // const [lastNameError, setLastNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [qualificationsError, setQualificationsError] = useState("");
@@ -40,17 +40,12 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    setIsLoading(true); 
+    setIsLoading(true);
     // Validation logic
     let isValid = true;
 
-    if (!firstName) {
-      setFirstNameError("First Name is required.");
-      isValid = false;
-    }
-
-    if (!lastName) {
-      setLastNameError("Last Name is required.");
+    if (!name) {
+      setNameError("First Name is required.");
       isValid = false;
     }
 
@@ -109,8 +104,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
     if (isValid) {
       try {
         const formData = new FormData();
-        formData.append("firstName", firstName);
-        formData.append("lastName", lastName);
+        formData.append("name", name);
         formData.append("email", email);
         formData.append("phone", phone);
         formData.append("password", password);
@@ -123,8 +117,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
 
         await addTrainer(formData).unwrap();
 
-        setFirstName("");
-        setLastName("");
+        setName("");
         setEmail("");
         setPhone("");
         setQualifications("");
@@ -133,7 +126,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
         setDob("");
         setGender("");
         setProfileImage(null);
-        
+
         setIsLoading(false);
         onRequestClose();
 
@@ -169,52 +162,27 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
                     className="bg-gray-200 shadow-md rounded px-8 pt-6 pb-8 w-full"
                     encType="multipart/form-data"
                   >
-                    {/* First Row */}
-                    <div className="flex mb-4">
-                      <div className="w-1/2 mr-4">
-                        <label className="block text-black text-sm font-bold mb-1">
-                          First Name
-                        </label>
-                        <input
-                          className={`shadow appearance-none border rounded w-full py-2 px-3 text-black ${
-                            firstNameError ? "border-red-500" : ""
-                          }`}
-                          type="text"
-                          placeholder="First Name"
-                          value={firstName}
-                          onChange={(e) => {
-                            setFirstName(e.target.value);
-                            setFirstNameError("");
-                          }}
-                        />
-                        {firstNameError && (
-                          <p className="text-red-500 text-xs italic">
-                            {firstNameError}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-1/2">
-                        <label className="block text-black text-sm font-bold mb-1">
-                          Last Name
-                        </label>
-                        <input
-                          className={`shadow appearance-none border rounded w-full py-2 px-3 text-black ${
-                            lastNameError ? "border-red-500" : ""
-                          }`}
-                          type="text"
-                          placeholder="Last Name"
-                          value={lastName}
-                          onChange={(e) => {
-                            setLastName(e.target.value);
-                            setLastNameError("");
-                          }}
-                        />
-                        {lastNameError && (
-                          <p className="text-red-500 text-xs italic">
-                            {lastNameError}
-                          </p>
-                        )}
-                      </div>
+                    <div className="mb-4">
+                      <label className="block text-black text-sm font-bold mb-1">
+                        Name
+                      </label>
+                      <input
+                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-black ${
+                          NameError ? "border-red-500" : ""
+                        }`}
+                        type="text"
+                        placeholder="First Name"
+                        value={name}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          setNameError("");
+                        }}
+                      />
+                      {NameError && (
+                        <p className="text-red-500 text-xs italic">
+                          {NameError}
+                        </p>
+                      )}
                     </div>
 
                     {/* Second Row */}
@@ -432,7 +400,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
                           </p>
                         )}
                       </div>
-                      <div className="mb-4">
+                      <div className="mb-4 ml-2 mt-1">
                         <label className="block text-black text-sm font-bold mb-1">
                           Profile Image
                         </label>

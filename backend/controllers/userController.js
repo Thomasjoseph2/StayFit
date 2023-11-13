@@ -2,22 +2,19 @@ import "dotenv/config.js";
 import mongoose from "mongoose";
 const { ObjectId } = mongoose.Types;
 import asyncHandler from "express-async-handler";
-import otpGenerator from "otp-generator";
-//import Razorpay from 'razorpay';
 import instance from "../utils/instance.js";
 import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
 
 import generateToken from "../utils/generateToken.js";
 import UserRepository from "../repositorys/UserRepository.js";
+import UserServices from "../services/UserServices.js";
 import transporter from "../utils/transporter.js";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { configureMailOptions ,generateOTP} from "../utils/mailoptions.js";
 import s3Obj from "../utils/s3.js";
-
+import generateUrl from "../utils/generateUrl.js";
+import deletes3Obj from "../utils/deletes3Obj.js";
+import putS3Obj from "../utils/puts3Obj.js";
 import { randomImageName } from "../utils/randomName.js";
 import { goodSizeResize } from "../utils/buffer.js";
 
@@ -26,7 +23,7 @@ const googleClient = new OAuth2Client(
 );
 //@desc Auth user/set token
 //@route POST /api/users/auth
-//@access public
+//@access publicbucket
 
 const authUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -39,6 +36,7 @@ const authUser = asyncHandler(async (req, res) => {
     user.verified === true
   ) {
     generateToken(res, user._id);
+
 
     res.status(201).json({
       _id: user._id,
@@ -63,49 +61,15 @@ const authUser = asyncHandler(async (req, res) => {
 //@desc new user registration
 //route POST api/users
 //@access public
+// Controller.js
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  
+  const result = await UserServices.registerUserWithOTP(req.body);
 
-  const userExists = await UserRepository.findByEmail({ email });
-
-  if (userExists) {
-    res.status(400);
-
-    throw new Error("User already exists");
-  }
-
-  const user = await UserRepository.createUser({
-    name,
-    email,
-    password,
-  });
-
-  if (user) {
-
-    const subject='registration';
-    const otp =  generateOTP(6);
-    const mailOptions = configureMailOptions(email, otp,subject);
-    
-    transporter.sendMail(mailOptions, async (error, info) => {
-      if (error) {
-        console.error(error);
-        throw new Error("erro sendig otp");
-      } else {
-        await UserRepository.saveOtp(email, otp);
-
-        res.status(200).json({
-          message:
-            "OTP sent successfully. Please check your email for verification.",
-        });
-      }
-    });
-  } else {
-    res.status(401);
-
-    throw new Error("Invalid user data");
-  }
+  res.status(200).json(result);
 });
+
 
 const googleLogin = asyncHandler(async (req, res) => {
   const { token } = req.body;
@@ -187,19 +151,13 @@ const getTrainers = asyncHandler(async (req, res) => {
   const trainers = await UserRepository.getTrainers();
 
   if (trainers) {
+    
     s3Obj.destroy();
 
     const trainersWithUrls = await Promise.all(
       trainers.map(async (trainer) => {
-        const getObjectParams = {
-          Bucket: process.env.BUCKET_NAME,
 
-          Key: trainer.imageName,
-        };
-
-        const command = new GetObjectCommand(getObjectParams);
-
-        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+        const url = await generateUrl(trainer.imageName);
 
         return {
           ...trainer.toObject(),
@@ -211,7 +169,7 @@ const getTrainers = asyncHandler(async (req, res) => {
 
     res.status(200).json(trainersWithUrls);
   } else {
-    res.status(401);
+    res.status(400);
 
     throw new Error("Invalid user data");
   }
@@ -227,14 +185,7 @@ const getTrainer = asyncHandler(async (req, res) => {
   if (trainer) {
     s3Obj.destroy();
 
-    const getObjectParams = {
-      Bucket: process.env.BUCKET_NAME,
-
-      Key: trainer.imageName,
-    };
-    const command = new GetObjectCommand(getObjectParams);
-
-    const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+    const url = await generateUrl(trainer.imageName)
 
     plainTrainer = trainer.toObject();
 
@@ -244,14 +195,8 @@ const getTrainer = asyncHandler(async (req, res) => {
 
     const postsWithUrl = await Promise.all(
       posts.map(async (post) => {
-        const getObjectParams = {
-          Bucket: process.env.BUCKET_NAME,
-          Key: post.imageName,
-        };
 
-        const command = new GetObjectCommand(getObjectParams);
-
-        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+        const url = await generateUrl(post.imageName);
 
         return {
           ...post,
@@ -273,18 +218,9 @@ const getUserVideos = asyncHandler(async (req, res) => {
     postVideos.map(async (trainer) => {
       const videosWithUrls = await Promise.all(
         trainer.videos.map(async (video) => {
-          const getObjectParams = {
-            Bucket: process.env.BUCKET_NAME,
-            Key: video.videoName,
-          };
 
-          const command = new GetObjectCommand(getObjectParams);
+          const signedUrl = await generateUrl(video.videoName);
 
-          const signedUrl = await getSignedUrl(s3Obj, command, {
-            expiresIn: 600,
-          });
-
-          // Append signed URL to the video object
           return {
             ...video.toObject(),
             signedUrl: signedUrl,
@@ -308,16 +244,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
   if (finduser) {
     if (finduser.imagePath) {
-      s3Obj.destroy();
 
-      const getObjectParams = {
-        Bucket: process.env.BUCKET_NAME,
-
-        Key: finduser.imagePath,
-      };
-      const command = new GetObjectCommand(getObjectParams);
-
-      const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+      const url = await generateUrl(finduser.imagePath);
 
       const user = finduser.toObject();
 
@@ -346,24 +274,12 @@ const addProfileImage = asyncHandler(async (req, res) => {
     req.body.userId
   );
   if (exists) {
-    const deleteParams = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: exists,
-    };
-    const deleteCommand = new DeleteObjectCommand(deleteParams);
 
-    await s3Obj.send(deleteCommand);
+    await deletes3Obj(exists)
+
   }
-  const params = {
-    Bucket: process.env.BUCKET_NAME,
-    Key: imageName,
-    Body: buffer,
-    ContentType: req.file.mimetype,
-  };
 
-  const command = new PutObjectCommand(params);
-
-  await s3Obj.send(command);
+  await putS3Obj(imageName,req.file.mimetype,buffer)
 
   res.status(200).json({ message: "profile photo updated " });
 });
@@ -376,9 +292,9 @@ const editProfile = asyncHandler(async (req, res) => {
   if (user) {
     res.status(200).json({ user });
   } else {
-    res.status(401);
+    res.status(404);
 
-    throw new Error("something went wrong");
+    throw new Error("user not found");
   }
 });
 const getUserDiets = asyncHandler(async (req, res) => {
@@ -388,18 +304,9 @@ const getUserDiets = asyncHandler(async (req, res) => {
     postDiets.map(async (trainer) => {
       const dietsWithUrls = await Promise.all(
         trainer.diets.map(async (diet) => {
-          const getObjectParams = {
-            Bucket: process.env.BUCKET_NAME,
-            Key: diet.imageName,
-          };
 
-          const command = new GetObjectCommand(getObjectParams);
+          const signedUrl = await generateUrl(diet.imageName);
 
-          const signedUrl = await getSignedUrl(s3Obj, command, {
-            expiresIn: 600,
-          });
-
-          // Append signed URL to the diet object
           return {
             ...diet.toObject(),
             signedUrl: signedUrl,
@@ -407,7 +314,6 @@ const getUserDiets = asyncHandler(async (req, res) => {
         })
       );
 
-      // Replace trainer's diets array with diets containing signed URLs
       return {
         ...trainer.toObject(),
         diets: dietsWithUrls,
@@ -438,7 +344,7 @@ const verifyOtp = asyncHandler(async (req, res) => {
       blocked: user.blocked,
     });
   } else {
-    res.status(401);
+    res.status(400);
 
     throw new Error("verification failed");
   }
@@ -465,7 +371,7 @@ const createOrder = asyncHandler(async (req, res) => {
   if (order) {
     res.status(200).json(order);
   } else {
-    res.status(404);
+    res.status(500);
     throw new Error("order creation failed ");
   }
 });
@@ -501,7 +407,7 @@ const checkPlanStatus=asyncHandler(async(req,res)=>{
   }else if(!status){
     res.status(200).json({status:false})
   }else{
-    res.status(404)
+    res.status(500)
     throw new Error('something went wrong ')
   }
 })
@@ -536,7 +442,7 @@ const verifyForgotOtp = asyncHandler(async (req, res) => {
   if (user) {
       res.status(200).json({status:'success'})
   } else {
-    res.status(401);
+    res.status(400);
 
     throw new Error("verification failed");
   }
@@ -550,7 +456,7 @@ const changePassword = asyncHandler(async (req, res) => {
   if (response) {
     res.status(200).json({ status: 'success' });
   } else {
-    res.status(401);
+    res.status(500);
     throw new Error("password updation failed");
   }
 });

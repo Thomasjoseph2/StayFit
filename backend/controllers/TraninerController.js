@@ -4,14 +4,12 @@ import generateToken from "../utils/generateToken.js";
 import { Types as mongooseTypes } from "mongoose";
 import TrainerRepository from "../repositorys/TrainerRepository.js";
 import s3Obj from "../utils/s3.js";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { goodSizeResize, resize } from "../utils/buffer.js";
 import { randomImageName } from "../utils/randomName.js";
+import generateUrl from "../utils/generateUrl.js";
+import deletes3Obj from "../utils/deletes3Obj.js";
+import putS3Obj from "../utils/puts3Obj.js";
 const { ObjectId } = mongooseTypes;
-
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
 
 //@desc Auth trainer/set token
 //@route POST /api/trainer/auth
@@ -23,12 +21,14 @@ const authTrainer = asyncHandler(async (req, res) => {
   const trainer = await TrainerRepository.findByEmail({ email });
 
   if (trainer && (await TrainerRepository.matchPasswords(trainer, password))) {
+
     generateToken(res, trainer._id);
 
     res.status(201).json({
+      
       _id: trainer._id,
 
-      name: trainer.firstName+" "+trainer.lastName,
+      name: trainer.name,
 
       email: trainer.email,
 
@@ -57,17 +57,8 @@ const getProfile = asyncHandler(async (req, res) => {
   const trainer = await TrainerRepository.findById(trainerId);
 
   if (trainer) {
-    s3Obj.destroy();
 
-    const getObjectParams = {
-      Bucket: process.env.BUCKET_NAME,
-
-      Key: trainer.imageName,
-    };
-
-    const command = new GetObjectCommand(getObjectParams);
-
-    const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+    const url = await generateUrl(trainer.imageName);
 
     const plainTrainer = trainer.toObject();
 
@@ -89,18 +80,7 @@ const addPost = asyncHandler(async (req, res) => {
 
   const imageName = randomImageName();
 
-  const params = {
-    Bucket: process.env.BUCKET_NAME,
-    Key: imageName,
-    Body: buffer,
-    ContentType: req.file.mimetype,
-  };
-
-  const command = new PutObjectCommand(params);
-
-  await s3Obj.send(command);
-
-  // Create a new Trainer instance using the Trainer model
+  await putS3Obj(imageName,req.file.mimetype,buffer)
 
   const newPost = {
     trainer: trainerId,
@@ -129,14 +109,7 @@ const getPosts = asyncHandler(async (req, res) => {
 
       posts.map(async (post) => {
 
-        const getObjectParams = {
-          Bucket: process.env.BUCKET_NAME,
-          Key: post.imageName,
-        };
-
-        const command = new GetObjectCommand(getObjectParams);
-
-        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+        const url = await generateUrl(post.imageName);
 
         return {
           ...post,
@@ -158,24 +131,15 @@ const addVideos = asyncHandler(async (req, res) => {
   try {
     s3Obj.destroy();
 
-    const { description,specification, trainerId } = req.body;
+    const { description,specification, trainerId,trainerName } = req.body;
 
     const trainersId = new ObjectId(trainerId);
 
-    const buffer = req.file.buffer; // Video buffer from Multer
+    const buffer = req.file.buffer;
 
-    const videoName = req.file.originalname; // Use the original file name
+    const videoName = req.file.originalname; 
 
-    const params = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: videoName,
-      Body: buffer,
-      ContentType: req.file.mimetype,
-    };
-
-    const command = new PutObjectCommand(params);
-
-    await s3Obj.send(command);
+    await putS3Obj(videoName,req.file.mimetype,buffer)
 
     const newVideo = {
       trainer: trainersId,
@@ -211,17 +175,7 @@ const getVideos = asyncHandler(async (req, res) => {
 
       videos.map(async (video) => {
 
-        const getObjectParams = {
-
-          Bucket: process.env.BUCKET_NAME,
-
-          Key: video.videoName,
-
-        };
-
-        const command = new GetObjectCommand(getObjectParams);
-
-        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+        const url = await generateUrl(video.videoName);
 
         return {
           ...video,
@@ -234,7 +188,7 @@ const getVideos = asyncHandler(async (req, res) => {
   } else {
     res.status(401);
 
-    throw new Error("posts not found"); // Send error response as JSON
+    throw new Error("posts not found"); 
   }
 });
 
@@ -244,14 +198,7 @@ const deletePost=asyncHandler(async(req,res)=>{
 
   if(response.success===true){
 
-    const deleteParams = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: req.body.imageName, 
-    };
-
-    const deleteCommand = new DeleteObjectCommand(deleteParams);
-
-    await s3Obj.send(deleteCommand);
+   await deletes3Obj(req.body.imageName)
 
     res.status(201).json({message:'post deleted successfully'})
 
@@ -279,14 +226,7 @@ const deleteVideo = asyncHandler(async(req,res)=>{
 
   if(response.success===true){
 
-    const deleteParams = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: req.body.videoName, 
-    };
-
-    const deleteCommand = new DeleteObjectCommand(deleteParams);
-
-    await s3Obj.send(deleteCommand);
+    await deletes3Obj(req.body.videoName)
 
     res.status(201).json({message:'video deleted successfully'})
 
@@ -314,19 +254,7 @@ const addDiet=asyncHandler(async(req,res)=>{
 
   const imageName = randomImageName();
 
-  const params = {
-    Bucket: process.env.BUCKET_NAME,
-    Key: imageName,
-    Body: buffer,
-    ContentType: req.file.mimetype,
-  };
-
-  const command = new PutObjectCommand(params);
-
-  await s3Obj.send(command);
-
-  // Create a new Trainer instance using the Trainer model
-
+  await putS3Obj(imageName,req.file.mimetype,buffer)
 
   const newDiet = {
     trainer: trainerId,
@@ -358,14 +286,7 @@ const getDiets=asyncHandler(async(req,res)=>{
 
       diets.map(async (diet) => {
 
-        const getObjectParams = {
-          Bucket: process.env.BUCKET_NAME,
-          Key: diet.imageName,
-        };
-
-        const command = new GetObjectCommand(getObjectParams);
-
-        const url = await getSignedUrl(s3Obj, command, { expiresIn: 600 });
+        const url = await generateUrl(diet.imageName);
 
         return {
           ...diet,
@@ -379,7 +300,7 @@ const getDiets=asyncHandler(async(req,res)=>{
   } else {
     res.status(401);
 
-    throw new Error("posts not found"); // Send error response as JSON
+    throw new Error("posts not found"); 
   }
 })
 
@@ -389,14 +310,7 @@ const deleteDiet=asyncHandler(async(req,res)=>{
 
   if(response.success===true){
 
-    const deleteParams = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: req.body.imageName, 
-    };
-
-    const deleteCommand = new DeleteObjectCommand(deleteParams);
-
-    await s3Obj.send(deleteCommand);
+    await deletes3Obj(req.body.imageName)
 
     res.status(201).json({message:'post deleted successfully'})
 
@@ -417,8 +331,6 @@ else{
 
 const addTrainerProfileImage=asyncHandler(async(req,res)=>{
 
-  console.log(req.body);
-
   const buffer = await goodSizeResize(req.file.buffer)
 
   const imageName = randomImageName();
@@ -429,24 +341,11 @@ const addTrainerProfileImage=asyncHandler(async(req,res)=>{
   );
 
   if (exists) {
-    const deleteParams = {
-      Bucket: process.env.BUCKET_NAME,
-      Key: exists,
-    };
-    const deleteCommand = new DeleteObjectCommand(deleteParams);
 
-    await s3Obj.send(deleteCommand);
+    await deletes3Obj(exists)
   }
-  const params = {
-    Bucket: process.env.BUCKET_NAME,
-    Key: imageName,
-    Body: buffer,
-    ContentType: req.file.mimetype,
-  };
 
-  const command = new PutObjectCommand(params);
-
-  await s3Obj.send(command);
+  await putS3Obj(imageName,req.file.mimetype,buffer)
 
   res.status(200).json({ message: "profile photo updated " });
 

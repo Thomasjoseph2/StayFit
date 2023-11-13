@@ -10,8 +10,7 @@ const EditTrainerModal = ({
   trainerDetails,
 }) => {
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [qualification, setQualification] = useState("");
   const [experience, setExperience] = useState("");
@@ -22,8 +21,7 @@ const EditTrainerModal = ({
 
   useEffect(() => {
     if (trainerDetails) {
-      setFirstName(trainerDetails.firstName);
-      setLastName(trainerDetails.lastName);
+      setName(trainerDetails.name);
       setPhone(trainerDetails.phone);
       setQualification(trainerDetails.qualifications);
       setExperience(trainerDetails.experience );
@@ -38,8 +36,7 @@ const EditTrainerModal = ({
     try {
       const res = await updateProfile({
         trainerId: trainerDetails._id,
-        firstName: firstName,
-        lastName: lastName,
+        name: name,
         phone: phone,
         qualifications: qualification,
         experience: experience,
@@ -69,16 +66,9 @@ const EditTrainerModal = ({
           <input
             type="text"
             className="border p-2 w-full text-black"
-            value={firstName}
+            value={name}
             placeholder="Enter First Name"
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-          <input
-            type="text"
-            className="border p-2 w-full text-black"
-            value={lastName}
-            placeholder="Enter Last Name"
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
           />
           <input
             type="text"

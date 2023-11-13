@@ -21,8 +21,10 @@ import {
   checkPlanStatus,
   forgotPassword,
   verifyForgotOtp,
-  changePassword
+  changePassword,
+
 } from "../controllers/userController.js";
+import { createRoom,getRooms,chatSend } from "../controllers/chatController.js";
 
 import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
 
@@ -67,5 +69,18 @@ router.post('/forgot-password',forgotPassword)
 router.post('/forgot-otp-verification',verifyForgotOtp)
 
 router.post('/change-password',changePassword)
+
+//chat routes
+
+router.post('/get-or-createroom',createRoom)
+
+router.get('/getrooms/:userId',getRooms)
+
+router.post('/sendchat/:chatid/:sender/:type',chatSend)
+
+router.get('/get-room-messages/:roomid',)
+
+
+
 
 export default router;

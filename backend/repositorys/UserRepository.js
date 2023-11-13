@@ -246,15 +246,15 @@ class UserRepository {
       const user = await User.findOne({ email });
   
       if (!user) {
-        throw new Error("User not found");
+       return false
       }
   
       user.password = password;
       await user.save();
-       return true;
+      return true;
+
     } catch (error) {
       console.error("Error resetting password:", error.message);
-        return false;
     }
   }
   

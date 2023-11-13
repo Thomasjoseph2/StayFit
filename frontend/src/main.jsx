@@ -29,7 +29,7 @@ import OtpVerification from "./components/userComponents/OtpVerification.jsx";
 import SubscriptionPlans from "./components/userComponents/SubscriptionPlans.jsx";
 import ForgotOtpVerify from "./components/userComponents/ForgotOtpVerify.jsx";
 import PasswordResetForm from "./components/userComponents/PasswordResetForm.jsx";
-
+import Messages from "./components/userComponents/Messages.jsx";
 import AdminLogin from "./components/adminComponents/AdminLogin";
 import PrivateRoute from "./components/adminComponents/PrivateRoutes";
 import Sidebar from "./components/adminComponents/SideBar";
@@ -55,7 +55,7 @@ const routes = createRoutesFromElements(
     <Route path='/otp-verification/:email' element={<OtpVerification />} />
     <Route path='/forgot-password-otp-verification/:email' element={<ForgotOtpVerify />} />
     <Route path="/password-reset-form/:email" element={<PasswordResetForm/>}/>
-
+    <Route path="/user-messages" element={<Messages/>}/>
 
     <Route path="" element={<UserPrivateRoute />}>
       <Route path="/profile" element={<UserProfile />} />
