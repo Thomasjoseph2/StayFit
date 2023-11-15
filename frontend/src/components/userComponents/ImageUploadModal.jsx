@@ -24,7 +24,7 @@ if(selectedImage){
 
         await addProfileImage(formData).unwrap().then(()=>{
         toast.success("post added successfully")
-        setRefresher(true)
+        setRefresher(Date.now())
         onClose();
         })
         

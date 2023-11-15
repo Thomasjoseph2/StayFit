@@ -20,7 +20,7 @@ import {
     editDiet
 
 } from "../controllers/TraninerController.js";
-
+import { getTrainerRooms,chatSend,getMessages ,createTrainerRoom} from "../controllers/chatController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const storage = multer.memoryStorage()
@@ -67,5 +67,12 @@ router.post('/add-trainer-profile-image',upload.single("trainerImage"),protect,a
 router.post('/update-trainer-profile',protect,editTrainerProfile)
 
 router.post('/update-diet',protect,editDiet)
+
+
+router.post('/get-or-create-trainer-room',createTrainerRoom)
+router.get('/get-trainer-rooms/:trainer',getTrainerRooms)
+router.post('/send-message',chatSend)
+
+router.get('/get-room-messages/:roomid',getMessages)
 
 export default router;

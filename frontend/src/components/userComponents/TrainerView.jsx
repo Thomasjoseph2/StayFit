@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "tailwindcss/tailwind.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGetTrainerMutation } from "../../slices/usersApiSlice";
 import ShimmerTrainerCard from "../Shimmers/ShimmerTrainerCard";
-
-
+import { useGetIndividualRoomMutation } from "../../slices/usersApiSlice";
+import { useSelector } from "react-redux";
 const Trainer = () => {
-
+  const { userInfo } = useSelector((state) => state.auth);
   const [getTrainer,{isLoading}]=useGetTrainerMutation();
   const [trainer,setTrainer]=useState({})
   const { trainerId } = useParams();
+  const navigate=useNavigate()
+  const [getIndividualRoom]=useGetIndividualRoomMutation();
 
      useEffect(() => {
         fetchData(trainerId );
@@ -19,12 +21,25 @@ const Trainer = () => {
         try {
             const response = await getTrainer(trainerId);
             setTrainer(response.data);
+            console.log(response.data);
         } catch (error) {
             console.error('Error fetching trainer data', error);
             toast.error('Error fetching trainer data');
         }
     };
+  
+  const chatHandler=async(trainerId)=>{
+     const chatId=trainerId
+     const userId=userInfo._id
+     if(chatId){
+      const room =await getIndividualRoom({userId,trainerId});
+      if (room.data) {
+        navigate(`/user-messages/${chatId}`)
 
+      }
+    }
+
+  }
 
 
   return (
@@ -43,9 +58,10 @@ const Trainer = () => {
         scrambled it to make a type specimen book.
       </p>
       <div className="flex items-center justify-center mb-4">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={()=>{chatHandler(trainer?.plainTrainer?._id)}} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Message
         </button>
+        {/* <Messages className='hidden' trainerId={trainer?.plainTrainer?._id} /> */}
       </div>
       <div className="container mx-auto mt-8 mb-20">
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">

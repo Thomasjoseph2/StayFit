@@ -12,7 +12,7 @@ const UserProfile = () => {
   const [userData, setUserData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileEditModal, setProfileEditModal] = useState(false);
-  const [refresher, setRefresher] = useState(false);
+  const [refresher, setRefresher] = useState(Date.now());
   const [getUser] = useGetUserProfileMutation();
   const { userInfo } = useSelector((state) => state.auth);
 

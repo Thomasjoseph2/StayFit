@@ -4,11 +4,11 @@
   }
   
   .scroll::-webkit-scrollbar-thumb {
-    background-color: #777;
+    background-color: #242424;
   }
   
   .scroll::-webkit-scrollbar-track {
-    background-color: #333;
+    background-color: #242424;
   }
   
   /* Firefox */
@@ -17,10 +17,10 @@
   }
   
   .scroll::-moz-scrollbar-thumb {
-    background-color: #777;
+    background-color: #242424;
   }
   
   .scroll::-moz-scrollbar-track {
-    background-color: #333;
+    background-color: #242424
   }
   

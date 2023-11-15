@@ -22,6 +22,7 @@ import {
   getSubscriptions
 } from "../controllers/adminController.js";
 
+
 import { protect } from "../middleware/authMiddleware.js";
 
 const storage = multer.memoryStorage();
@@ -60,5 +61,7 @@ router.get('/get-plans',protect,getPlans)
 router.get('/get-subscriptions',protect,getSubscriptions)
 
 // router.route('/profile').get(protect,profile).put(protect,upload.single('file'),updateUserProfile);
+
+
 
 export default router;

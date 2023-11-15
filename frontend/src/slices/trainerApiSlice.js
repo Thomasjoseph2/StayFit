@@ -111,6 +111,32 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getTrainerRooms: builder.mutation({
+      query: (trainerId) => ({
+        url: `${TRAINER_URL}/get-trainer-rooms/${trainerId}`,
+        method: "GET",
+      }),
+    }),
+    getTrainerMessages: builder.mutation({
+      query: (roomId) => ({
+        url: `${TRAINER_URL}/get-room-messages/${roomId}`,
+        method: "GET",
+      }),
+    }),
+    sendTrainerMessage: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/send-message`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getTrainerIndividualRoom: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/get-or-create-trainer-room`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -130,6 +156,10 @@ export const {
  useDeleteDietMutation,
  useAddTrainerProfileImageMutation,
  useUpdateTrainerProfileMutation,
- useUpdateDietMutation
+ useUpdateDietMutation,
+ useGetTrainerRoomsMutation,
+ useGetTrainerMessagesMutation,
+ useSendTrainerMessageMutation,
+ useGetTrainerIndividualRoomMutation
 
 } = trainerApiSlice;

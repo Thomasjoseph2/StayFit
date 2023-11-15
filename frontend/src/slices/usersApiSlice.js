@@ -163,6 +163,19 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getMessages: builder.mutation({
+      query: (roomId) => ({
+        url: `${USERS_URL}/get-room-messages/${roomId}`,
+        method: "GET",
+      }),
+    }),
+    sendMessage: builder.mutation({
+      query: (data) => ({
+        url: `${USERS_URL}/send-message`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -188,5 +201,8 @@ export const {
   useForgotOtpVerificationMutation,
   useChangePasswordMutation,
   useGetRoomsMutation,
-  useGetIndividualRoomMutation
+  useGetIndividualRoomMutation,
+  useGetMessagesMutation,
+  useSendMessageMutation
+  
 } = usersApiSlice;

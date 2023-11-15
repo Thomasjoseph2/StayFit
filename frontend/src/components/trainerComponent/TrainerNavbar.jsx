@@ -59,7 +59,7 @@ const TrainerNavbar = () => {
           <Link to="/trainer" className="text-white hover:text-gray-300 text-xl">
             <FaHome size={24} />
           </Link>{" "}
-          <Link to="#" className="text-white hover:text-gray-300 text-xl">
+          <Link to="/trainer/messages" className="text-white hover:text-gray-300 text-xl">
             <FaComment size={24} />
           </Link>{" "}
           {/* Messages Icon */}

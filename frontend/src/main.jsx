@@ -41,6 +41,8 @@ import TrainerProfile from "./components/trainerComponent/TrainerProfile";
 import AddPostScreen from "./screens/AddPostScreen";
 import VideoScreen from "./screens/VideoScreen";
 import DietScreen from "./screens/DietScreen";
+import TrainerMessages from "./components/trainerComponent/TrainerMessage.jsx";
+
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -55,13 +57,12 @@ const routes = createRoutesFromElements(
     <Route path='/otp-verification/:email' element={<OtpVerification />} />
     <Route path='/forgot-password-otp-verification/:email' element={<ForgotOtpVerify />} />
     <Route path="/password-reset-form/:email" element={<PasswordResetForm/>}/>
-    <Route path="/user-messages" element={<Messages/>}/>
+    <Route path="/user-messages/:chatId" element={<Messages/>}/>
 
     <Route path="" element={<UserPrivateRoute />}>
       <Route path="/profile" element={<UserProfile />} />
       <Route path="/user-trainer-view/:trainerId" element={<TrainerView />} />
       <Route path="/subscription-plans" element={<SubscriptionPlans/>} />
-
 
     </Route>
 
@@ -80,6 +81,8 @@ const routes = createRoutesFromElements(
       <Route path="/trainer/add-results" element={<AddPostScreen />} />
       <Route path="/trainer/videos" element={<VideoScreen />} />
       <Route path="/trainer/diet" element={<DietScreen />} />
+      <Route path="/trainer/messages" element={<TrainerMessages />} />
+
     </Route>
   </Route>
 );

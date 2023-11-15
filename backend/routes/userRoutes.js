@@ -23,8 +23,10 @@ import {
   verifyForgotOtp,
   changePassword,
 
+
 } from "../controllers/userController.js";
-import { createRoom,getRooms,chatSend } from "../controllers/chatController.js";
+
+import { createRoom,getRooms,chatSend,getMessages } from "../controllers/chatController.js";
 
 import { protect,isBlocked,loginBlockCheck } from "../middleware/authMiddleware.js";
 
@@ -76,9 +78,9 @@ router.post('/get-or-createroom',createRoom)
 
 router.get('/getrooms/:userId',getRooms)
 
-router.post('/sendchat/:chatid/:sender/:type',chatSend)
+router.post('/send-message',chatSend)
 
-router.get('/get-room-messages/:roomid',)
+router.get('/get-room-messages/:roomid',getMessages)
 
 
 

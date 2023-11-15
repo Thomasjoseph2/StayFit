@@ -19,15 +19,55 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use('/api/users', userRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/trainer', trainerRoutes); // Add the forward slash before api/trainer
+app.use("/api/users", userRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/trainer", trainerRoutes); // Add the forward slash before api/trainer
 
 app.get("/", (req, res) => res.send("server is ready"));
 
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`server started on port ${port}`);
+});
+
+import { Server } from "socket.io";
+
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    // origin: ["https://stayfit.online","https://www.stayfit.online"],
+    origin: "http://localhost:3000",
+  },
+});
+
+io.on("connection", (socket) => {
+  socket.on("setup", (userData) => {
+    socket.join(userData._id);
+    socket.emit("connected");
+    console.log("user joined", userData._id);
+  });
+
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("userjoined room", room);
+  });
+
+  socket.on("new message", (newMessageReceived) => {
+
+    var chat = newMessageReceived.room;
+    if (!chat.user || !chat.trainer) {
+      return console.log("chat.users not defined");
+    }
+
+    if (chat.user._id === newMessageReceived.sender._id) {
+      socket.to(chat.trainer._id).emit("message received", newMessageReceived);
+    }
+
+    if (chat.trainer._id === newMessageReceived.sender._id) {
+      socket.to(chat.user._id).emit("message received", newMessageReceived);
+    }
+  });
+
 });
