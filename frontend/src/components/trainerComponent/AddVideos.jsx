@@ -74,12 +74,12 @@ const AddVideos = ({ refreshPosts }) => {
                 accept="video/*"
                 onChange={handleFileChange}
                 name="postFile"
-                className="mb-4 p-2 w-full border rounded"
+                className="mb-4 p-2 w-full border rounded border-black"
               />
 
               <input
                 type="text"
-                className="border p-2 w-full"
+                className="border p-2 w-full border-black "
                 value={specification}
                 placeholder="enter specification..."
                 onChange={(e) => setSpecification(e.target.value)}
@@ -89,7 +89,7 @@ const AddVideos = ({ refreshPosts }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter description..."
-                className="mb-4 p-2 w-full border rounded border-black"
+                className="mb-4 p-2 w-full border rounded border-black mt-3"
                 rows="4"
               />
               <div className="flex justify-end">

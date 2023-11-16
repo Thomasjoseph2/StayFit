@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import generateToken from "../utils/generateToken.js";
 import { Types as mongooseTypes } from "mongoose";
 import TrainerRepository from "../repositorys/TrainerRepository.js";
+import TrainerServices from "../services/TrainerServices.js";
 import s3Obj from "../utils/s3.js";
 import { goodSizeResize, resize } from "../utils/buffer.js";
 import { randomImageName } from "../utils/randomName.js";
@@ -14,207 +15,168 @@ const { ObjectId } = mongooseTypes;
 //@desc Auth trainer/set token
 //@route POST /api/trainer/auth
 //@access public
-
 const authTrainer = asyncHandler(async (req, res) => {
+
   const { email, password } = req.body;
 
-  const trainer = await TrainerRepository.findByEmail({ email });
+  const result = await TrainerServices.trainerLogin(email, password, res);
 
-  if (trainer && (await TrainerRepository.matchPasswords(trainer, password))) {
+  if(result){
 
-    generateToken(res, trainer._id);
+    res.status(result.statusCode).json(result.data);
 
-    res.status(201).json({
-      
-      _id: trainer._id,
+  }else {
 
-      name: trainer.name,
-
-      email: trainer.email,
-
-      blocked: trainer.blocked,
-    });
-  } else {
-    res.status(401);
+    res.status(401)
 
     throw new Error("Invalid email or password");
+    
   }
+
 });
+
 
 //@trainer logout
 //@ route post api/trainer/logout
 //@access public
 
 const logoutTrainer = asyncHandler(async (req, res) => {
+
   res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
 
   res.status(200).json({ message: "trainer logged out" });
 });
 
 const getProfile = asyncHandler(async (req, res) => {
+
   const trainerId = new ObjectId(req.params.trainerId);
+  
+  const trainer=await TrainerServices.getProfile(trainerId)
+  
+  if(trainer){
 
-  const trainer = await TrainerRepository.findById(trainerId);
+    res.status(trainer.statusCode).json({ plainTrainer:trainer.plainTrainer})
 
-  if (trainer) {
+  }else {
 
-    const url = await generateUrl(trainer.imageName);
-
-    const plainTrainer = trainer.toObject();
-
-    plainTrainer.imageUrl = url;
-
-    res.status(200).json({ plainTrainer });
-  } else {
-    res.status(401);
-
+    res.status(404)
+  
     throw new Error("trainer not found");
+
   }
+
 });
 
 const addPost = asyncHandler(async (req, res) => {
 
   const { description, trainerId } = req.body;
 
-  const buffer= await resize(req.file.buffer);
+  const addPost=await TrainerServices.addPost(description, trainerId,req.file.buffer,req.file.mimetype)
 
-  const imageName = randomImageName();
 
-  await putS3Obj(imageName,req.file.mimetype,buffer)
+  if(addPost.statusCode){
 
-  const newPost = {
-    trainer: trainerId,
-    posts: [
-      {
-        imageName: imageName,
-        description: description,
-      },
-    ],
-  };
+    res.status(addPost.statusCode).json(addPost.message)
 
-  await TrainerRepository.updatePost(trainerId, newPost);
+  }else{
+    res.status(500)
 
-  res.status(201).json("post created successfully");
+    throw new Error("something went wrong");
+  }
+
+
 });
 
 const getPosts = asyncHandler(async (req, res) => {
 
   const trainerId = new ObjectId(req.params.trainerId);
 
-  const posts = await TrainerRepository.getPosts(trainerId);
+  const posts = await TrainerServices.getPosts(trainerId)
 
   if (posts) {
 
-    const postsWithUrl = await Promise.all(
+    res.status(posts.statusCode).json(posts.postsWithUrl)
+    
+  }else{
 
-      posts.map(async (post) => {
-
-        const url = await generateUrl(post.imageName);
-
-        return {
-          ...post,
-          imageUrl: url,
-        };
-
-      })
-    );
-
-    res.status(200).json(postsWithUrl);
-  } else {
-    res.status(401);
-
-    throw new Error("posts not found"); // Send error response as JSON
+    res.status(404)
+    throw new Error("posts not found");
   }
+
+
 });
 
 const addVideos = asyncHandler(async (req, res) => {
-  try {
-    s3Obj.destroy();
 
-    const { description,specification, trainerId,trainerName } = req.body;
+  const { description,specification, trainerId,trainerName } = req.body;
 
-    const trainersId = new ObjectId(trainerId);
+  const trainersId = new ObjectId(trainerId);
 
-    const buffer = req.file.buffer;
+  const buffer = req.file.buffer;
 
-    const videoName = req.file.originalname; 
+  const videoName = req.file.originalname; 
 
-    await putS3Obj(videoName,req.file.mimetype,buffer)
+  const video=await TrainerServices.addVideos( 
+    description,
+    specification,
+    trainersId,
+    trainerName,
+    videoName,
+    req.file.mimetype,
+    buffer)
 
-    const newVideo = {
-      trainer: trainersId,
-      trainerName:trainerName,
-      videos: [
-        {
-          videoName: videoName,
-          specification:specification,
-          description: description,
-        },
-      ],
-    };
+    if(video.statusCode){
+     
+      res.status(video.statusCode).json(video.message)
 
-    await TrainerRepository.updateVideo(trainersId, newVideo);
+    }else{
 
-    res.status(201).json("video uploaded successfully");
-  } catch (error) {
-    console.log(error);
+      res.status(500)
 
-    res.status(500);
+      throw new Error("something went wrong");
 
-    throw new Error("failed to add video"); // Send error response as JSON
-  }
+    }
+
+
 });
 
 const getVideos = asyncHandler(async (req, res) => {
+
   const trainerId = new ObjectId(req.params.trainerId);
 
-  const videos = await TrainerRepository.getVideos(trainerId);
+  const videos =await TrainerServices.getVideos(trainerId)
 
   if (videos) {
-    const videosWithUrl = await Promise.all(
 
-      videos.map(async (video) => {
+    res.status(videos.statusCode).json(videos.videosWithUrl)
 
-        const url = await generateUrl(video.videoName);
+  }else{
 
-        return {
-          ...video,
-          videoUrl: url,
-        };
-      })
-    );
+    res.status(404)
 
-    res.status(200).json(videosWithUrl);
-  } else {
-    res.status(401);
+    throw new Error("videos not found");
 
-    throw new Error("posts not found"); 
   }
+
+
+
 });
 
 const deletePost=asyncHandler(async(req,res)=>{
 
-  const response=await TrainerRepository.deletePost(req.body.selectedPostId,req.body.trainer);
+  const response=await TrainerServices.deletePost(req.body.selectedPostId,req.body.trainer,req.body.imageName)
 
-  if(response.success===true){
-
-   await deletes3Obj(req.body.imageName)
-
-    res.status(201).json({message:'post deleted successfully'})
-
-  }
-
-  else if (response.success===false) {
-
-    res.status(401).json({message:'post not found'})
+  if (response) {
+   
+    res.status(response.statusCode).json(response.message)
     
+  }else{
+
+    res.status(500)
+
+    throw new Error("something went wrong");
+
   }
-else{
-
-  res.status(401);
-
-  throw new Error("posts not found"); // Send error response as JSON
-}
 
 }
 )
@@ -222,27 +184,21 @@ else{
 
 const deleteVideo = asyncHandler(async(req,res)=>{
 
-  const response=await TrainerRepository.deleteVideo(req.body.postId,req.body.trainer);
+  const response=await TrainerServices.deleteVideo(req.body.postId,req.body.trainer,req.body.videoName);
 
-  if(response.success===true){
-
-    await deletes3Obj(req.body.videoName)
-
-    res.status(201).json({message:'video deleted successfully'})
-
-  }
-
-  else if (response.success===false) {
-
-    res.status(401).json({message:'video not found'})
+  if (response.statusCode) {
     
+    res.status(response.statusCode).json({message:response.message})
+    
+  }else{
+
+    res.status(500)
+
+    throw new Error("something went wrong");
+
+
   }
-else{
-
-  res.status(401);
-
-  throw new Error("posts not found"); // Send error response as JSON
-}
+  
   
 })
 
@@ -250,104 +206,77 @@ const addDiet=asyncHandler(async(req,res)=>{
 
   const { description, trainerId,category,dietType,trainerName} = req.body;
 
-  const buffer= await resize(req.file.buffer);
+  const diet=await TrainerServices.addDiet(description, trainerId,category,dietType,trainerName,req.file.buffer,req.file.mimetype)
 
-  const imageName = randomImageName();
+  if (diet) {
 
-  await putS3Obj(imageName,req.file.mimetype,buffer)
+    res.status(diet.statusCode).json(diet.message)
+    
+  }else{
+    res.status(500)
 
-  const newDiet = {
-    trainer: trainerId,
-    trainerName:trainerName,
-    diets: [
-      {
-        imageName: imageName,
-        description: description,
-        category:category,
-        dietType:dietType
-      },
-    ],
-  };
+    throw new Error("something went wrong");
 
-  await TrainerRepository.updateDiet(trainerId, newDiet);
+  }
 
-  res.status(201).json("dietcreated successfully");
+ 
+
+
 })
 
 const getDiets=asyncHandler(async(req,res)=>{
 
    const trainerId = new ObjectId(req.params.trainerId);
 
-  const diets = await TrainerRepository.getDiets(trainerId);
+   const diets=await TrainerServices.getDiets(trainerId)
 
-  if (diets) {
+   if(diets){
 
-    const dietsWithUrl = await Promise.all(
+     res.status(diets.statusCode).json(diets.dietsWithUrl)
 
-      diets.map(async (diet) => {
+   }else{
 
-        const url = await generateUrl(diet.imageName);
+    res.status(404)
 
-        return {
-          ...diet,
-          imageUrl: url,
-        };
+    throw new Error("diets not found");
 
-      })
-    );
+   }
 
-    res.status(200).json(dietsWithUrl);
-  } else {
-    res.status(401);
-
-    throw new Error("posts not found"); 
-  }
 })
 
 const deleteDiet=asyncHandler(async(req,res)=>{
  
-  const response=await TrainerRepository.deleteDiet(req.body.selectedDietId,req.body.trainer);
-
-  if(response.success===true){
-
-    await deletes3Obj(req.body.imageName)
-
-    res.status(201).json({message:'post deleted successfully'})
-
-  }
-
-  else if (response.success===false) {
-
-    res.status(401).json({message:'post not found'})
+  const response=await TrainerServices.deleteDiet(req.body.selectedDietId,req.body.trainer,req.body.imageName)
+  
+  if(response){
     
+    res.status(response.statusCode).json({message:response.message})
+
+  }else{
+
+    res.status(500)
+
+    throw new Error("something went wrong");
+
   }
-else{
 
-  res.status(401);
-
-  throw new Error("posts not found"); // Send error response as JSON
-}
 })
 
 const addTrainerProfileImage=asyncHandler(async(req,res)=>{
 
-  const buffer = await goodSizeResize(req.file.buffer)
+  const result=await TrainerServices.addProfileImage(req.body.trainerId,req.file.buffer,req.file.mimetype)
 
-  const imageName = randomImageName();
+  if(result){
+   
+    res.status(result.statusCode).json({message:result.message})
 
-  const exists = await TrainerRepository.addProfileImage(
-    imageName,
-    req.body.trainerId
-  );
+  }else{
+    res.status(500)
 
-  if (exists) {
+    throw new Error("something went wrong");
 
-    await deletes3Obj(exists)
   }
 
-  await putS3Obj(imageName,req.file.mimetype,buffer)
-
-  res.status(200).json({ message: "profile photo updated " });
 
 })
 
@@ -355,15 +284,20 @@ const editTrainerProfile=asyncHandler(async (req,res)=>{
 
   const trainerDetails=req.body;
 
-  const trainer=await TrainerRepository.editTrainer(trainerDetails)
+  const result =await TrainerServices.editTrainer(trainerDetails)
 
-  if(trainer){
-     res.status(200).json({ trainer});
+  if(result){
+
+    res.status(result.statusCode).json({trainer:result.trainer})
+
   }else{
+
     res.status(401);
 
     throw new Error("something went wrong");
+
   }
+
 })
 
 const editDiet=asyncHandler(async (req,res)=>{
@@ -371,10 +305,10 @@ const editDiet=asyncHandler(async (req,res)=>{
 
   const { trainer, dietId, category, dietType, description } = req.body;
 
-  const response=await TrainerRepository.editDiet(trainer, dietId, category, dietType, description)
+  const response =await TrainerServices.editDiet(trainer, dietId, category, dietType, description)
 
-  if(response.success===true){
-     res.status(200).json({response});
+  if(response.statusCode){
+     res.status(response.statusCode).json({response:response.response})
   }else{
     res.status(401);
 
