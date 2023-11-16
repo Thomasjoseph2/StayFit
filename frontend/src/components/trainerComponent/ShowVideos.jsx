@@ -13,14 +13,14 @@ const ShowVideos = ({ refreshTrigger }) => {
   const [postId, setPostId] = useState(null);
   const [videoName, setVideoName] = useState(null);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [refresher,setRefresher]=useState(false)
+  const [refresher, setRefresher] = useState(false);
 
   const [getVideos, { isLoading }] = useGetVideosMutation();
   const [deleteVideos] = useDeleteVideoMutation();
 
   useEffect(() => {
     fetchData(trainerInfo._id);
-  }, [refreshTrigger, trainerInfo._id,refresher]);
+  }, [refreshTrigger, trainerInfo._id, refresher]);
 
   const fetchData = async (trainerId) => {
     try {
@@ -58,12 +58,22 @@ const ShowVideos = ({ refreshTrigger }) => {
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {posts.map((post) => (
           <div key={post.postId} className="bg-gray-900 p-4 rounded shadow-lg">
-            <button
-              onClick={() => handleDeleteClick(post.postId, post.videoName)}
-              className="align-top text-red-900"
-            >
-              <ImCross />
-            </button>
+            <div className="flex items-center justify-between mb-2">
+              <button
+                onClick={() => handleDeleteClick(post.postId, post.videoName)}
+                className="align-top text-red-900"
+              >
+                <ImCross />
+              </button>
+              <button
+                className={`rounded-full  text-white px-[2px] text-xs ${
+                  post.status === "approved" ? "bg-green-500" : "bg-red-900 "
+                }`}
+              >
+                {post.status}
+              </button>
+            </div>
+
             <video controls className="w-full h-56 object-cover mb-4">
               <source src={post.videoUrl} type="video/mp4" />
               Your browser does not support the video tag.

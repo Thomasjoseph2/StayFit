@@ -98,6 +98,7 @@ class TrainerRepository {
             dietId: diet._id,
             category: diet.category,
             dietType: diet.dietType,
+            status:diet.status
           };
         });
       } else {
@@ -142,7 +143,8 @@ class TrainerRepository {
             videoName: post.videoName,
             specification: post.specification,
             description: post.description,
-            postId: post._id, // Optionally include the post ID if needed
+            postId: post._id, 
+            status:post.status
           };
         });
       } else {

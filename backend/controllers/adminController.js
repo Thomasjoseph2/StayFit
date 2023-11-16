@@ -6,6 +6,7 @@ import AdminRepository from "../repositorys/AdminRepository.js";
 import { randomImageName } from "../utils/randomName.js";
 import { goodSizeResize } from "../utils/buffer.js";
 import generateUrl from "../utils/generateUrl.js";
+import AdminServices from "../services/AdminServices.js";
 const { ObjectId } = mongoose.Types;
 
 //@desc Auth user/set token
@@ -13,275 +14,240 @@ const { ObjectId } = mongoose.Types;
 //@access public
 
 const authAdmin = asyncHandler(async (req, res) => {
+
   const { email, password } = req.body;
 
-  const admin = await AdminRepository.findAdminByEmail(email);
+  const result = await AdminServices.adminLogin(email, password, res);
 
-  if (
-    admin &&
-    (await AdminRepository.matchPasswords(password, admin.password))
-  ) {
-    generateToken(res, admin._id);
+  if(result){
 
-    res.status(201).json({
-      _id: admin._id,
+    res.status(result.statusCode).json(result.data);
 
-      name: admin.name,
+  }else {
 
-      email: admin.email,
-    });
-  } else {
-    res.status(401);
+    res.status(401)
 
     throw new Error("Invalid email or password");
+    
   }
+
 });
+
+
 
 //@admin logout
 //@ route post api/admin/logout
 //@access public
 
 const logoutAdmin = asyncHandler(async (req, res) => {
+
   res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
 
   res.status(200).json({ message: "user logged out" });
+
 });
 
 const users = asyncHandler(async (req, res) => {
-  const users = await AdminRepository.getUsers(); // Fetch all users from the database
 
-  if (users) {
-    res.status(200).json(users);
+  const users=await AdminServices.getUsers();
+
+  if(users){
+
+    res.status(users.statusCode).json(users.users)
+
   } else {
+
     res.status(404);
 
-    throw new Error("user not found");
+    throw new Error("users not found");
+
   }
 });
 
 const getTrainers = asyncHandler(async (req, res) => {
-  const trainers = await AdminRepository.getTrainers(); // Fetch all trainers from the database
 
-  if (trainers) {
-    res.status(200).json(trainers);
+  const trainers=await AdminServices.getTrainers()
+
+  if(trainers){
+
+    res.status(trainers.statusCode).json(trainers.trainers)
+
   } else {
+
     res.status(404);
 
     throw new Error("trainers not found");
+
   }
+
 });
 
 const blockUser = asyncHandler(async (req, res) => {
+
   const userId = new ObjectId(req.body.userId);
 
-  const user = await AdminRepository.findUserById(userId);
+  const blocked =await AdminServices.blockUser(userId)
 
-  if (user) {
-    user.blocked = true;
+  if(blocked){
 
-    await AdminRepository.updateUser(user);
+    res.status(blocked.statusCode).json({message:blocked.message})
 
-    res.status(200).json({ message: "User blocked successfully" });
   } else {
     res.status(404);
 
     throw new Error("user not found");
   }
+
 });
 
 const unblockUser = asyncHandler(async (req, res) => {
+
   const userId = new ObjectId(req.body.userId);
 
-  const user = await AdminRepository.findUserById(userId);
+  const unblocked=await AdminServices.unblockUser(userId)
 
-  if (user) {
-    user.blocked = false;
+  if(unblocked){
 
-    await AdminRepository.updateUser(user);
+    res.status(unblocked.statusCode).json({message:unblocked.message})
 
-    res.status(200).json({ message: "user unblocked" });
-  } else {
+  }else {
+
     res.status(404);
 
     throw new Error("user not found");
+
   }
+
 });
 
 const addTrainer = asyncHandler(async (req, res) => {
-  const {
-    name,
-    email,
-    phone,
-    password,
-    qualifications,
-    experience,
-    specialties,
-    dob,
-    gender,
-  } = req.body;
 
-  const TrainerExists = await AdminRepository.findTrainerByEmail(email);
+  const {name,email, phone,password,qualifications,experience,specialties,dob,gender} = req.body;
 
-  if (TrainerExists) {
-    res.status(400).json("trainer already exists");
+  const imgbuffer=req.file.buffer;
 
-    throw new Error("User already exists");
+  const mimetype=req.file.mimetype;
+
+  const added=await AdminServices.addTrainer (name,email,phone,password,qualifications,experience,specialties,dob,gender,mimetype,imgbuffer)
+
+  if(added){
+
+    res.status(added.statusCode).json(added.message)
+
+  }else{
+
+    res.status(500)
+
+    throw new Error("something went wrong")
+    
   }
 
-  const buffer= await goodSizeResize(req.file.buffer);
 
-  const imageName= randomImageName();
-
-  await putS3Obj(imageName,req.file.mimetype,buffer)
-
-  const newTrainer = new Trainer({
-    name,
-    email,
-    phone,
-    password,
-    qualifications,
-    experience,
-    specialties,
-    imageName,
-    dob: new Date(dob), 
-    gender,
-    blocked: false, 
-  });
-
-  await AdminRepository.updateTrainer(newTrainer);
-
-  res.status(201).json("Trainer created successfully");
 });
 
 const getAdminVideos = asyncHandler(async (req, res) => {
-  const postVideos = await AdminRepository.getAdminVideos();
 
-  const videosWithSignedUrls = await Promise.all(postVideos.map(async (trainer) => {
-    const videosWithUrls = await Promise.all(trainer.videos.map(async (video) => {
-      
-    const signedUrl= await generateUrl(video.videoName)
-      return {
-        ...video.toObject(),
-        signedUrl: signedUrl,
-      };
-    }));
+  const response = await AdminServices.getAdminVideos()
 
-    // Replace trainer's videos array with videos containing signed URLs
-    return {
-      ...trainer.toObject(),
-      videos: videosWithUrls,
-    };
-  }));
+  if (response) {
+
+    res.status(response.statusCode).json({postVideos:response.videosWithSignedUrls})
+    
+  }else{
+
+    res.status(404)
+
+    throw new Error("videos not found")
+
+  }
 
 
-  res.status(200).json({ postVideos: videosWithSignedUrls });
 });
 
 const approveVideo=asyncHandler(async(req,res)=>{
 
-  const status=await AdminRepository.approveVideo(req.body.trainerId,req.body.videoId)
+  const response=await AdminServices.approveVideo(req.body.trainerId,req.body.videoId)
 
-  res.status(200).json({status})
+  if(response){
+
+    res.status(response.statusCode).json({status:response.status})
+
+  }else{
+    res.status(500)
+    throw new Error("something went wrong")
+  }
 
 })
+
 
 const rejectVideo=asyncHandler(async(req,res)=>{
 
-  const status=await AdminRepository.rejectVideo(req.body.trainerId,req.body.videoId)
+  const response=await AdminServices.rejectVideo(req.body.trainerId,req.body.videoId)
 
-  res.status(200).json({status})
+  if(response){
 
-})
+    res.status(response.statusCode).json({status:response.status})
 
-const getDiet=asyncHandler(async(req,res)=>{
-
-  const diets = await AdminRepository.getDiets();
-
-  const dietsWithSignedUrls = await Promise.all(diets.map(async (trainer) => {
-    const dietsWithUrls = await Promise.all(trainer.diets.map(async (diet) => {
-
-      const signedUrl = await generateUrl(diet.imageName)
-      
-      return {
-        ...diet.toObject(),
-        signedUrl: signedUrl,
-        trainer:trainer.trainerName
-      };
-    }));
-
-    return {
-      ...trainer.toObject(),
-      diets: dietsWithUrls,
-    };
-  }));
-
-
-  res.status(200).json({ diets: dietsWithSignedUrls });
+  }else{
+    res.status(500)
+    throw new Error("something went wrong")
+  }
 
 })
+
+
+const getDiet = asyncHandler(async (req, res) => {
+
+  const response = await AdminServices.getDiet();
+
+  res.status(response.statusCode).json({diets:response.diets});
+});
+
 const approveDiet=asyncHandler(async(req,res)=>{
 
-  const status=await AdminRepository.approveDiet(req.body.trainerId,req.body.dietId)
+  const response=await AdminServices.approveDiet(req.body.trainerId,req.body.dietId)
+  
+  if(response){
 
-  if(status.success===true){
-    res.status(200).json({status})
-  }
+  res.status(response.statusCode).json({status:response.status})
+
+}
 else{
   res.status(400).json("failed to approve");
 
   throw new Error("failed to approve");
 }
 })
-const rejectDiet=asyncHandler(async(req,res)=>{
 
-  const status=await AdminRepository.rejectDiet(req.body.trainerId,req.body.dietId)
+const rejectDiet = asyncHandler(async (req, res) => {
 
-  if(status.success===true){
-    res.status(200).json({status})
-  }
-else{
-  res.status(400).json("failed to reject");
+  const response = await AdminServices.rejectDiet(req);
 
-  throw new Error("failed to reject");
-}
- 
-})
+  res.status(response.statusCode).json({ status: response.status });
+});
 
-const addPlans=asyncHandler(async(req,res)=>{
 
-  const plan=req.body
+const addPlans = asyncHandler(async (req, res) => {
   
-  const addedPlan=await AdminRepository.addPlans(plan)
+  const response = await AdminServices.addPlans(req);
 
-  if(addedPlan){
-    res.status(200).json({success:true})
-  }else{
-    res.status(200).json({success:false})
-  }
-})
+  res.status(response.statusCode).json({ success: response.success });
+});
 
-const getPlans=asyncHandler(async(req,res)=>{
-  const plans =await AdminRepository.getPlans();
-  if(plans){
-    res.status(200).json(plans)
-  }else{
-    res.status(400).json("plans not found");
+const getPlans = asyncHandler(async (req, res) => {
 
-    throw new Error("plans not found");
-  }
-})
+  const response = await AdminServices.getPlans();
 
-const getSubscriptions=asyncHandler(async(req,res)=>{
+  res.status(response.statusCode).json(response.plans);
+});
 
-  const subscriptions =await AdminRepository.getSubscriptions();
-  if(subscriptions){
-    res.status(200).json(subscriptions)
-  }else{
-    res.status(400).json("subscriptions not found");
 
-    throw new Error("plans not found");
-  }
-})
+const getSubscriptions = asyncHandler(async (req, res) => {
+
+  const response = await AdminServices.getSubscriptions();
+
+  res.status(response.statusCode).json(response.subscriptions);
+});
 export {
   authAdmin,
   logoutAdmin,

@@ -44,21 +44,21 @@ router.post("/logout",logoutUser);
 
 router.get('/trainers',getTrainers)
 
-router.get('/getTrainer/:trainerId',getTrainer)
+router.get('/getTrainer/:trainerId',protect,isBlocked,getTrainer)
 
 router.get('/get-user-videos',getUserVideos)
 
-router.get('/get-userprofile/:userId',protect, getUserProfile);
+router.get('/get-userprofile/:userId',protect,isBlocked,getUserProfile);
 
-router.post('/add-profile-image',protect,uploadProfile.single("profileImage"),addProfileImage)
+router.post('/add-profile-image',protect,isBlocked,uploadProfile.single("profileImage"),addProfileImage)
 
-router.post('/update-profile',protect,editProfile)
+router.post('/update-profile',protect,isBlocked,editProfile)
 
 router.get('/get-user-diets',getUserDiets)
 
 router.post('/otp-verification',verifyOtp)
 
-router.get('/get-user-plans',protect,getUserPlans)
+router.get('/get-user-plans',isBlocked,protect,getUserPlans)
 
 router.post('/create-order',protect,createOrder)
 
@@ -76,11 +76,11 @@ router.post('/change-password',changePassword)
 
 router.post('/get-or-createroom',createRoom)
 
-router.get('/getrooms/:userId',getRooms)
+router.get('/getrooms/:userId',isBlocked,getRooms)
 
 router.post('/send-message',chatSend)
 
-router.get('/get-room-messages/:roomid',getMessages)
+router.get('/get-room-messages/:roomid',isBlocked,getMessages)
 
 
 

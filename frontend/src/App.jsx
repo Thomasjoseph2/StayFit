@@ -16,23 +16,26 @@ const App = () => {
   const isAdminLogin = location.pathname.includes("/admin/login");
 
   let navBar = null;
-
+  let footer=null
   if (isAdminRoute) {
-    // If the route is for admin, don't render any navigation bar
+   
     navBar = null;
+    footer=null;
   } else if (isTrainerRoute) {
     // If the route is for trainer, render TrainerNavbar
     navBar = <TrainerNavbar />;
+    footer=<Footer />
   } else if (!isAdminLogin) {
     // If it's not an admin route or admin login, render UserNavbar
     navBar = <UserNavbar />;
+    footer=<Footer />
   }
 
   return (
     <div className="app bg-black  flex flex-col h-full  ">
       {navBar} 
       <Outlet />
-      <Footer />
+      {footer}
       <ToastContainer />
     </div>
   );

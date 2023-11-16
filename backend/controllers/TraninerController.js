@@ -1,15 +1,7 @@
 import "dotenv/config.js";
 import asyncHandler from "express-async-handler";
-import generateToken from "../utils/generateToken.js";
 import { Types as mongooseTypes } from "mongoose";
-import TrainerRepository from "../repositorys/TrainerRepository.js";
 import TrainerServices from "../services/TrainerServices.js";
-import s3Obj from "../utils/s3.js";
-import { goodSizeResize, resize } from "../utils/buffer.js";
-import { randomImageName } from "../utils/randomName.js";
-import generateUrl from "../utils/generateUrl.js";
-import deletes3Obj from "../utils/deletes3Obj.js";
-import putS3Obj from "../utils/puts3Obj.js";
 const { ObjectId } = mongooseTypes;
 
 //@desc Auth trainer/set token
@@ -117,13 +109,22 @@ const addVideos = asyncHandler(async (req, res) => {
   const videoName = req.file.originalname; 
 
   const video=await TrainerServices.addVideos( 
+
     description,
+
     specification,
+
     trainersId,
+    
     trainerName,
+    
     videoName,
+    
     req.file.mimetype,
-    buffer)
+    
+    buffer
+    
+    )
 
     if(video.statusCode){
      

@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import {useGetUserProfileMutation} from "../../slices/usersApiSlice";
-import { useSelector } from "react-redux";
+import { useSelector ,useDispatch} from "react-redux";
 import { toast } from "react-toastify";
 import { FaCrown } from "react-icons/fa";
 import ImageUploadModal from "./ImageUploadModal";
 import EditProfileModal from "./EditProfileModal";
 import avatar from "../../assets/no-avatar.webp";
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../slices/authSlice";
 const UserProfile = () => {
   const [userData, setUserData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileEditModal, setProfileEditModal] = useState(false);
   const [refresher, setRefresher] = useState(Date.now());
+  const navigate=useNavigate()
+  const dispatch = useDispatch();
   const [getUser] = useGetUserProfileMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -24,9 +27,15 @@ const UserProfile = () => {
     try {
       const response = await getUser(userId);
       setUserData(response.data);
+
+       if(response?.error?.status===401){
+         toast.error('you are not authorized to access the page')
+         dispatch(logout());
+         navigate("/login");
+       }
     } catch (error) {
-      console.error("Error fetching trainer data", error);
-      toast.error("Error fetching trainer data");
+      console.error("Error fetching user data", error);
+      toast.error("Error fetching user data");
     }
   };
 

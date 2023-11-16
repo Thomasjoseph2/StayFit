@@ -4,6 +4,7 @@ import User from "../models/userModel.js";
 import UserRepository from "../repositorys/UserRepository.js";
 
 const protect = asyncHandler(async (req, res, next) => {
+
   let token;
 
   token = req.cookies.jwt;
@@ -28,13 +29,41 @@ const protect = asyncHandler(async (req, res, next) => {
 });
 
 const isBlocked = asyncHandler(async (req, res, next) => {
-  if (req.user && req.user.blocked) {
-    res.status(403); // Forbidden
+  let token;
 
-    throw new Error("User is blocked. Please contact support for assistance.");
+  token = req.cookies.jwt;
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      const user = await UserRepository.findUserByIdForMiddleWare(
+        decoded.userId
+      );
+
+      if (!user.blocked) {
+
+        next();
+
+      } else {
+
+        res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
+
+        res.status(401);
+
+        throw new Error("not authorizes,invalid token");
+        
+      }
+    } catch (error) {
+      res.status(401);
+
+      throw new Error("not authorizes,invalid token");
+    }
+  } else {
+    res.status(401);
+
+    throw new Error("not authorizes,no token");
   }
-
-  next();
 });
 
 const loginBlockCheck = asyncHandler(async (req, res, next) => {

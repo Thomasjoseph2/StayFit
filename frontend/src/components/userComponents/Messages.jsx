@@ -8,10 +8,12 @@ import {
   useGetMessagesMutation,
   useSendMessageMutation,
 } from "../../slices/usersApiSlice";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import io from "socket.io-client";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { logout } from "../../slices/authSlice";
+
 const ENDPOINT = "http://localhost:5000";
 var socket, selectedChatCompare;
 
@@ -26,6 +28,9 @@ const Messages = () => {
   const [messages, setMessages] = useState([]);
   const [content, setContent] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
+ 
+  const dispatch=useDispatch()
+  const navigate=useNavigate
 
   const [getRooms] = useGetRoomsMutation();
   const [getIndividualRoom] = useGetIndividualRoomMutation();
@@ -74,9 +79,15 @@ const Messages = () => {
     try {
       const res = await getRooms(userId).unwrap();
       setRooms(res);
-      console.log(chatId,'this is the chat id');
     } catch (err) {
-      console.log(err);
+      if (err.status === 401) {
+        toast.error("you are not authorized to access the page");
+        dispatch(logout());
+        navigate("/login");
+      }else{
+        console.error(err);
+        toast.error("Something went wrong");
+      }
     }
   };
 

@@ -51,7 +51,9 @@ class AdminRepository {
   async updateTrainer(newTrainer) {
     await newTrainer.save();
   }
-
+  async addTrainer(newTrainer) {
+    return await Trainer.create(newTrainer);
+  }
   async getAdminVideos() {
     return await Videos.find({});
   }

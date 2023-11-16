@@ -57,13 +57,13 @@ const routes = createRoutesFromElements(
     <Route path='/otp-verification/:email' element={<OtpVerification />} />
     <Route path='/forgot-password-otp-verification/:email' element={<ForgotOtpVerify />} />
     <Route path="/password-reset-form/:email" element={<PasswordResetForm/>}/>
-    <Route path="/user-messages/:chatId" element={<Messages/>}/>
+    
 
     <Route path="" element={<UserPrivateRoute />}>
       <Route path="/profile" element={<UserProfile />} />
       <Route path="/user-trainer-view/:trainerId" element={<TrainerView />} />
       <Route path="/subscription-plans" element={<SubscriptionPlans/>} />
-
+      <Route path="/user-messages/:chatId" element={<Messages/>}/>
     </Route>
 
     {/************Admin side routes ***************/}

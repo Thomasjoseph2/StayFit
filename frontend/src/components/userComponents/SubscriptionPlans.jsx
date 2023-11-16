@@ -4,8 +4,9 @@ import { useCreateOrderMutation } from "../../slices/usersApiSlice";
 import { useVerifyPaymentMutation } from "../../slices/usersApiSlice";
 import { useCheckPlanStatusMutation } from "../../slices/usersApiSlice";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { logout } from "../../slices/authSlice";
 import logo from "../../assets/fitnesss.png";
 const SubscriptionPlans = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -18,6 +19,7 @@ const SubscriptionPlans = () => {
   const [verifyPayment] = useVerifyPaymentMutation();
   const [checkStatus] = useCheckPlanStatusMutation();
   const navigate = useNavigate();
+  const dispatch=useDispatch()
   useEffect(() => {
     fetchPlanData();
   }, []);
@@ -25,11 +27,18 @@ const SubscriptionPlans = () => {
   const fetchPlanData = async () => {
     try {
       const response = await getPlans().unwrap();
-
       setPlans(response);
+
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      if (error.status === 401) {
+        toast.error("you are not authorized to access the page");
+        dispatch(logout());
+        navigate("/login");
+      }else{
+        console.error(error);
+        toast.error("Something went wrong");
+      }
+
     }
   };
 

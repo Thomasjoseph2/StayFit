@@ -1,35 +1,26 @@
 import React, { useState } from "react";
-import { FaDumbbell } from 'react-icons/fa';
-import {
-  FaUsers,
-  FaRunning,
-  FaVideo,
-  FaUtensils,
-  FaSignOutAlt,
-  FaCrown
-} from "react-icons/fa";
+import { FaDumbbell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import AdminHomePage from "./AdminHomePage";
 import { useDispatch, useSelector } from "react-redux";
 import { useAdminLogoutMutation } from "../../slices/adminApiSlice";
 import { logout } from "../../slices/adminAuthSlice";
+import AdminHomePage from "./AdminHomePage";
 import TutorsList from "./TrainersList";
 import UsersList from "./UsersList";
 import AdminVideoScreen from "../../screens/AdminVideoScreen";
 import AdminDietScreen from "../../screens/AdminDietScreen";
 import SubscriptionPlans from "./SubscriptionPlans";
 import Subscriptions from "./Suscriptions";
-const Sidebar = () => {
+import { FaRunning, FaUsers, FaVideo, FaUtensils, FaCrown, FaSignOutAlt } from "react-icons/fa";
+import AdminNavBar from "./AdminNavbar";
 
+const Sidebar = () => {
   const [content, setContent] = useState("Dashboard");
   const [activeMenuItem, setActiveMenuItem] = useState("Dashboard");
-
   const { adminInfo } = useSelector((state) => state.adminAuth);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [logoutApiCall] = useAdminLogoutMutation();
 
   const logoutHandler = async () => {
@@ -49,12 +40,13 @@ const Sidebar = () => {
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row">
-        <div className="w-full lg:w-1/5 bg-gray-800 h-screen">
+      {/* Sidebar for large screens and above */}
+      <div className=" lg:flex">
+        <div className="w-1/5 bg-gray-800 h-screen hidden lg:flex">
           <div className="p-4 text-white">
             <div className="flex items-center mb-4">
-              < FaDumbbell className="text-white text-2xl" />
-              <h1 className=" ml-1 text-2xl font-bold">Stayfit</h1>
+              <FaDumbbell className="text-white text-2xl" />
+              <h1 className="ml-1 text-2xl font-bold">Stayfit</h1>
               <span className="text-sm text-white p-3 ml-2">Admin</span>
             </div>
 
@@ -123,23 +115,29 @@ const Sidebar = () => {
               >
                 <FaSignOutAlt className="mr-2" /> Logout
               </li>
-            </ul>
+              </ul>
           </div>
         </div>
-        <div className="w-full lg:w-4/5 bg-gray-200 h-screen">
+        <div className="lg:hidden ">
+        <AdminNavBar changeContent={changeContent} logoutHandler={logoutHandler} />
+      </div>
+        <div className="lg:w-4/5 bg-gray-200 h-screen  w-full">
           <div className="p-4">
+            {/* Render content based on the selected menu item */}
             {content === "Dashboard" && <AdminHomePage />}
             {content === "trainer" && <TutorsList />}
             {content === "users" && <UsersList />}
-            {content === "videos" && <AdminVideoScreen/> }
-            {content === "diet" && <AdminDietScreen/>}
-            {content === "subscriptionPlans" && <SubscriptionPlans/>}
-            {content === "subscriptions" && <Subscriptions/>}
-
+            {content === "videos" && <AdminVideoScreen />}
+            {content === "diet" && <AdminDietScreen />}
+            {content === "subscriptionPlans" && <SubscriptionPlans />}
+            {content === "subscriptions" && <Subscriptions />}
             {content === "logout" && "Logout Content"}
           </div>
         </div>
       </div>
+
+      {/* AdminNavBar for medium and smaller screens */}
+
     </>
   );
 };

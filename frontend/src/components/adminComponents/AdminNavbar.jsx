@@ -1,16 +1,57 @@
-import React from 'react';
+import React, { useState } from "react";
+import { FaRunning, FaUsers, FaVideo, FaUtensils, FaCrown, FaSignOutAlt } from "react-icons/fa";
+import { FiAlignJustify } from "react-icons/fi";
+import { FaDumbbell } from "react-icons/fa";
 
-const AdminNavbar = () => {
+const AdminNavBar = ({ changeContent, logoutHandler }) => {
+  const [isNavbarOpen, setNavbarOpen] = useState(false);
+
+  const toggleNavbar = () => {
+    setNavbarOpen(!isNavbarOpen);
+  };
+
   return (
-    <nav className="bg-gray-900 p-4 flex justify-between items-center">
-      <h1 className="text-white text-xl">Admin Dashboard</h1>
-      <div>
-        <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
-          Logout
-        </button>
+    <div className="bg-gray-800 p-4 text-white ">
+      <div className="flex items-center justify-between">
+      <div className="">
+      <FaDumbbell className="mr-auto ml-auto"/>
+      <h2>Stayfit</h2>
       </div>
-    </nav>
+      <button onClick={toggleNavbar} className=" text-white focus:outline-none">
+        <FiAlignJustify className="text-3xl" />
+      </button>
+      </div>
+
+      {isNavbarOpen && (
+        <ul className="mt-4" onClick={toggleNavbar}>
+          <li className="py-2 hover:bg-gray-700 flex items-center pl-4" onClick={() => changeContent("Dashboard")}>
+            <FaRunning className="mr-2" /> Dashboard
+          </li>
+          <li className="py-2 hover:bg-gray-700 flex items-center pl-4" onClick={() => changeContent("users")}>
+            <FaUsers className="mr-2" /> Users
+          </li>
+          <li className="py-2 hover:bg-gray-700 flex items-center pl-4" onClick={() => changeContent("trainer")}>
+            <FaRunning className="mr-2" /> Trainer
+          </li>
+          <li className="py-2 hover-bg-gray-700 flex items-center pl-4" onClick={() => changeContent("videos")}>
+            <FaVideo className="mr-2" /> Videos
+          </li>
+          <li className="py-2 hover:bg-gray-700 flex items-center pl-4" onClick={() => changeContent("diet")}>
+            <FaUtensils className="mr-2" /> Diet
+          </li>
+          <li className="py-2 hover:bg-gray-700 flex items-center pl-4" onClick={() => changeContent("subscriptionPlans")}>
+            <FaCrown className="mr-2" /> Subscription Plans
+          </li>
+          <li className="py-2 hover:bg-gray-700 flex items-center pl-4" onClick={() => changeContent("subscriptions")}>
+            <FaCrown className="mr-2" /> Subscriptions
+          </li>
+          <li className="py-2 hover:bg-gray-700 flex items-center pl-4" onClick={logoutHandler}>
+            <FaSignOutAlt className="mr-2" /> Logout
+          </li>
+        </ul>
+      )}
+    </div>
   );
 };
 
-export default AdminNavbar;
+export default AdminNavBar;
