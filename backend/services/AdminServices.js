@@ -1,7 +1,5 @@
 import asyncHandler from "express-async-handler";
-import generateToken from "../utils/generateToken.js";
-import mongoose from "mongoose";
-import Trainer from "../models/TrainerModel.js";
+import generateAdminTokken from "../utils/generateAdminToken.js";
 import AdminRepository from "../repositorys/AdminRepository.js";
 import { randomImageName } from "../utils/randomName.js";
 import { goodSizeResize } from "../utils/buffer.js";
@@ -26,7 +24,7 @@ class AdminServices {
       admin &&
       (await AdminRepository.matchPasswords(password, admin.password))
     ) {
-      generateToken(res, admin._id);
+      generateAdminTokken(res, admin._id);
 
       return {
         statusCode: 201,

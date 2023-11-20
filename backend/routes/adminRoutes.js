@@ -25,7 +25,7 @@ import {
 } from "../controllers/adminController.js";
 
 
-import { protect } from "../middleware/authMiddleware.js";
+import { protectAdmin } from "../middleware/adminAuthMiddleWare.js";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -34,37 +34,37 @@ router.post("/login", authAdmin);
 
 router.post("/logout", logoutAdmin);
 
-router.post("/block-user", blockUser);
+router.post("/block-user",protectAdmin, blockUser);
 
-router.post("/unblock-user", unblockUser);
+router.post("/unblock-user",protectAdmin, unblockUser);
 
-router.post("/block-trainer", blockTrainer)
+router.post("/block-trainer",protectAdmin, blockTrainer)
 
-router.post("/unblock-trainer", unBlockTrainer);
+router.post("/unblock-trainer",protectAdmin, unBlockTrainer);
 
-router.get("/users", protect, users);
+router.get("/users",protectAdmin,  users);
 
-router.post("/add-trainer", upload.single("profileImage"), addTrainer);
+router.post("/add-trainer",protectAdmin, upload.single("profileImage"), addTrainer);
 
-router.get("/trainers", protect, getTrainers);
+router.get("/trainers",protectAdmin,  getTrainers);
 
-router.get("/get-videos", protect, getAdminVideos);
+router.get("/get-videos", protectAdmin, getAdminVideos);
 
-router.post("/approve-video", protect, approveVideo);
+router.post("/approve-video", protectAdmin, approveVideo);
 
-router.post("/reject-video", protect, rejectVideo);
+router.post("/reject-video",protectAdmin,  rejectVideo);
 
-router.get("/get-diets", protect, getDiet);
+router.get("/get-diets",protectAdmin,  getDiet);
 
-router.post("/approve-diet", protect, approveDiet);
+router.post("/approve-diet",protectAdmin,  approveDiet);
 
-router.post("/reject-diet", protect, rejectDiet);
+router.post("/reject-diet", protectAdmin, rejectDiet);
 
-router.post ('/add-plans',protect,addPlans)
+router.post ('/add-plans',protectAdmin,addPlans)
 
-router.get('/get-plans',protect,getPlans)
+router.get('/get-plans',protectAdmin,getPlans)
 
-router.get('/get-subscriptions',protect,getSubscriptions)
+router.get('/get-subscriptions',protectAdmin,getSubscriptions)
 
 // router.route('/profile').get(protect,profile).put(protect,upload.single('file'),updateUserProfile);
 

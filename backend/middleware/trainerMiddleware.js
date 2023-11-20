@@ -6,15 +6,14 @@ const protectTrainer = asyncHandler(async (req, res, next) => {
 
     let token;
   
-    token = req.cookies.jwt;
+    token = req.cookies.trainerjwt;
   
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        console.log(decoded);
   
-        req.trainer = await TrainerRepository.findUserByIdForMiddleWare(decoded.trainerId);
+        req.trainer = await TrainerRepository.findById(decoded.trainerId);
   
         next();
       } catch (error) {

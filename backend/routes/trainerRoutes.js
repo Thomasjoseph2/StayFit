@@ -43,35 +43,35 @@ router.post("/logout",logoutTrainer);
 
 router.get('/getProfile/:trainerId',protectTrainer,  getProfile);
 
-router.post('/addPost',upload.single("postImage"),addPost)
+router.post('/addPost',protectTrainer,upload.single("postImage"),addPost)
 
-router.get('/getPosts/:trainerId',  getPosts);
+router.get('/getPosts/:trainerId',protectTrainer,getPosts);
 
-router.post('/addVideo',upload.single("postFile"),addVideos)
+router.post('/addVideo',protectTrainer,upload.single("postFile"),addVideos)
 
-router.get('/getVideos/:trainerId', getVideos);
+router.get('/getVideos/:trainerId',protectTrainer, getVideos);
 
-router.post('/deletePost',deletePost)
+router.post('/deletePost',protectTrainer,deletePost)
 
-router.post('/deleteVideo',deleteVideo)
+router.post('/deleteVideo',protectTrainer,deleteVideo)
 
-router.post('/add-diet',upload.single("dietImage"),addDiet)
+router.post('/add-diet',protectTrainer,upload.single("dietImage"),addDiet)
 
-router.get('/get-diets/:trainerId',  getDiets);
+router.get('/get-diets/:trainerId',protectTrainer, getDiets);
 
-router.post('/delete-diet',deleteDiet)
+router.post('/delete-diet',protectTrainer,deleteDiet)
 
-router.post('/add-trainer-profile-image',upload.single("trainerImage"),addTrainerProfileImage)
+router.post('/add-trainer-profile-image',protectTrainer,upload.single("trainerImage"),addTrainerProfileImage)
 
-router.post('/update-trainer-profile',editTrainerProfile)
+router.post('/update-trainer-profile',protectTrainer,editTrainerProfile)
 
-router.post('/update-diet',editDiet)
+router.post('/update-diet',protectTrainer,editDiet)
 
 
-router.post('/get-or-create-trainer-room',createTrainerRoom)
-router.get('/get-trainer-rooms/:trainer',getTrainerRooms)
-router.post('/send-message',chatSend)
+router.post('/get-or-create-trainer-room',protectTrainer,createTrainerRoom)
+router.get('/get-trainer-rooms/:trainer',protectTrainer,getTrainerRooms)
+router.post('/send-message',protectTrainer,chatSend)
 
-router.get('/get-room-messages/:roomid',getMessages)
+router.get('/get-room-messages/:roomid',protectTrainer,getMessages)
 
 export default router;

@@ -20,7 +20,9 @@ class AdminRepository {
   async findAdminByEmail(email) {
     return await Admin.findOne({ email });
   }
-
+  async findById(adminId) {
+    return await Admin.findById(adminId);
+  }
   async findByEmail(email) {
     return await Admin.findOne({ email });
   }

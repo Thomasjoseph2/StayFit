@@ -25,6 +25,8 @@ class TrainerRepository {
   async findById(trainerId) {
     return await Trainer.findById(trainerId);
   }
+
+  
   async getPost(trainerId) {
     const post = await Result.findById(trainerId);
   }
