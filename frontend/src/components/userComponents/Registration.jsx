@@ -57,13 +57,17 @@ const Registration = () => {
 
     }
 
-    if (password !== confirmPassword) {
-
-      setConfirmPasswordError("Passwords do not match");
-
+    if (!password) {
+      setPasswordError("Password is required");
       isValid = false;
-
+    } else if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      isValid = false;
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]/.test(password)) {
+      setPasswordError("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character");
+      isValid = false;
     }
+  
 
     if (isValid) {
 
@@ -82,7 +86,7 @@ const Registration = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-black mt-12">
+    <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-black mt-16 m-5">
       <div>
         <a href="/">
           <h3 className="text-4xl font-bold">

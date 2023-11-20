@@ -20,7 +20,7 @@ const createRoom = asyncHandler(async (req, res) => {
       });
       await chatRoom.save();
     }
-    
+
     const roomDetails = await ChatRoom.findOne({ _id: chatRoom._id }).populate({
       path: "trainer",
       select: "_id name specialties imageName",
@@ -28,10 +28,9 @@ const createRoom = asyncHandler(async (req, res) => {
 
     const signedUrl = await generateUrl(roomDetails.trainer.imageName);
 
-   const roomDetail = roomDetails.toObject();
+    const roomDetail = roomDetails.toObject();
 
     roomDetail.trainer.signedUrl = signedUrl;
-
 
     res.status(200).json(roomDetail);
   } catch (error) {
@@ -48,7 +47,6 @@ const createTrainerRoom = asyncHandler(async (req, res) => {
       trainer: trainerId,
     });
 
-
     if (!chatRoom) {
       chatRoom = new ChatRoom({
         user: userId,
@@ -61,7 +59,6 @@ const createTrainerRoom = asyncHandler(async (req, res) => {
       path: "user",
       select: "_id name email imagePath",
     });
-
 
     let signedUrl;
 
@@ -84,8 +81,6 @@ const createTrainerRoom = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 //User side
 const getRooms = asyncHandler(async (req, res) => {
   const { userId } = req.params;
@@ -98,8 +93,7 @@ const getRooms = asyncHandler(async (req, res) => {
     const roomsWithUrls = await Promise.all(
       rooms.map(async (room) => {
         if (room.trainer && room.trainer.imageName) {
-
-            const url = await generateUrl(room.trainer.imageName);
+          const url = await generateUrl(room.trainer.imageName);
           return {
             ...room.toObject(),
             trainer: {
@@ -120,8 +114,7 @@ const getRooms = asyncHandler(async (req, res) => {
 });
 
 const chatSend = asyncHandler(async (req, res) => {
-
-  const { content,chatid, sender, type  } = req.body;
+  const { content, chatid, sender, type } = req.body;
   // Create a new chat message
   const newMessage = new ChatMessage({
     room: chatid,
@@ -136,6 +129,7 @@ const chatSend = asyncHandler(async (req, res) => {
   let chatRoom = await ChatRoom.findOne({ _id: chatid });
   if (chatRoom) {
     chatRoom.messages.push(newMessage._id);
+    chatRoom.latestMessage = content;
   }
   await chatRoom.save();
 
@@ -155,48 +149,61 @@ const chatSend = asyncHandler(async (req, res) => {
   res.json(newMessage);
 });
 
-const getMessages= asyncHandler(async (req, res) => {
+const getMessages = asyncHandler(async (req, res) => {
   const { roomid } = req.params;
 
   try {
-    const messages = await ChatMessage.find({ room: roomid }).sort({ createdAt: 1 });
+    const messages = await ChatMessage.find({ room: roomid }).sort({
+      createdAt: 1,
+    });
 
     if (messages) {
       res.status(200).json(messages);
     } else {
-      res.status(404).json({ message: 'No messages found for the given room.' });
+      res
+        .status(404)
+        .json({ message: "No messages found for the given room." });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: "Internal Server Error" });
   }
-})
+});
 
-const getTrainerRooms = asyncHandler(async(req,res)=>{
-    const { trainer } = req.params
-   
-    const rooms = await ChatRoom.find({trainer:trainer}).populate({path:'user',select:'_id name email imagePath'})
-   
-    if (rooms) {
-      const roomsWithUrls = await Promise.all(
-        rooms.map(async (room) => {
-          if (room.user && room.user.imagePath) {
-  
-              const url = await generateUrl(room.user.imagePath);
-            return {
-              ...room.toObject(),
-              user: {
-                ...room.user.toObject(),
-                imageUrl: url,
-              },
-            };
-          } else {
-            return room.toObject();
-          }
-        })
-      );
-      res.status(200).json(roomsWithUrls);
-    } else {
-      res.status(400).json({ message: "Failed to fetch rooms" });
-    }
-})
-export { createRoom, getRooms, chatSend,getMessages ,getTrainerRooms,createTrainerRoom};
+const getTrainerRooms = asyncHandler(async (req, res) => {
+  const { trainer } = req.params;
+
+  const rooms = await ChatRoom.find({ trainer: trainer }).populate({
+    path: "user",
+    select: "_id name email imagePath",
+  });
+
+  if (rooms) {
+    const roomsWithUrls = await Promise.all(
+      rooms.map(async (room) => {
+        if (room.user && room.user.imagePath) {
+          const url = await generateUrl(room.user.imagePath);
+          return {
+            ...room.toObject(),
+            user: {
+              ...room.user.toObject(),
+              imageUrl: url,
+            },
+          };
+        } else {
+          return room.toObject();
+        }
+      })
+    );
+    res.status(200).json(roomsWithUrls);
+  } else {
+    res.status(400).json({ message: "Failed to fetch rooms" });
+  }
+});
+export {
+  createRoom,
+  getRooms,
+  chatSend,
+  getMessages,
+  getTrainerRooms,
+  createTrainerRoom,
+};

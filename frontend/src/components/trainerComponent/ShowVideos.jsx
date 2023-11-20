@@ -13,7 +13,7 @@ const ShowVideos = ({ refreshTrigger }) => {
   const [postId, setPostId] = useState(null);
   const [videoName, setVideoName] = useState(null);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [refresher, setRefresher] = useState(false);
+  const [refresher, setRefresher] = useState(Date.now());
 
   const [getVideos, { isLoading }] = useGetVideosMutation();
   const [deleteVideos] = useDeleteVideoMutation();
@@ -42,7 +42,7 @@ const ShowVideos = ({ refreshTrigger }) => {
     await deleteVideos({ postId, trainer, videoName })
       .then((response) => {
         setIsConfirmationVisible(false);
-        setRefresher(true);
+        setRefresher(Date.now());
         toast.success(response.data.message);
       })
       .catch((error) => {

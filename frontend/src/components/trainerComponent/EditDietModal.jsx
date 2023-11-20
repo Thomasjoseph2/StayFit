@@ -14,9 +14,6 @@ const EditDietModal = ({
   const [description, setDescription] = useState("");
 
   const [updateDiet] = useUpdateDietMutation();
-
-  console.log(dietDetails);
-
   useEffect(() => {
     if (dietDetails) {
       setCategory(dietDetails.category);

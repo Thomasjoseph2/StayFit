@@ -21,10 +21,8 @@ import LoginPage from "./components/userComponents/LoginPage";
 import UserTrainerView from "./screens/UserTrainerView";
 import TrainerView from "./components/userComponents/TrainerView";
 import BmiCalculator from "./components/userComponents/BmiCalculator.jsx";
-import SeeVideos from "./components/userComponents/SeeVideos.jsx";
 import UserPrivateRoute from "./components/userComponents/UserPrivateRoute";
 import UserProfile from "./components/userComponents/UserProfile";
-import DietView from "./components/userComponents/DietView";
 import OtpVerification from "./components/userComponents/OtpVerification.jsx";
 import SubscriptionPlans from "./components/userComponents/SubscriptionPlans.jsx";
 import ForgotOtpVerify from "./components/userComponents/ForgotOtpVerify.jsx";
@@ -33,6 +31,8 @@ import Messages from "./components/userComponents/Messages.jsx";
 import AdminLogin from "./components/adminComponents/AdminLogin";
 import PrivateRoute from "./components/adminComponents/PrivateRoutes";
 import Sidebar from "./components/adminComponents/SideBar";
+import SeeVideosHOC from "./components/userComponents/SeeVideosHOC.jsx";
+import SeeDietsHOC from "./components/userComponents/SeeDietsHOC.jsx";
 
 import TrainerPrivateRoute from "./components/trainerComponent/TrainerPrivateRoute";
 import TrainerLogin from "./components/trainerComponent/TrainerLogin";
@@ -52,8 +52,8 @@ const routes = createRoutesFromElements(
     <Route path="/login" element={<LoginPage />} />
     <Route path="/user-trainers" element={<UserTrainerView />} />
     <Route path="/bmi" element={<BmiCalculator />} />
-    <Route path="/videos" element={<SeeVideos />} />
-    <Route path="/diets" element={<DietView/>}/>
+    <Route path="/videos" element={<SeeVideosHOC />} />
+    <Route path="/diets" element={<SeeDietsHOC/>}/>
     <Route path='/otp-verification/:email' element={<OtpVerification />} />
     <Route path='/forgot-password-otp-verification/:email' element={<ForgotOtpVerify />} />
     <Route path="/password-reset-form/:email" element={<PasswordResetForm/>}/>

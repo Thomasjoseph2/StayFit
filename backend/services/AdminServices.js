@@ -7,265 +7,248 @@ import { randomImageName } from "../utils/randomName.js";
 import { goodSizeResize } from "../utils/buffer.js";
 import generateUrl from "../utils/generateUrl.js";
 import putS3Obj from "../utils/puts3Obj.js";
-const { ObjectId } = mongoose.Types;
-
 
 class AdminServices {
+  static instance;
 
-  adminLogin=asyncHandler(async(email,password,res)=>{
-      
-        const admin = await AdminRepository.findAdminByEmail(email);
-      
-        if (
-          admin &&
-
-          (await AdminRepository.matchPasswords(password, admin.password))
-
-        ) {
-
-          generateToken(res, admin._id);
-
-         return {
-
-            statusCode:201,data:{
-
-                _id: admin._id,
-      
-                name: admin.name,
-          
-                email: admin.email,
-
-            }
-         }
-         
-        } 
-
-  });
-
-  getUsers=asyncHandler(async()=>{
-
-    const users = await AdminRepository.getUsers(); 
-
-    if (users) {
-
-        return { statusCode:200,users}
-
+  constructor() {
+    if (AdminServices.instance) {
+      return AdminServices.instance;
     }
-  })
-  
-  getTrainers=asyncHandler(async()=>{
-    
-  const trainers = await AdminRepository.getTrainers(); 
 
-  if (trainers) {
-
-    return { statusCode:200,trainers}
-
+    AdminServices.instance = this;
   }
 
-  })
+  adminLogin = asyncHandler(async (email, password, res) => {
+    const admin = await AdminRepository.findAdminByEmail(email);
 
-  blockUser=asyncHandler(async(userId)=>{
+    if (
+      admin &&
+      (await AdminRepository.matchPasswords(password, admin.password))
+    ) {
+      generateToken(res, admin._id);
 
+      return {
+        statusCode: 201,
+        data: {
+          _id: admin._id,
+
+          name: admin.name,
+
+          email: admin.email,
+        },
+      };
+    }
+  });
+
+  getUsers = asyncHandler(async () => {
+    const users = await AdminRepository.getUsers();
+
+    if (users) {
+      return { statusCode: 200, users };
+    }
+  });
+
+  getTrainers = asyncHandler(async () => {
+    const trainers = await AdminRepository.getTrainers();
+
+    if (trainers) {
+      return { statusCode: 200, trainers };
+    }
+  });
+
+  blockUser = asyncHandler(async (userId) => {
     const user = await AdminRepository.findUserById(userId);
 
     if (user) {
-
       user.blocked = true;
-  
+
       await AdminRepository.updateUser(user);
-  
-      return {statusCode:200,message:"User blocked successfully"}
 
+      return { statusCode: 200, message: "User blocked successfully" };
     }
-  })
+  });
 
-  unblockUser=asyncHandler(async(userId)=>{
-    
-  const user = await AdminRepository.findUserById(userId);
+  blockTrainer = asyncHandler(async (trainerId) => {
 
-  if (user) {
-    user.blocked = false;
+    const trainer = await AdminRepository.findTrainerById(trainerId);
 
-    await AdminRepository.updateUser(user);
+    if (trainer) {
+      trainer.blocked = true;
 
-    return {statusCode:200,message:"user unblocked"}
+      await AdminRepository.updateTainerBlock(trainer);
 
-  } 
+      return { statusCode: 200, message: "User blocked successfully" };
+    }
+  });
 
-  })
+  unblockUser = asyncHandler(async (userId) => {
+    const user = await AdminRepository.findUserById(userId);
 
-  addTrainer=asyncHandler(async(name,email,phone,password,qualifications,experience,specialties,dob,gender,mimetype,imgbuffer)=>{
+    if (user) {
+      user.blocked = false;
 
+      await AdminRepository.updateUser(user);
 
+      return { statusCode: 200, message: "user unblocked" };
+    }
+  });
 
-        const TrainerExists = await AdminRepository.findTrainerByEmail(email);
+  unblockTrainer = asyncHandler(async (trainerId) => {
+    const trainer = await AdminRepository.findTrainerById(trainerId);
 
-        if (TrainerExists) {
+    if (trainer) {
+      trainer.blocked = false;
 
-          return{statusCode:400,message:"trainer already exists"}
+      await AdminRepository.updateTainerBlock(trainer);
 
-        }
-      
-        const buffer= await goodSizeResize(imgbuffer);
-      
-        const imageName= randomImageName();
-      
-        await putS3Obj(imageName,mimetype,buffer)
-      
-        const newTrainer = {
-          name,
-          email,
-          phone,
-          password,
-          qualifications,
-          experience,
-          specialties,
-          imageName,
-          dob: new Date(dob), 
-          gender,
-          blocked: false, 
-        };
-      
-        await AdminRepository.addTrainer(newTrainer);
+      return { statusCode: 200, message: "trainer unblocked" };
+    }
+  });
 
-        return {statusCode:201,message:"Trainer created successfully"}
-    
-  })
+  addTrainer = asyncHandler(
+    async (
+      name,
+      email,
+      phone,
+      password,
+      qualifications,
+      experience,
+      specialties,
+      dob,
+      gender,
+      mimetype,
+      imgbuffer
+    ) => {
+      const TrainerExists = await AdminRepository.findTrainerByEmail(email);
 
-  getAdminVideos=asyncHandler(async()=>{
+      if (TrainerExists) {
+        return { statusCode: 400, message: "trainer already exists" };
+      }
 
+      const buffer = await goodSizeResize(imgbuffer);
+
+      const imageName = randomImageName();
+
+      await putS3Obj(imageName, mimetype, buffer);
+
+      const newTrainer = {
+        name,
+        email,
+        phone,
+        password,
+        qualifications,
+        experience,
+        specialties,
+        imageName,
+        dob: new Date(dob),
+        gender,
+        blocked: false,
+      };
+
+      await AdminRepository.addTrainer(newTrainer);
+
+      return { statusCode: 201, message: "Trainer created successfully" };
+    }
+  );
+
+  getAdminVideos = asyncHandler(async () => {
     const postVideos = await AdminRepository.getAdminVideos();
 
-    const videosWithSignedUrls = await Promise.all(postVideos.map(async (trainer) => {
-  
-      const videosWithUrls = await Promise.all(trainer.videos.map(async (video) => {
-        
-      const signedUrl= await generateUrl(video.videoName)
-  
+    const videosWithSignedUrls = await Promise.all(
+      postVideos.map(async (trainer) => {
+        const videosWithUrls = await Promise.all(
+          trainer.videos.map(async (video) => {
+            const signedUrl = await generateUrl(video.videoName);
+
+            return {
+              ...video.toObject(),
+
+              signedUrl: signedUrl,
+            };
+          })
+        );
+
+        // Replace trainer's videos array with videos containing signed URLs
         return {
-  
-          ...video.toObject(),
-  
-          signedUrl: signedUrl,
-  
+          ...trainer.toObject(),
+
+          videos: videosWithUrls,
         };
-  
-      }));
-  
-      // Replace trainer's videos array with videos containing signed URLs
-      return {
-  
-        ...trainer.toObject(),
-  
-        videos: videosWithUrls,
-  
-      };
-  
-    }));
-  
-    return {statusCode:200,videosWithSignedUrls}
-  })
-  approveVideo=asyncHandler(async(trainerId,videoId)=>{
+      })
+    );
 
-    const status=await AdminRepository.approveVideo(trainerId,videoId)
+    return { statusCode: 200, videosWithSignedUrls };
+  });
+  approveVideo = asyncHandler(async (trainerId, videoId) => {
+    const status = await AdminRepository.approveVideo(trainerId, videoId);
 
-    return {statusCode:200,status}
-  })
+    return { statusCode: 200, status };
+  });
 
-  rejectVideo=asyncHandler(async(trainerId,videoId)=>{
-    
-    const status=await AdminRepository.rejectVideo(trainerId,videoId)
-  
-    return {statusCode:200,status}
-  
-  })
+  rejectVideo = asyncHandler(async (trainerId, videoId) => {
+    const status = await AdminRepository.rejectVideo(trainerId, videoId);
+
+    return { statusCode: 200, status };
+  });
 
   getDiet = asyncHandler(async () => {
-
     const diets = await AdminRepository.getDiets();
 
     const dietsWithSignedUrls = await Promise.all(
-
       diets.map(async (trainer) => {
-
         const dietsWithUrls = await Promise.all(
-
           trainer.diets.map(async (diet) => {
-
             const signedUrl = await generateUrl(diet.imageName);
 
             return {
-
               ...diet.toObject(),
 
               signedUrl: signedUrl,
 
               trainer: trainer.trainerName,
-
             };
-
           })
-
         );
 
         return {
-
           ...trainer.toObject(),
-          
+
           diets: dietsWithUrls,
-
         };
-
       })
-
     );
 
     return { statusCode: 200, diets: dietsWithSignedUrls };
-
   });
 
-  approveDiet = asyncHandler(async (trainerId,dietId) => {
-
+  approveDiet = asyncHandler(async (trainerId, dietId) => {
     const status = await AdminRepository.approveDiet(
-
       trainerId,
 
       dietId
-      
     );
 
     if (status.success === true) {
-
       return { statusCode: 200, status };
-
     }
-
   });
 
   rejectDiet = asyncHandler(async (req) => {
-
     const status = await AdminRepository.rejectDiet(
-    
-        req.body.trainerId,
-    
-        req.body.dietId
-    
-        );
+      req.body.trainerId,
+
+      req.body.dietId
+    );
 
     if (status.success === true) {
-    
-        return { statusCode: 200, status };
-    
+      return { statusCode: 200, status };
     } else {
-    
-        throw new Error("failed to reject");
-    
+      throw new Error("failed to reject");
     }
-  
-});
+  });
 
-addPlans = asyncHandler(async (req) => {
+  addPlans = asyncHandler(async (req) => {
     const plan = req.body;
 
     const addedPlan = await AdminRepository.addPlans(plan);

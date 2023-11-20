@@ -10,8 +10,7 @@ const chatRoom = mongoose.Schema({
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ChatMessage' }],
 
     latestMessage: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ChatMessage',
+        type:String,
         default: null
       }
 })

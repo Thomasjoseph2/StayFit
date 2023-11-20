@@ -21,8 +21,7 @@ import {
 
 } from "../controllers/TraninerController.js";
 import { getTrainerRooms,chatSend,getMessages ,createTrainerRoom} from "../controllers/chatController.js";
-import { protect } from "../middleware/authMiddleware.js";
-
+import { protectTrainer } from "../middleware/trainerMiddleware.js";
 const storage = multer.memoryStorage()
 
 const fileFilter = (req, file, cb) => {
@@ -42,31 +41,31 @@ router.post("/login", authTrainer);
 
 router.post("/logout",logoutTrainer);
 
-router.get('/getProfile/:trainerId', protect, getProfile);
+router.get('/getProfile/:trainerId',protectTrainer,  getProfile);
 
-router.post('/addPost',protect,upload.single("postImage"),addPost)
+router.post('/addPost',upload.single("postImage"),addPost)
 
-router.get('/getPosts/:trainerId', protect, getPosts);
+router.get('/getPosts/:trainerId',  getPosts);
 
-router.post('/addVideo',protect,upload.single("postFile"),addVideos)
+router.post('/addVideo',upload.single("postFile"),addVideos)
 
-router.get('/getVideos/:trainerId', protect,getVideos);
+router.get('/getVideos/:trainerId', getVideos);
 
-router.post('/deletePost',protect,deletePost)
+router.post('/deletePost',deletePost)
 
-router.post('/deleteVideo',protect,deleteVideo)
+router.post('/deleteVideo',deleteVideo)
 
-router.post('/add-diet',protect,upload.single("dietImage"),addDiet)
+router.post('/add-diet',upload.single("dietImage"),addDiet)
 
-router.get('/get-diets/:trainerId', protect, getDiets);
+router.get('/get-diets/:trainerId',  getDiets);
 
-router.post('/delete-diet',protect,deleteDiet)
+router.post('/delete-diet',deleteDiet)
 
-router.post('/add-trainer-profile-image',upload.single("trainerImage"),protect,addTrainerProfileImage)
+router.post('/add-trainer-profile-image',upload.single("trainerImage"),addTrainerProfileImage)
 
-router.post('/update-trainer-profile',protect,editTrainerProfile)
+router.post('/update-trainer-profile',editTrainerProfile)
 
-router.post('/update-diet',protect,editDiet)
+router.post('/update-diet',editDiet)
 
 
 router.post('/get-or-create-trainer-room',createTrainerRoom)

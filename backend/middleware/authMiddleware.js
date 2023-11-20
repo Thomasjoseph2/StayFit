@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import User from "../models/userModel.js";
 import UserRepository from "../repositorys/UserRepository.js";
 
 const protect = asyncHandler(async (req, res, next) => {
@@ -14,6 +13,8 @@ const protect = asyncHandler(async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       req.user = await UserRepository.findUserByIdForMiddleWare(decoded.userId);
+
+      console.log(req.user);
 
       next();
     } catch (error) {

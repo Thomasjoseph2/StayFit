@@ -19,7 +19,9 @@ import {
   rejectDiet,
   addPlans,
   getPlans,
-  getSubscriptions
+  getSubscriptions,
+  blockTrainer,
+  unBlockTrainer
 } from "../controllers/adminController.js";
 
 
@@ -35,6 +37,10 @@ router.post("/logout", logoutAdmin);
 router.post("/block-user", blockUser);
 
 router.post("/unblock-user", unblockUser);
+
+router.post("/block-trainer", blockTrainer)
+
+router.post("/unblock-trainer", unBlockTrainer);
 
 router.get("/users", protect, users);
 

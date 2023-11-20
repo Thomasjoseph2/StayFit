@@ -1,0 +1,16 @@
+/* Add this to your CSS file or styles */
+@keyframes typing {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+  
+  .typing-animation {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 1s steps(20, end) infinite;
+  }
+  

@@ -54,8 +54,10 @@ io.on("connection", (socket) => {
     console.log("userjoined room", room);
   });
 
-  socket.on("new message", (newMessageReceived) => {
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
+  socket.on("new message", (newMessageReceived) => {
     var chat = newMessageReceived.room;
     if (!chat.user || !chat.trainer) {
       return console.log("chat.users not defined");
@@ -69,5 +71,8 @@ io.on("connection", (socket) => {
       socket.to(chat.user._id).emit("message received", newMessageReceived);
     }
   });
-
+  socket.off("setup",()=>{
+    console.log("USER DISCONNECTED");
+    socket.leave(userData._id)
+  })
 });

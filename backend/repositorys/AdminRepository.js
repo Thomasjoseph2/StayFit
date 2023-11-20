@@ -7,6 +7,16 @@ import Diet from "../models/dietModel.js";
 import Plan from "../models/plans.js";
 import Payment from "../models/payments.js";
 class AdminRepository {
+  static instance;
+
+  constructor() {
+    if (AdminRepository.instance) {
+      return AdminRepository.instance;
+    }
+
+    AdminRepository.instance = this;
+  }
+
   async findAdminByEmail(email) {
     return await Admin.findOne({ email });
   }
@@ -39,9 +49,14 @@ class AdminRepository {
   async findUserById(userId) {
     return await User.findById(userId);
   }
-
+  async findTrainerById(trainerId) {
+    return await Trainer.findById(trainerId);
+  }
   async updateUser(user) {
     await user.save();
+  }
+  async updateTainerBlock(trainer) {
+    await trainer.save();
   }
 
   async addPlans(plan) {

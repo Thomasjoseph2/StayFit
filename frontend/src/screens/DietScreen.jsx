@@ -1,16 +1,16 @@
 import React,{useState} from 'react'
 import AddDiet from '../components/trainerComponent/AddDiet'
-import ShowDiets from '../components/trainerComponent/ShowDiets';
+import ViewTrainerDiets from '../components/trainerComponent/ViewTrainerDiets';
 
 const DietScreen = () => {
   const [refreshPosts, setRefreshPosts] = useState(false);
   return (
     <>
       <div>
-        <AddDiet refreshPosts={() => setRefreshPosts(prev => !prev)} />
+        <AddDiet  refreshPosts={() => setRefreshPosts(prev => !prev)} />
       </div>
       <div>
-        <ShowDiets refreshTrigger={refreshPosts}/>
+        <ViewTrainerDiets refreshTrigger={refreshPosts}  />
       </div>
     </>
   );

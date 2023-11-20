@@ -15,8 +15,14 @@ const AddDiet = ({ refreshPosts }) => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    console.log(file); // Check if the file object is valid
-    setDietImage(file);
+      if (file) {
+      if (file.type.startsWith("image/")) {
+        setDietImage(file);
+      } else {
+        toast.error("Please select a valid image file.");
+        e.target.value = null;
+      }
+    }
   };
   
 
@@ -25,8 +31,6 @@ const AddDiet = ({ refreshPosts }) => {
 
    
       try {
-        console.log(dietImage);
-        // Create a FormData object and append the file and description
         const formData = new FormData();
         formData.append("dietImage", dietImage);
         formData.append("description", description);

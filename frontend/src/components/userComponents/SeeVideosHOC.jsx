@@ -1,29 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import React from 'react';
 import { useGetUserVideosMutation } from "../../slices/usersApiSlice";
+import withUserPosts from './WithUserPosts';
 import Shimmer from "../Shimmers/Shrimmer";
 import "../../css/headding.css";
-const SeeVideos = () => {
-  const [posts, setPosts] = useState([]);
 
-  const [getUserVideos, { isLoading }] = useGetUserVideosMutation();
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await getUserVideos();
-      setPosts(response.data.postVideos);
-
-      console.log(posts, "posts");
-    } catch (error) {
-      console.error("Error fetching video data", error);
-      toast.error("Error fetching video data");
-    }
-  };
-
+const SeeVideos = ({ posts, isLoading, fetchData }) => {
   return (
     <div className="container mx-auto mt-20 mb-20">
       <h2 className="heading text-2xl sm:text-2xl md:text-2xl lg:text-2xl xl:text-2xl text-white mb-8 w-full mt-8 text-center">
@@ -58,4 +39,4 @@ const SeeVideos = () => {
   );
 };
 
-export default SeeVideos;
+export default withUserPosts(SeeVideos, useGetUserVideosMutation, "Videos");

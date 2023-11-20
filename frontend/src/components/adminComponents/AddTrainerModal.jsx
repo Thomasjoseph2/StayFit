@@ -35,7 +35,14 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setProfileImage(file);
+    if (file) {
+      if (file.type.startsWith("image/")) {
+        setProfileImage(file);
+      } else {
+        toast.error("Please select a valid image file.");
+        e.target.value = null;
+      }
+    }
   };
 
   const submitHandler = async (e) => {

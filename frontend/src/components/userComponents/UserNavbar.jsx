@@ -114,28 +114,28 @@ const UserNavbar = () => {
         <div className="md:hidden absolute top-16 right-4 left-4 bg-gray-800 p-2">
           <ul className="space-y-2">
             <li>
-              <a
-                href="#"
+              <Link
+                to="/diets"
                 className="text-white hover:text-gray-300 w-full block"
               >
-                Diet
-              </a>
+                Diets
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/videos"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Videos
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="/bmi"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 BMI Calculator
-              </a>
+              </Link>
             </li>
             {userInfo ? (
               <>

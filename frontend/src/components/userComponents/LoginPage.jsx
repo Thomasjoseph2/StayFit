@@ -70,7 +70,7 @@ const LoginPage = () => {
     setIsModalOpen(true);
   };
   return (
-    <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-black mt-12">
+    <div className="flex flex-col items-center min-h-screen pt-6 sm:justify-center sm:pt-0 bg-black mt-16 m-5">
       <div>
         <a href="/">
           <h3 className="text-4xl font-bold">

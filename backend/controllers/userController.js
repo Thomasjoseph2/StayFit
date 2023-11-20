@@ -3,9 +3,11 @@ import mongoose from "mongoose";
 const { ObjectId } = mongoose.Types;
 import asyncHandler from "express-async-handler";
 import UserServices from "../services/UserServices.js";
+
 //@desc Auth user/set token
 //@route POST /api/users/auth
 //@access publicbucket
+
 const authUser = asyncHandler(async (req, res) => {
 
   const { email, password } = req.body;
@@ -23,6 +25,8 @@ const authUser = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
 
   const result = await UserServices.registerUserWithOTP(req.body);
+
+  
 
   res.status(200).json(result);
 });

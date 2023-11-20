@@ -117,6 +117,20 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    blockTrainer: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/block-trainer`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    unblockTrainer: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/unblock-trainer`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -136,5 +150,7 @@ export const {
   useRejectDietMutation,
   useAddPlansMutation,
   useGetAdminPlansMutation,
-  useGetSubscriptionsMutation
+  useGetSubscriptionsMutation,
+  useBlockTrainerMutation,
+  useUnblockTrainerMutation
 } = adminApiSlice;

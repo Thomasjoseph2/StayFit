@@ -42,8 +42,8 @@ const TrainerProfile = () => {
         setProfileEditModal(false)
       }
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white ">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full mt-24">
+        <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white  ">
+            <div className="bg-gray-800 p-8 rounded-lg shadow-lg max-w-md w-full mt-24 mb-7">
                 <img onClick={openModal}
                     src={trainerData?.plainTrainer?.imageUrl}
                     alt="Profile"
@@ -72,7 +72,13 @@ const TrainerProfile = () => {
                         <p className="font-semibold">Specialties:</p>
                         <p>{trainerData?.plainTrainer?.specialties}</p>
                     </div>
+
                 </div>
+                
+                <div className='text-center '>
+                        <p className="font-semibold">Description:</p>
+                        <p>{trainerData?.plainTrainer?.description}</p>
+                    </div>
 
                 <div className="flex justify-center space-x-4">
                     <button onClick={openProfileModal} className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">

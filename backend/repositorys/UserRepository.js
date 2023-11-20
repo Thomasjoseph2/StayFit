@@ -8,6 +8,16 @@ import Diet from "../models/dietModel.js";
 import Plan from "../models/plans.js";
 import Payments from "../models/payments.js";
 class UserRepository {
+  static instance;
+
+  constructor() {
+    if (UserRepository.instance) {
+      return UserRepository.instance;
+    }
+
+    UserRepository.instance = this;
+  }
+
   async findByEmail(email) {
     return await User.findOne(email);
   }
@@ -119,7 +129,7 @@ class UserRepository {
       }
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong")
+      throw new Error("something went wrong");
     }
   }
   async addProfileImage(imageName, userId) {
@@ -244,20 +254,18 @@ class UserRepository {
   async changePassword(email, password) {
     try {
       const user = await User.findOne({ email });
-  
+
       if (!user) {
-       return false
+        return false;
       }
-  
+
       user.password = password;
       await user.save();
       return true;
-
     } catch (error) {
       console.error("Error resetting password:", error.message);
     }
   }
-  
 }
 
 export default new UserRepository();

@@ -4,6 +4,16 @@ import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
 class TrainerRepository {
+  static instance;
+
+  constructor() {
+    if (TrainerRepository.instance) {
+      return TrainerRepository.instance;
+    }
+
+    TrainerRepository.instance = this;
+  }
+
   async findByEmail(email) {
     return await Trainer.findOne(email);
   }
@@ -98,7 +108,7 @@ class TrainerRepository {
             dietId: diet._id,
             category: diet.category,
             dietType: diet.dietType,
-            status:diet.status
+            status: diet.status,
           };
         });
       } else {
@@ -143,8 +153,8 @@ class TrainerRepository {
             videoName: post.videoName,
             specification: post.specification,
             description: post.description,
-            postId: post._id, 
-            status:post.status
+            postId: post._id,
+            status: post.status,
           };
         });
       } else {
@@ -301,7 +311,6 @@ class TrainerRepository {
     }
   }
 
-  
   async editDiet(trainer, dietId, category, dietType, description) {
     try {
       const result = await Diet.findOneAndUpdate(
