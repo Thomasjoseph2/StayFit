@@ -14,25 +14,25 @@ const protect = asyncHandler(async (req, res, next) => {
 
       req.user = await UserRepository.findUserByIdForMiddleWare(decoded.userId);
 
-      console.log(req.user);
-
       next();
     } catch (error) {
       res.status(401);
 
-      throw new Error("not authorizes,invalid token");
+      throw new Error("not authorized,invalid token");
     }
   } else {
     res.status(401);
 
-    throw new Error("not authorizes,no token");
+    throw new Error("not authorized,no token");
   }
 });
 
 const isBlocked = asyncHandler(async (req, res, next) => {
+
   let token;
 
-  token = req.cookies.jwt;
+  token = req.cookies.userjwt;
+
 
   if (token) {
     try {
@@ -40,6 +40,7 @@ const isBlocked = asyncHandler(async (req, res, next) => {
 
       const user = await UserRepository.findUserByIdForMiddleWare(
         decoded.userId
+
       );
 
       if (!user.blocked) {
@@ -48,11 +49,11 @@ const isBlocked = asyncHandler(async (req, res, next) => {
 
       } else {
 
-        res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
+        res.cookie("userjwt", "", { httpOnly: true, expires: new Date(0) });
 
         res.status(401);
 
-        throw new Error("not authorizes,invalid token");
+        throw new Error("blocked by the admin");
         
       }
     } catch (error) {

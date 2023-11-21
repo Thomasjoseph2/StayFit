@@ -30,6 +30,8 @@ const handleSubmit = async (e) => {
       await addPost(formData).unwrap().then(()=>{
         toast.success("post added successfully")
         refreshPosts();
+      }).catch((err)=>{
+        toast.error(err.data.message)
       })
 
       // Reset form and close modal

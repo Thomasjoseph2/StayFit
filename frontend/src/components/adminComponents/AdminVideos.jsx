@@ -33,8 +33,6 @@ const AdminVideos = () => {
       }))
     );
 
-  console.log(filteredVideos, "hi");
-
   useEffect(() => {
     setLength(filteredVideos.length);
   }, [filteredVideos]);
@@ -43,7 +41,6 @@ const AdminVideos = () => {
     try {
       const response = await getAdminVideos();
       setPostVideos(response.data.postVideos);
-      console.log(response.data.postVideos);
     } catch (error) {
       console.error("Error fetching video data", error);
       toast.error("Error fetching video data");

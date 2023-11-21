@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useGetDietsMutation } from "../../slices/trainerApiSlice";
 import { ImCross } from "react-icons/im";
 import PostDietHOC from "./PostDietHOC";
@@ -12,10 +12,12 @@ const ViewTrainerDiets = ({ posts, handleDeleteClick,setRefresher }) => {
   const [trainer, setTrainer] = useState(trainerInfo._id);
   const [isEditDietModalOpen, setEditDietModalOpen] = useState(false);
   const [selectedDiet, setSelectedDiet] = useState(null);
+
   const handleEditDiet = (diet) => {
     setSelectedDiet(diet);
     setEditDietModalOpen(true);
   };
+
 
   return (
     <div className="container mx-auto mt-8 mb-20">

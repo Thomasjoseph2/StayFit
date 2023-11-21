@@ -117,21 +117,36 @@ class UserRepository {
   async checkPlanStatus(userId) {
     try {
       const user = await User.findById(userId);
-
+  
       if (!user) {
         throw new Error("User not found");
       }
-
-      if (user.subscription_status === "active") {
-        return true;
-      } else {
+  
+      if (user.subscription_status === "inactive") {
         return false;
+      }
+  
+      if (user.subscription_expire) {
+        const currentDate = new Date();
+        const subscriptionExpireDate = user.subscription_expire;
+      console.log(currentDate,subscriptionExpireDate);
+        if (currentDate > subscriptionExpireDate) {
+          user.subscription_status = "inactive";
+          await user.save();
+          return false;
+        } else if(user.subscription_status === "active"){
+          return true;
+        }
+      } else {
+        console.log("Subscription expire date is undefined for this user.");
+        return false; 
       }
     } catch (err) {
       console.log(err);
-      throw new Error("something went wrong");
+      throw new Error("Something went wrong");
     }
   }
+  
   async addProfileImage(imageName, userId) {
     try {
       const user = await User.findById(userId);

@@ -15,6 +15,7 @@ import Subscriptions from "./Suscriptions";
 import { FaRunning, FaUsers, FaVideo, FaUtensils, FaCrown, FaSignOutAlt } from "react-icons/fa";
 import AdminNavBar from "./AdminNavbar";
 
+
 const Sidebar = () => {
   const [content, setContent] = useState("Dashboard");
   const [activeMenuItem, setActiveMenuItem] = useState("Dashboard");
@@ -121,7 +122,7 @@ const Sidebar = () => {
         <div className="lg:hidden ">
         <AdminNavBar changeContent={changeContent} logoutHandler={logoutHandler} />
       </div>
-        <div className="lg:w-4/5 bg-gray-200 h-screen  w-full">
+        <div className="lg:w-4/5 bg-gray-200 h-screen w-full">
           <div className="p-4">
             {/* Render content based on the selected menu item */}
             {content === "Dashboard" && <AdminHomePage />}

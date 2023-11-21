@@ -45,7 +45,9 @@ const AddDiet = ({ refreshPosts }) => {
           .then(() => {
             toast.success("diet added successfully");
             refreshPosts();
-          });
+          }).catch((err)=>{
+            toast.error(err.data.message)
+          })
 
         // Reset form and close modal
         setDietImage(null);

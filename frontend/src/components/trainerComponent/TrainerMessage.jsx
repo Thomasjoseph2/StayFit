@@ -2,14 +2,15 @@ import React, { useEffect, useState, useRef } from "react";
 import noimg from "../../assets/no-avatar.webp";
 import { FaVideo, FaPaperPlane } from "react-icons/fa";
 import "../../css/overflow.css";
-
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../slices/trainerAuthSlice";
 import {
   useGetTrainerRoomsMutation,
   useGetTrainerMessagesMutation,
   useSendTrainerMessageMutation,
   useGetTrainerIndividualRoomMutation,
 } from "../../slices/trainerApiSlice";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 import io from "socket.io-client";
@@ -28,6 +29,9 @@ const TrainerMessages = () => {
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [getRooms] = useGetTrainerRoomsMutation();
   const [GetMessages] = useGetTrainerMessagesMutation();
   const [SendMessage] = useSendTrainerMessageMutation();
@@ -41,7 +45,7 @@ const TrainerMessages = () => {
     socket.on("connected", () => setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
-    
+
     return () => {
       socket.off("connected");
       socket.off("typing");
@@ -83,8 +87,13 @@ const TrainerMessages = () => {
     try {
       const res = await getRooms(trainerId).unwrap();
       setRooms(res);
+
     } catch (err) {
-      console.log(err);
+      if (err.status === 401) {
+        dispatch(logout());
+        navigate("/trainer/login");
+        toast.error("you are not authorized to access the page");
+      }
     }
   };
   const fetchMessages = async () => {
@@ -154,7 +163,7 @@ const TrainerMessages = () => {
       <div className="lg:w-1/4 md:w-1/2 bg-gray-900 h-screen overflow-y-auto scroll">
         <div className="flex items-center mt-24 mx-9  ">
           <img
-            src={trainerInfo.imageName?trainerInfo.imageName:noimg}
+            src={trainerInfo.imageName ? trainerInfo.imageName : noimg}
             className="rounded-full"
             width={60}
             height={60}

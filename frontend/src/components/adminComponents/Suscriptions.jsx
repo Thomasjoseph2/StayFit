@@ -32,12 +32,7 @@ const Subscriptions = () => {
     <div className="container mx-auto p-6 bg-gray-100 rounded-lg shadow-lg">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-gray-800">Subscriptions</h2>
-        <button
-         
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-        >
-          Add new Plan
-        </button>
+  
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-300 rounded shadow-lg">

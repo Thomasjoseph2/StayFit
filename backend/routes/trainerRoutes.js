@@ -21,7 +21,7 @@ import {
 
 } from "../controllers/TraninerController.js";
 import { getTrainerRooms,chatSend,getMessages ,createTrainerRoom} from "../controllers/chatController.js";
-import { protectTrainer } from "../middleware/trainerMiddleware.js";
+import { protectTrainer,trainerLoginBlockCheck ,isTrainerBlocked} from "../middleware/trainerMiddleware.js";
 const storage = multer.memoryStorage()
 
 const fileFilter = (req, file, cb) => {
@@ -37,27 +37,27 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-router.post("/login", authTrainer);
+router.post("/login",trainerLoginBlockCheck, authTrainer);
 
 router.post("/logout",logoutTrainer);
 
-router.get('/getProfile/:trainerId',protectTrainer,  getProfile);
+router.get('/getProfile/:trainerId',protectTrainer,isTrainerBlocked, getProfile);
 
-router.post('/addPost',protectTrainer,upload.single("postImage"),addPost)
+router.post('/addPost',protectTrainer,isTrainerBlocked,upload.single("postImage"),addPost)
 
-router.get('/getPosts/:trainerId',protectTrainer,getPosts);
+router.get('/getPosts/:trainerId',protectTrainer,isTrainerBlocked,getPosts);
 
-router.post('/addVideo',protectTrainer,upload.single("postFile"),addVideos)
+router.post('/addVideo',protectTrainer,isTrainerBlocked,upload.single("postFile"),addVideos)
 
-router.get('/getVideos/:trainerId',protectTrainer, getVideos);
+router.get('/getVideos/:trainerId',isTrainerBlocked,protectTrainer, getVideos);
 
-router.post('/deletePost',protectTrainer,deletePost)
+router.post('/deletePost',isTrainerBlocked,protectTrainer,deletePost)
 
-router.post('/deleteVideo',protectTrainer,deleteVideo)
+router.post('/deleteVideo',isTrainerBlocked,protectTrainer,deleteVideo)
 
-router.post('/add-diet',protectTrainer,upload.single("dietImage"),addDiet)
+router.post('/add-diet',isTrainerBlocked,protectTrainer,upload.single("dietImage"),addDiet)
 
-router.get('/get-diets/:trainerId',protectTrainer, getDiets);
+router.get('/get-diets/:trainerId',isTrainerBlocked,protectTrainer, getDiets);
 
 router.post('/delete-diet',protectTrainer,deleteDiet)
 
@@ -68,10 +68,10 @@ router.post('/update-trainer-profile',protectTrainer,editTrainerProfile)
 router.post('/update-diet',protectTrainer,editDiet)
 
 
-router.post('/get-or-create-trainer-room',protectTrainer,createTrainerRoom)
-router.get('/get-trainer-rooms/:trainer',protectTrainer,getTrainerRooms)
-router.post('/send-message',protectTrainer,chatSend)
+router.post('/get-or-create-trainer-room',protectTrainer,isTrainerBlocked,createTrainerRoom)
+router.get('/get-trainer-rooms/:trainer',protectTrainer,isTrainerBlocked,getTrainerRooms)
+router.post('/send-message',protectTrainer,isTrainerBlocked,chatSend)
 
-router.get('/get-room-messages/:roomid',protectTrainer,getMessages)
+router.get('/get-room-messages/:roomid',protectTrainer,isTrainerBlocked,getMessages)
 
 export default router;

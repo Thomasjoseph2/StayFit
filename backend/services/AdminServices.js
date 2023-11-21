@@ -258,11 +258,44 @@ class AdminServices {
     }
   });
 
+  unlistPlans = asyncHandler(async (planId) => {
+
+    const planAdded = await AdminRepository.unlistPlans(planId);
+
+    if (planAdded) {
+    
+      return { statusCode: 200, success: true };
+    } else {
+      return { statusCode: 200, success: false };
+    }
+  });
+
+  activatePlan = asyncHandler(async (planId) => {
+
+    const planAdded = await AdminRepository.activatePlan(planId);
+
+    if (planAdded) {
+    
+      return { statusCode: 200, success: true };
+    } else {
+      return { statusCode: 200, success: false };
+    }
+  });
+
   getPlans = asyncHandler(async () => {
     const plans = await AdminRepository.getPlans();
 
     if (plans) {
       return { statusCode: 200, plans };
+    } else {
+      throw new Error("plans not found");
+    }
+  });
+
+  getSales = asyncHandler(async () => {
+    const sales = await AdminRepository.getSales();
+    if (sales) {
+      return { statusCode: 200, sales };
     } else {
       throw new Error("plans not found");
     }

@@ -70,7 +70,7 @@ const blockUser = asyncHandler(async (req, res) => {
 });
 
 const unblockUser = asyncHandler(async (req, res) => {
-
+  const userId = new ObjectId(req.body.userId);
   const unblocked = await AdminServices.unblockUser(userId);
 
   if (unblocked) {
@@ -82,7 +82,6 @@ const unblockUser = asyncHandler(async (req, res) => {
   }
 });
 const blockTrainer = asyncHandler(async (req, res) => {
-
   const trainerId = new ObjectId(req.body.trainerIdToConfirm);
 
   const blocked = await AdminServices.blockTrainer(trainerId);
@@ -97,7 +96,6 @@ const blockTrainer = asyncHandler(async (req, res) => {
 });
 
 const unBlockTrainer = asyncHandler(async (req, res) => {
-
   const trainerId = new ObjectId(req.body.trainerIdToConfirm);
 
   const unblocked = await AdminServices.unblockTrainer(trainerId);
@@ -225,6 +223,18 @@ const addPlans = asyncHandler(async (req, res) => {
   res.status(response.statusCode).json({ success: response.success });
 });
 
+const unlistPlans = asyncHandler(async (req, res) => {
+  const response = await AdminServices.unlistPlans(req.body.planId);
+
+  res.status(response.statusCode).json({ success: response.success });
+});
+
+const activatePlan= asyncHandler(async (req, res) => {
+  const response = await AdminServices.activatePlan(req.body.planId);
+
+  res.status(response.statusCode).json({ success: response.success });
+});
+
 const getPlans = asyncHandler(async (req, res) => {
   const response = await AdminServices.getPlans();
 
@@ -235,6 +245,12 @@ const getSubscriptions = asyncHandler(async (req, res) => {
   const response = await AdminServices.getSubscriptions();
 
   res.status(response.statusCode).json(response.subscriptions);
+});
+
+const getSales = asyncHandler(async (req, res) => {
+  const response = await AdminServices.getSales();
+
+  res.status(response.statusCode).json(response.sales);
 });
 export {
   authAdmin,
@@ -254,5 +270,8 @@ export {
   getPlans,
   getSubscriptions,
   blockTrainer,
-  unBlockTrainer
+  unBlockTrainer,
+  unlistPlans,
+  getSales,
+  activatePlan
 };

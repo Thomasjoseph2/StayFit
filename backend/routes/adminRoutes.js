@@ -21,7 +21,10 @@ import {
   getPlans,
   getSubscriptions,
   blockTrainer,
-  unBlockTrainer
+  unBlockTrainer,
+  unlistPlans,
+  activatePlan,
+  getSales
 } from "../controllers/adminController.js";
 
 
@@ -62,9 +65,15 @@ router.post("/reject-diet", protectAdmin, rejectDiet);
 
 router.post ('/add-plans',protectAdmin,addPlans)
 
+router.post ('/unlist-plan',protectAdmin,unlistPlans)
+
+router.post('/activate-plan',protectAdmin,activatePlan)
+
 router.get('/get-plans',protectAdmin,getPlans)
 
 router.get('/get-subscriptions',protectAdmin,getSubscriptions)
+
+router.get('/get-sales',protectAdmin,getSales)
 
 // router.route('/profile').get(protect,profile).put(protect,upload.single('file'),updateUserProfile);
 

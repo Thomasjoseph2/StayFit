@@ -131,6 +131,26 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    unlistPlan: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/unlist-plan`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    activatePlans: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/activate-plan`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getSales: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/get-sales`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -152,5 +172,8 @@ export const {
   useGetAdminPlansMutation,
   useGetSubscriptionsMutation,
   useBlockTrainerMutation,
-  useUnblockTrainerMutation
+  useUnblockTrainerMutation,
+  useUnlistPlanMutation,
+useActivatePlansMutation,
+useGetSalesMutation
 } = adminApiSlice;

@@ -191,6 +191,95 @@ class AdminRepository {
       return { success: false, message: "Internal server error." };
     }
   }
+
+  async unlistPlans(planId) {
+    try {
+      const plan = await Plan.findOneAndUpdate(
+        { _id: planId },
+        { $set: { status: 'unlisted' } },
+        { new: true } 
+      );
+  
+      if (!plan) {
+        throw new Error("Plan not found");
+      }
+      return plan;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to unlist plan");
+    }
+  }
+
+  async activatePlan(planId) {
+    try {
+      const plan = await Plan.findOneAndUpdate(
+        { _id: planId },
+        { $set: { status: 'active' } },
+        { new: true } 
+      );
+  
+      if (!plan) {
+        throw new Error("Plan not found");
+      }
+      return plan;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Failed to unlist plan");
+    }
+  }
+  async getSales() {
+    const currentYear = new Date().getFullYear();
+  
+    const aggregatePipeline = [
+      {
+        $project: {
+          month: { $month: "$createdAt" },
+          amount: "$amount",
+          year: { $year: "$createdAt" },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: "$month",
+            year: "$year",
+          },
+          totalMonthlySales: { $sum: "$amount" },
+        },
+      },
+      {
+        $sort: { "_id.year": 1, "_id.month": 1 },
+      },
+      {
+        $group: {
+          _id: null,
+          totalAllTimeSales: { $sum: "$totalMonthlySales" },
+          totalCurrentYearSales: {
+            $sum: {
+              $cond: [
+                { $eq: ["$_id.year", currentYear] },
+                "$totalMonthlySales",
+                0,
+              ],
+            },
+          },
+          monthlySales: { $push: "$$ROOT" },
+        },
+      },
+    ];
+  
+    try {
+      const result = await Payment.aggregate(aggregatePipeline);
+      const noOfUsers = await User.countDocuments();
+      const noOfTrainers = await Trainer.countDocuments();
+      return { result, noOfTrainers, noOfUsers };
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
+  
+  
 }
 
 export default new AdminRepository();
