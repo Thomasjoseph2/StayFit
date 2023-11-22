@@ -113,6 +113,14 @@ const UserNavbar = () => {
       {isOpen && (
         <div className="md:hidden absolute top-16 right-4 left-4 bg-gray-800 p-2">
           <ul className="space-y-2">
+          <li>
+              <Link
+                to={`/user-messages/allchats`}
+                className="text-white hover:text-gray-300 w-full block"
+              >
+                Messages
+              </Link>
+            </li>
             <li>
               <Link
                 to="/diets"

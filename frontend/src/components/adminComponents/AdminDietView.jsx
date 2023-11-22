@@ -86,7 +86,7 @@ const AdminDietView = () => {
         <input
           type="text"
           className="h-7  rounded-lg p-2 bg-gray-400 w-80 text-gray-600 placeholder:text-white"
-          placeholder="enter user name or email to search...."
+          placeholder="enter trainer name to search...."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

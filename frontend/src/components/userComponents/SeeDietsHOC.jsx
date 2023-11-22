@@ -18,7 +18,7 @@ const SeeDietsHOC = ({ posts, isLoading, fetchData }) => {
   return (
     <div className="container mx-auto mt-20 mb-20">
       <h2 className="heading text-2xl sm:text-2xl md:text-2xl lg:text-2xl xl:text-2xl text-white mb-8 w-full mt-8 text-center">
-        Videos
+        Diets
       </h2>
       {isLoading ? (
         <Shimmer />
