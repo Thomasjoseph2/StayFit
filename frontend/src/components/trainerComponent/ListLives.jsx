@@ -103,7 +103,8 @@ const ListLives = () => {
     return randomId;
   };
   const handleNavigate = (liveId) => {
-    navigate(`/video-conference/${liveId}`);
+    console.log('camehere',liveId);
+    navigate(`/trainer/video-conference/${liveId}`);
   };
 
   const deleteLives = async (liveId) => {
@@ -111,7 +112,6 @@ const ListLives = () => {
     await deleteLive({ trainerId, liveId })
       .unwrap()
       .then((response) => {
-        console.log(response);
         setRefresher((prev) => !prev);
         toast.success(response.message);
       })

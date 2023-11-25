@@ -30,7 +30,7 @@ const LiveList = () => {
     }
   };
   const handleNavigate=(liveId)=>{
-     navigate(`/video-conference/${liveId}`);
+     navigate(`/user/video-conference/${liveId}`);
 
   }
   return (

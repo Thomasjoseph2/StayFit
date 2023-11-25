@@ -13,8 +13,6 @@ import App from "./App";
 import "./index.css";
 import store from "./store";
 
-import ErrorPage from "./components/ErrorPage";
-
 import Roompage from "./components/roompage.jsx";
 
 import UserBody from "./components/userComponents/UserBody";
@@ -36,6 +34,7 @@ import Sidebar from "./components/adminComponents/SideBar";
 import SeeVideosHOC from "./components/userComponents/SeeVideosHOC.jsx";
 import SeeDietsHOC from "./components/userComponents/SeeDietsHOC.jsx";
 import LiveList from "./components/userComponents/LiveList.jsx";
+import UserVideoStream from "./components/userComponents/UserVideoStream.jsx";
 
 import TrainerPrivateRoute from "./components/trainerComponent/TrainerPrivateRoute";
 import TrainerLogin from "./components/trainerComponent/TrainerLogin";
@@ -47,6 +46,7 @@ import DietScreen from "./screens/DietScreen";
 import TrainerMessages from "./components/trainerComponent/TrainerMessage.jsx";
 import VideoStream from "./components/VideoStream.jsx";
 import ListLives from "./components/trainerComponent/ListLives.jsx";
+
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -70,7 +70,7 @@ const routes = createRoutesFromElements(
       <Route path="/user-messages/:chatId" element={<Messages/>}/>
       <Route path="/user-roompage/:roomId" element={<Roompage/>}/>
       <Route path='/user-conferences' element={<LiveList/>}/>
-      <Route path='/video-conference/:liveId' element={<VideoStream/>}/>
+      <Route path='/user/video-conference/:liveId' element={<UserVideoStream/>}/>
 
 
     </Route>
@@ -92,8 +92,8 @@ const routes = createRoutesFromElements(
       <Route path="/trainer/diet" element={<DietScreen />} />
       <Route path="/trainer/messages" element={<TrainerMessages />} />
      {/* <Route path="/trainer-roompage/:id" element={<Roompage/>}/> */}
-     <Route path='/video-conference/:liveId' element={<VideoStream/>}/>
-     <Route path='trainer/list-lives' element={<ListLives />}/>
+     <Route path='/trainer/video-conference/:liveId' element={<VideoStream/>}/>
+     <Route path='/trainer/list-lives' element={<ListLives />}/>
      
     </Route>
   </Route>

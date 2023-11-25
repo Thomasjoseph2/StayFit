@@ -2,9 +2,9 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { useSelector } from "react-redux/es/hooks/useSelector";
-const VideoStream = () => {
+const UserVideoStream = () => {
   const { liveId } = useParams();
-  const { trainerInfo } = useSelector((state) => state.trainerAuth);
+  const { userInfo } = useSelector((state) => state.auth);
 
   const myMeeting = async (element) => {
     const appID = 1386993773;
@@ -15,8 +15,8 @@ const VideoStream = () => {
       serverSecret,
       roomID,
       Date.now().toString(),
-      'trainer'
-    );
+      userInfo.name
+      );
     // Create instance object from Kit Token.
     const zp =  ZegoUIKitPrebuilt.create(kitToken);
 
@@ -30,13 +30,13 @@ const VideoStream = () => {
 
   
   return (
-  <div className="mt-[6%] mb-10 w-full h-auto">
-    <div className=" ">
-      <div className="h-screen " ref={myMeeting} />
+  <div className="mt-[6%] mb-10   ">
+    <div className="  ">
+      <div className="h-screen" ref={myMeeting} />
     </div>
     
     </div>
   );
 };
 
-export default VideoStream;
+export default UserVideoStream;
