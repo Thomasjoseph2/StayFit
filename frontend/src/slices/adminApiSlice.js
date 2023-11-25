@@ -71,7 +71,7 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-   rejectVideo: builder.mutation({
+    rejectVideo: builder.mutation({
       query: (data) => ({
         url: `${ADMIN_URL}/reject-video`,
         method: "POST",
@@ -91,7 +91,7 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-   rejectDiet: builder.mutation({
+    rejectDiet: builder.mutation({
       query: (data) => ({
         url: `${ADMIN_URL}/reject-diet`,
         method: "POST",
@@ -151,6 +151,12 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getAdminConferences: builder.mutation({
+      query: () => ({
+        url: `${ADMIN_URL}/get-admin-conferences`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -174,6 +180,7 @@ export const {
   useBlockTrainerMutation,
   useUnblockTrainerMutation,
   useUnlistPlanMutation,
-useActivatePlansMutation,
-useGetSalesMutation
+  useActivatePlansMutation,
+  useGetSalesMutation,
+  useGetAdminConferencesMutation,
 } = adminApiSlice;

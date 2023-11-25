@@ -179,6 +179,19 @@ const addDiet = asyncHandler(async (req, res) => {
   }
 });
 
+const addLive = asyncHandler(async (req, res) => {
+
+  const addLive = await TrainerServices.addLive(req.body.live)
+
+  if (addLive) {
+    res.status(addLive.statusCode).json(addLive.addLive);
+  } else {
+    res.status(500);
+
+    throw new Error("something went wrong");
+  }
+});
+
 const getDiets = asyncHandler(async (req, res) => {
   const trainerId = new ObjectId(req.params.trainerId);
 
@@ -193,11 +206,43 @@ const getDiets = asyncHandler(async (req, res) => {
   }
 });
 
+const getLives = asyncHandler(async (req, res) => {
+
+  const trainerId = new ObjectId(req.params.trainerId);
+  console.log(trainerId);
+
+  const lives = await TrainerServices.getLives(trainerId);
+
+  if (lives) {
+    res.status(lives.statusCode).json(lives.lives);
+  } else {
+    res.status(404);
+
+    throw new Error("diets not found");
+  }
+});
+
 const deleteDiet = asyncHandler(async (req, res) => {
   const response = await TrainerServices.deleteDiet(
     req.body.postId,
     req.body.trainer,
     req.body.name
+  );
+
+  if (response) {
+    res.status(response.statusCode).json({ message: response.message });
+  } else {
+    res.status(500);
+
+    throw new Error("something went wrong");
+  }
+});
+
+const deleteLive = asyncHandler(async (req, res) => {
+  console.log(req.body);
+  const response = await TrainerServices.deleteLive(
+    req.body.trainerId,
+    req.body.liveId,
   );
 
   if (response) {
@@ -275,4 +320,7 @@ export {
   addTrainerProfileImage,
   editTrainerProfile,
   editDiet,
+  addLive,
+  getLives,
+  deleteLive
 };

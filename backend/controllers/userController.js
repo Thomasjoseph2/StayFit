@@ -152,6 +152,14 @@ const getUserPlans = asyncHandler(async (req, res) => {
 
 });
 
+const getUserConferences=asyncHandler(async(req,res)=>{
+
+  const lives=await UserServices.findActiveLives();
+
+  res.status(lives.statusCode).json(lives.lives);
+
+})
+
 const createOrder = asyncHandler(async (req, res) => {
 
   const order = await UserServices.createOrder(req.body.price);
@@ -234,4 +242,5 @@ export {
   forgotPassword,
   verifyForgotOtp,
   changePassword,
+  getUserConferences
 };

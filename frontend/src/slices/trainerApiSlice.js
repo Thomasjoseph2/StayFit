@@ -137,6 +137,32 @@ export const trainerApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getAllUsers: builder.mutation({
+      query: () => ({
+        url: `${TRAINER_URL}/get-users/`,
+        method: "GET",
+      }),
+    }),
+    addLive: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/add-live`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getLives: builder.mutation({
+      query: (trainerId) => ({
+        url: `${TRAINER_URL}/get-lives/${trainerId}`, 
+        method: "GET",
+      }),
+    }),
+    deleteLive: builder.mutation({
+      query: (data) => ({
+        url: `${TRAINER_URL}/delete-live`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -160,6 +186,10 @@ export const {
  useGetTrainerRoomsMutation,
  useGetTrainerMessagesMutation,
  useSendTrainerMessageMutation,
- useGetTrainerIndividualRoomMutation
+ useGetTrainerIndividualRoomMutation,
+ useGetAllUsersMutation,
+ useAddLiveMutation,
+ useGetLivesMutation,
+ useDeleteLiveMutation
 
 } = trainerApiSlice;

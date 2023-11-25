@@ -6,7 +6,8 @@ import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
 import Plan from "../models/plans.js";
-import Payments from "../models/payments.js";
+import Payments from "../models/payments.js"; 
+import Live from '../models/lives.js'
 class UserRepository {
   static instance;
 
@@ -59,6 +60,10 @@ class UserRepository {
 
   async getTrainers() {
     return await Trainer.find({});
+  }
+  async findActiveLives(){
+    const result = await Live.find({});
+    return result;
   }
   async findActivePlans() {
     try {
@@ -129,7 +134,6 @@ class UserRepository {
       if (user.subscription_expire) {
         const currentDate = new Date();
         const subscriptionExpireDate = user.subscription_expire;
-      console.log(currentDate,subscriptionExpireDate);
         if (currentDate > subscriptionExpireDate) {
           user.subscription_status = "inactive";
           await user.save();

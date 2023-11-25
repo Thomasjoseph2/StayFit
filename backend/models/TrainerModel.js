@@ -52,6 +52,9 @@ const TrainerSchema = mongoose.Schema(
     description: {
       type: String,
     },
+    live_id: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

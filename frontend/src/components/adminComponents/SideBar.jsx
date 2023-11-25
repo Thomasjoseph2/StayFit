@@ -14,7 +14,7 @@ import SubscriptionPlans from "./SubscriptionPlans";
 import Subscriptions from "./Suscriptions";
 import { FaRunning, FaUsers, FaVideo, FaUtensils, FaCrown, FaSignOutAlt } from "react-icons/fa";
 import AdminNavBar from "./AdminNavbar";
-
+import AdminLiveList from "./AdminLiveList";
 
 const Sidebar = () => {
   const [content, setContent] = useState("Dashboard");
@@ -110,6 +110,14 @@ const Sidebar = () => {
               </li>
               <li
                 className={`py-2 hover:bg-gray-700 flex items-center pl-4  ${
+                  activeMenuItem === "lives" ? "bg-gray-700" : ""
+                }`}
+                onClick={() => changeContent("lives")}
+              >
+                <FaCrown className="mr-2" /> Live List
+              </li>
+              <li
+                className={`py-2 hover:bg-gray-700 flex items-center pl-4  ${
                   activeMenuItem === "logout" ? "bg-gray-700" : ""
                 }`}
                 onClick={logoutHandler}
@@ -132,6 +140,7 @@ const Sidebar = () => {
             {content === "diet" && <AdminDietScreen />}
             {content === "subscriptionPlans" && <SubscriptionPlans />}
             {content === "subscriptions" && <Subscriptions />}
+            {content === "lives" && <AdminLiveList />}
             {content === "logout" && "Logout Content"}
           </div>
         </div>

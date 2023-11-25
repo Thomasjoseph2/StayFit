@@ -22,6 +22,7 @@ import {
   forgotPassword,
   verifyForgotOtp,
   changePassword,
+  getUserConferences
 
 
 } from "../controllers/userController.js";
@@ -59,6 +60,9 @@ router.get('/get-user-diets',getUserDiets)
 router.post('/otp-verification',verifyOtp)
 
 router.get('/get-user-plans',isBlocked,protect,getUserPlans)
+
+router.get('/get-user-conferences',isBlocked,protect,getUserConferences)
+
 
 router.post('/create-order',protect,createOrder)
 

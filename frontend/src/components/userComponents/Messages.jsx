@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import noimg from "../../assets/no-avatar.webp";
-import { FaVideo, FaPaperPlane } from "react-icons/fa";
+import {  FaPaperPlane } from "react-icons/fa";
 import "../../css/overflow.css";
 import {
   useGetRoomsMutation,
@@ -32,7 +32,7 @@ const Messages = () => {
   const [isTyping, setIsTyping] = useState(false);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate;
+  const navigate = useNavigate();
 
   const [getRooms] = useGetRoomsMutation();
   const [getIndividualRoom] = useGetIndividualRoomMutation();
@@ -166,6 +166,11 @@ const Messages = () => {
     }
   };
 
+  // const VideoCallHandler=()=>{
+  //   navigate(`/user-roompage/${individual._id+'videocall'}`)
+
+  // }
+
   return (
     <div className="flex ">
       <div className="lg:w-1/4 md:w-1/2 bg-gray-900 h-screen overflow-y-auto scroll">
@@ -223,7 +228,6 @@ const Messages = () => {
                 <h3 className="text-lg">{individual?.trainer?.name}</h3>
                 {/* <p className="text-sm font-light text-green-500">online</p> */}
               </div>
-              <FaVideo className="text-2xl m-5 cursor-pointer" />
             </div>
             <div
               className="h-3/4 w-full  overflow-x-auto scroll "

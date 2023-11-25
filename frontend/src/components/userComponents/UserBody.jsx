@@ -16,7 +16,6 @@ const UserBody = () => {
     try {
       const response = await getDiets().unwrap();
       setDiets(response.postDiets.slice(0, 4));
-      console.log(response);
     } catch (error) {
       console.error(`Error fetching diet data`, error);
       toast.error(`Error fetching dietdata`);

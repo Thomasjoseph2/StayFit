@@ -24,7 +24,8 @@ import {
   unBlockTrainer,
   unlistPlans,
   activatePlan,
-  getSales
+  getSales,
+  getAdminConferences
 } from "../controllers/adminController.js";
 
 
@@ -74,6 +75,9 @@ router.get('/get-plans',protectAdmin,getPlans)
 router.get('/get-subscriptions',protectAdmin,getSubscriptions)
 
 router.get('/get-sales',protectAdmin,getSales)
+
+router.get('/get-admin-conferences',protectAdmin,getAdminConferences)
+
 
 // router.route('/profile').get(protect,profile).put(protect,upload.single('file'),updateUserProfile);
 

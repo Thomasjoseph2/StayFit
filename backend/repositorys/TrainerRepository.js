@@ -3,6 +3,7 @@ import Trainer from "../models/TrainerModel.js";
 import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
+import Live from "../models/lives.js";
 class TrainerRepository {
   static instance;
 
@@ -17,7 +18,9 @@ class TrainerRepository {
   async findByEmail(email) {
     return await Trainer.findOne(email);
   }
-
+  // async addLive(live) {
+  //   return await Live.create(live);
+  // }
   async matchPasswords(trainer, enteredPassword) {
     return await trainer.matchPasswords(enteredPassword);
   }
@@ -26,7 +29,6 @@ class TrainerRepository {
     return await Trainer.findById(trainerId);
   }
 
-  
   async getPost(trainerId) {
     const post = await Result.findById(trainerId);
   }
@@ -74,28 +76,85 @@ class TrainerRepository {
       console.log(error);
     }
   }
+
+  async addLive(trainerId, live) {
+    try {
+      let result = await Live.findOne({ trainer: trainerId });
+
+      if (result) {
+        result.lives.push(...live.lives);
+      } else {
+        result = new Live(live);
+      }
+
+      await result.save();
+
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async getPosts(trainerId) {
     try {
-      // Find the Result document by trainer ID
       const result = await Result.findOne({ trainer: trainerId });
 
       if (result) {
-        // If the Result document exists, return the posts as an array of objects
         return result.posts.map((post) => {
           return {
             imageName: post.imageName,
             description: post.description,
-            postId: post._id, // Optionally include the post ID if needed
+            postId: post._id, 
           };
         });
       } else {
-        // If the Result document doesn't exist, return an empty array
         return [];
       }
     } catch (error) {
-      throw error; // Handle any errors that occur during the database operation
+      throw error;
     }
   }
+
+  async getLives (trainerId)  {
+    try {
+      const lives = await Live.findOne({ trainer: trainerId });
+      if (lives) {
+        const currentDateTime = new Date();
+        const expirationThreshold = 60 * 60 * 1000; // One hour in milliseconds
+  
+        lives.lives.forEach((live) => {
+          // Convert the date from BSON Date to JavaScript Date
+          const liveDateTime = new Date(live.date);
+  
+          // Set the time based on the live's time
+          const [hours, minutes] = live.time.split(':');
+          liveDateTime.setHours(Number(hours), Number(minutes), 0, 0);
+  
+          if (liveDateTime < currentDateTime) {
+            const timeDifference = currentDateTime - liveDateTime;
+  
+            if (timeDifference < expirationThreshold) {
+              // Set the status to "started" if less than one hour has passed
+              live.expired = "started";
+            
+            } else {
+              // Set the status to "expired" if more than or equal to one hour has passed
+              live.expired = "true";
+            }
+          }
+        });
+        await lives.save();
+        return lives.lives;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+  
+  
+  
   async getDiets(trainerId) {
     try {
       // Find the Result document by trainer ID
@@ -252,6 +311,34 @@ class TrainerRepository {
       }
 
       return { success: true, message: "diet deleted successfully." };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: "Internal server error." };
+    }
+  }
+
+  async deleteLive(trainerId, liveId) {
+    try {
+      const result = await Live.findOneAndUpdate(
+        {
+          trainer: trainerId,
+          "lives._id": liveId,
+        },
+        {
+          $pull: {
+            lives: {
+              _id: liveId,
+            },
+          },
+        },
+        { new: true }
+      );
+
+      if (!result) {
+        return { success: false, message: "live not found." };
+      }
+
+      return { success: true, message: "live deleted successfully." };
     } catch (error) {
       console.error(error);
       return { success: false, message: "Internal server error." };

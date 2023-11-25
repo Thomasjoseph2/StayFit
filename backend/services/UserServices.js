@@ -13,6 +13,7 @@ import deletes3Obj from "../utils/deletes3Obj.js";
 import instance from "../utils/instance.js";
 import crypto from "crypto";
 import util from "util";
+import { log } from "console";
 
 class UserService {
   static instance;
@@ -368,6 +369,15 @@ class UserService {
       return { statusCode: 200, plans };
     }
   });
+
+  findActiveLives = asyncHandler(async () => {
+    const lives = await UserRepository.findActiveLives();
+    
+    if (lives) {
+      return { statusCode: 200, lives };
+    }
+  });
+  
 
   createOrder = asyncHandler(async (price) => {
     var options = {

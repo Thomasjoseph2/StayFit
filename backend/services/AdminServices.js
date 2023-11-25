@@ -310,6 +310,14 @@ class AdminServices {
       throw new Error("subscriptions not found");
     }
   });
+
+  getAdminConferences = asyncHandler(async () => {
+    const lives = await AdminRepository.findActiveLives();
+    
+    if (lives) {
+      return { statusCode: 200, lives };
+    }
+  });
 }
 
 export default new AdminServices();

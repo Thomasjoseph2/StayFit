@@ -9,11 +9,13 @@ import {
   useGetTrainerMessagesMutation,
   useSendTrainerMessageMutation,
   useGetTrainerIndividualRoomMutation,
+  useGetAllUsersMutation,
 } from "../../slices/trainerApiSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 import io from "socket.io-client";
+import { button, input } from "@material-tailwind/react";
 
 const ENDPOINT = "http://localhost:5000";
 var socket, selectedChatCompare;
@@ -28,7 +30,13 @@ const TrainerMessages = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-
+  const [selected, setSelected] = useState(true);
+  const [brodcastMessage, setBrodcastMessage] = useState("");
+  const [invitationSuccess, setInvitationSuccess] = useState({});
+  const [invitationSending, setInvitationSending] = useState({});
+  const [selectedButton, setSelectedButton] = useState("message");
+  const [liveIdInput, setLiveIdInput] = useState("");
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -36,6 +44,7 @@ const TrainerMessages = () => {
   const [GetMessages] = useGetTrainerMessagesMutation();
   const [SendMessage] = useSendTrainerMessageMutation();
   const [getIndividualRoom] = useGetTrainerIndividualRoomMutation();
+  const [getUsers] = useGetAllUsersMutation();
 
   const messagesContainerRef = useRef(null);
 
@@ -87,7 +96,6 @@ const TrainerMessages = () => {
     try {
       const res = await getRooms(trainerId).unwrap();
       setRooms(res);
-
     } catch (err) {
       if (err.status === 401) {
         dispatch(logout());
@@ -132,7 +140,7 @@ const TrainerMessages = () => {
   const getTrainerRoom = async (trainerId, userId) => {
     try {
       const res = await getIndividualRoom({ trainerId, userId }).unwrap();
-      setIndividual(res);
+      setIndividual(res, trainerId, userId);
     } catch (err) {
       console.log(err);
     }
@@ -158,6 +166,55 @@ const TrainerMessages = () => {
     }, timerLength);
   };
 
+  const activateMessage = () => {
+    setSelected((prev) => !prev);
+    setSelectedButton("message")
+  };
+  const activateLink=()=>{
+    setSelected((prev) => !prev);
+    setSelectedButton("link")
+    
+  }
+  const dectivateMessage = () => {
+    setSelected((prev) => !prev);
+    setBrodcastMessage("");
+    setInvitationSuccess({});
+  };
+  const handleSendInvitation = async (roomId, userId) => {
+    setInvitationSending((prev) => ({ ...prev, [userId]: true }));
+    try {
+
+      if(selectedButton==="message"){
+          await SendMessage({
+          chatid: roomId,
+          sender: trainerInfo._id,
+          type: "Trainer",
+          content: brodcastMessage,
+        }).unwrap();
+      }
+      // else if(selectedButton==='link'){
+
+      //   const liveId=trainerInfo.liveId
+  
+      //   await SendMessage({
+      //     chatid: roomId,
+      //     sender: trainerInfo._id,
+      //     type: "Trainer",
+      //     content: `localhost:3000/trainer-video-conference/${liveId}`,
+      //   }).unwrap();
+      // }
+
+
+
+      setInvitationSuccess((prev) => ({ ...prev, [userId]: true }));
+    } catch (error) {
+      console.error("Error sending invitation:", error);
+      setInvitationSuccess((prev) => ({ ...prev, [userId]: false }));
+    } finally {
+      setInvitationSending((prev) => ({ ...prev, [userId]: false }));
+    }
+  };
+
   return (
     <div className="flex ">
       <div className="lg:w-1/4 md:w-1/2 bg-gray-900 h-screen overflow-y-auto scroll">
@@ -171,12 +228,44 @@ const TrainerMessages = () => {
           />
           <div className="ml-4 text-white">
             <h3 className="text-2xl">{trainerInfo.name}</h3>
-            <p className="text-lg font-light">{trainerInfo.email}</p>
+            {selected ? (
+              <button
+                onClick={dectivateMessage}
+                className="text-lg bg-red-600 rounded font-light mt-2 p-1"
+              >
+                Done
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={activateMessage}
+                  className="text-lg bg-green-600 rounded font-light mt-2 p-1"
+                >
+                 Message
+                </button>
+                   {/* <button
+                  onClick={activateLink}
+                  className="text-lg bg-green-600 rounded font-light mt-2 p-1 ml-2"
+                >
+                 link
+                </button> */}
+              </>
+            )}
           </div>
         </div>
         <hr className="mt-4" />
 
         <div className="text-blue-900 text-xl m-3">Messages</div>
+        {selected && (
+          <input
+            className="w-3/4 mx-8 h-10 rounded-full p-4 shadow-md bg-gray-800"
+            type="text"
+            placeholder="type a message....."
+            value={brodcastMessage}
+            onChange={(e) => setBrodcastMessage(e.target.value)}
+            required
+          />
+        )}
         <div className="mx-8 h-full">
           {rooms.map((room, index) => (
             <div
@@ -197,6 +286,24 @@ const TrainerMessages = () => {
                   {room.user.email}
                 </p>
               </div>
+              {selected && (
+                <>
+                  {invitationSending[room.user._id] ? (
+                    <div className="ml-2 text-sm text-white">Sending...</div>
+                  ) : invitationSuccess[room.user._id] ? (
+                    <div className="ml-2 text-green-500">done!</div>
+                  ) : (
+                    <button
+                      className="bg-blue-800 text-white ml-2 rounded p-1 text-sm"
+                      onClick={() =>
+                        handleSendInvitation(room._id, room.user._id)
+                      }
+                    >
+                      Send
+                    </button>
+                  )}
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -215,7 +322,6 @@ const TrainerMessages = () => {
                 <h3 className="text-lg">{individual?.user?.name}</h3>
                 {/* <p className="text-sm font-light text-green-500">online</p> */}
               </div>
-              <FaVideo className="text-2xl m-5 cursor-pointer" />
             </div>
             <div
               className="h-3/4 w-full  overflow-x-auto scroll "

@@ -252,6 +252,12 @@ const getSales = asyncHandler(async (req, res) => {
 
   res.status(response.statusCode).json(response.sales);
 });
+
+const getAdminConferences = asyncHandler(async (req, res) => {
+  const response = await AdminServices.getAdminConferences();
+
+  res.status(response.statusCode).json(response.lives);
+});
 export {
   authAdmin,
   logoutAdmin,
@@ -273,5 +279,6 @@ export {
   unBlockTrainer,
   unlistPlans,
   getSales,
-  activatePlan
+  activatePlan,
+  getAdminConferences
 };

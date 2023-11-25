@@ -17,7 +17,10 @@ import {
     deleteDiet,
     addTrainerProfileImage,
     editTrainerProfile,
-    editDiet
+    editDiet,
+    addLive,
+    getLives,
+    deleteLive
 
 } from "../controllers/TraninerController.js";
 import { getTrainerRooms,chatSend,getMessages ,createTrainerRoom} from "../controllers/chatController.js";
@@ -66,6 +69,14 @@ router.post('/add-trainer-profile-image',protectTrainer,upload.single("trainerIm
 router.post('/update-trainer-profile',protectTrainer,editTrainerProfile)
 
 router.post('/update-diet',protectTrainer,editDiet)
+
+router.post('/add-live',protectTrainer,addLive)
+
+router.post('/delete-live',protectTrainer,deleteLive)
+
+
+router.get('/get-lives/:trainerId',protectTrainer,getLives)
+
 
 
 router.post('/get-or-create-trainer-room',protectTrainer,isTrainerBlocked,createTrainerRoom)

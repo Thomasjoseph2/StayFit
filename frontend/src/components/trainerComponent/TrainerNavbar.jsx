@@ -11,7 +11,8 @@ import {
   FaComment,
   FaUtensils,
   FaPlayCircle,
-  FaDumbbell
+  FaDumbbell,
+  FaVideo
 } from "react-icons/fa"; // Import appropriate icons
 
 const TrainerNavbar = () => {
@@ -46,7 +47,7 @@ const TrainerNavbar = () => {
     setIsOpen(!isOpen);
 
   };
-
+/*`/trainer-video-conference/${trainerInfo.liveId}`*/
   return (
     <nav className="bg-red-700 bg-opacity-75 p-4 flex justify-between items-center z-10 fixed w-full ">
       <div className="text-white font-bold text-xl">
@@ -59,6 +60,9 @@ const TrainerNavbar = () => {
           <Link to="/trainer" className="text-white hover:text-gray-300 text-xl">
             <FaHome size={24} />
           </Link>{" "}
+          <Link to={`trainer/list-lives`} className="text-white hover:text-gray-300 text-xl">
+            <FaVideo size={24} />
+          </Link>
           <Link to="/trainer/messages" className="text-white hover:text-gray-300 text-xl">
             <FaComment size={24} />
           </Link>{" "}
@@ -130,7 +134,7 @@ const TrainerNavbar = () => {
             </li>
             <li>
               <Link
-                href="#"
+                href="/trainer-video-conference"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Live

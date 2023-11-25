@@ -57,6 +57,15 @@ io.on("connection", (socket) => {
   socket.on("typing", (room) => socket.in(room).emit("typing"));
   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
+  // socket.on("uservideoCall", ({ to, offer }) => {
+  //   io.to(to).emit("incoming:call", { from: socket.id, offer });
+  // });
+
+  // socket.on('videoCall',(roomId)=>{
+  //    const room=roomId;
+     
+  // })
+
   socket.on("new message", (newMessageReceived) => {
     var chat = newMessageReceived.room;
     if (!chat.user || !chat.trainer) {
@@ -71,8 +80,8 @@ io.on("connection", (socket) => {
       socket.to(chat.user._id).emit("message received", newMessageReceived);
     }
   });
-  socket.off("setup",()=>{
+  socket.off("setup", () => {
     console.log("USER DISCONNECTED");
-    socket.leave(userData._id)
-  })
+    socket.leave(userData._id);
+  });
 });

@@ -176,6 +176,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getUserConferences: builder.mutation({
+      query: () => ({
+        url: `${USERS_URL}/get-user-conferences`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -203,6 +209,7 @@ export const {
   useGetRoomsMutation,
   useGetIndividualRoomMutation,
   useGetMessagesMutation,
-  useSendMessageMutation
+  useSendMessageMutation,
+  useGetUserConferencesMutation
   
 } = usersApiSlice;

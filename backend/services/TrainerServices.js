@@ -234,6 +234,11 @@ class TrainerServices {
     }
   );
 
+  getLives=asyncHandler(async(trainerId)=>{
+    const lives = await TrainerRepository.getLives(trainerId);
+    return { statusCode: 200, lives };
+  })
+
   getDiets = asyncHandler(async (trainerId) => {
     const diets = await TrainerRepository.getDiets(trainerId);
 
@@ -272,6 +277,24 @@ class TrainerServices {
       throw new Error("posts not found"); // Send error response as JSON
     }
   });
+
+  deleteLive = asyncHandler(async (trainerId, liveId) => {
+
+    
+    const response = await TrainerRepository.deleteLive(
+      trainerId,
+      liveId
+    );
+
+    if (response.success === true) {
+
+      return { statusCode: 201, message: "live deleted successfully" };
+    } else if (response.success === false) {
+      return { statusCode: 401, message: "live not found" };
+    } else {
+      throw new Error("posts not found"); // Send error response as JSON
+    }
+  });
   addProfileImage = asyncHandler(async (trainerId, imgbuffer, mimetype) => {
     const buffer = await goodSizeResize(imgbuffer);
 
@@ -295,6 +318,26 @@ class TrainerServices {
 
     if (trainer) {
       return { statusCode: 200, trainer };
+    }
+  });
+
+  addLive = asyncHandler(async (liveObj) => {
+
+    const live={
+      trainer:liveObj.trainer,
+      trainerName:liveObj.trainerName,
+      lives:[{
+        title:liveObj.title,
+        randomId:liveObj.randomId,
+        date:liveObj.date,
+        time:liveObj.time,
+      }]
+    }
+
+    const addLive = await TrainerRepository.addLive(liveObj.trainer,live);
+
+    if (addLive) {
+      return { statusCode: 200, addLive };
     }
   });
 

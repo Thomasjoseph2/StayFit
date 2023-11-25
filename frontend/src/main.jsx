@@ -15,6 +15,8 @@ import store from "./store";
 
 import ErrorPage from "./components/ErrorPage";
 
+import Roompage from "./components/roompage.jsx";
+
 import UserBody from "./components/userComponents/UserBody";
 import Registration from "./components/userComponents/Registration";
 import LoginPage from "./components/userComponents/LoginPage";
@@ -33,16 +35,18 @@ import PrivateRoute from "./components/adminComponents/PrivateRoutes";
 import Sidebar from "./components/adminComponents/SideBar";
 import SeeVideosHOC from "./components/userComponents/SeeVideosHOC.jsx";
 import SeeDietsHOC from "./components/userComponents/SeeDietsHOC.jsx";
+import LiveList from "./components/userComponents/LiveList.jsx";
 
 import TrainerPrivateRoute from "./components/trainerComponent/TrainerPrivateRoute";
 import TrainerLogin from "./components/trainerComponent/TrainerLogin";
-import TrainerHome from "./components/trainerComponent/trainerHome";
+import TrainerHome from "./components/trainerComponent/TrainerHome.jsx";
 import TrainerProfile from "./components/trainerComponent/TrainerProfile";
 import AddPostScreen from "./screens/AddPostScreen";
 import VideoScreen from "./screens/VideoScreen";
 import DietScreen from "./screens/DietScreen";
 import TrainerMessages from "./components/trainerComponent/TrainerMessage.jsx";
-
+import VideoStream from "./components/VideoStream.jsx";
+import ListLives from "./components/trainerComponent/ListLives.jsx";
 const routes = createRoutesFromElements(
   <Route path="/" element={<App />}>
     {/************User side routes ***************/}
@@ -64,6 +68,11 @@ const routes = createRoutesFromElements(
       <Route path="/user-trainer-view/:trainerId" element={<TrainerView />} />
       <Route path="/subscription-plans" element={<SubscriptionPlans/>} />
       <Route path="/user-messages/:chatId" element={<Messages/>}/>
+      <Route path="/user-roompage/:roomId" element={<Roompage/>}/>
+      <Route path='/user-conferences' element={<LiveList/>}/>
+      <Route path='/video-conference/:liveId' element={<VideoStream/>}/>
+
+
     </Route>
 
     {/************Admin side routes ***************/}
@@ -82,7 +91,10 @@ const routes = createRoutesFromElements(
       <Route path="/trainer/videos" element={<VideoScreen />} />
       <Route path="/trainer/diet" element={<DietScreen />} />
       <Route path="/trainer/messages" element={<TrainerMessages />} />
-
+     {/* <Route path="/trainer-roompage/:id" element={<Roompage/>}/> */}
+     <Route path='/video-conference/:liveId' element={<VideoStream/>}/>
+     <Route path='trainer/list-lives' element={<ListLives />}/>
+     
     </Route>
   </Route>
 );

@@ -6,6 +6,7 @@ import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
 import Plan from "../models/plans.js";
 import Payment from "../models/payments.js";
+import Live from "../models/lives.js";
 class AdminRepository {
   static instance;
 
@@ -190,6 +191,11 @@ class AdminRepository {
       console.error(error);
       return { success: false, message: "Internal server error." };
     }
+  }
+
+  async findActiveLives(){
+    const result = await Live.find({});
+    return result;
   }
 
   async unlistPlans(planId) {
