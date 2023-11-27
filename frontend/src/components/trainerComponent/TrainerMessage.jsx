@@ -274,23 +274,23 @@ const TrainerMessages = () => {
               className="flex items-center py-2 border-b-[1px] border-gray-700 cursor-pointer "
             >
               <img
-                src={room.user.imageUrl ? room.user.imageUrl : noimg}
+                src={room?.user?.imageUrl ? room.user.imageUrl : noimg}
                 className="rounded-full w-16 h-16"
                 width={60}
                 height={60}
                 alt="User Avatar"
               />
               <div className="ml-4 text-white">
-                <h3 className="text-xl">{room.user.name}</h3>
+                <h3 className="text-xl">{room?.user?.name}</h3>
                 <p className="text-xs font-light text-gray-500">
-                  {room.user.email}
+                  {room?.user?.email}
                 </p>
               </div>
               {selected && (
                 <>
-                  {invitationSending[room.user._id] ? (
+                  {invitationSending[room?.user?._id] ? (
                     <div className="ml-2 text-sm text-white">Sending...</div>
-                  ) : invitationSuccess[room.user._id] ? (
+                  ) : invitationSuccess[room?.user?._id] ? (
                     <div className="ml-2 text-green-500">done!</div>
                   ) : (
                     <button

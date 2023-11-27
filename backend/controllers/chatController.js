@@ -116,7 +116,6 @@ const getRooms = asyncHandler(async (req, res) => {
 const chatSend = asyncHandler(async (req, res) => {
   const { content, chatid, sender, type } = req.body;
 
-  console.log(req.body);
   // Create a new chat message
   const newMessage = new ChatMessage({
     room: chatid,

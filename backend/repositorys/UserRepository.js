@@ -62,7 +62,7 @@ class UserRepository {
     return await Trainer.find({});
   }
   async findActiveLives(){
-    const result = await Live.find({});
+    const result = await Live.find({}).sort({_id: -1})
     return result;
   }
   async findActivePlans() {

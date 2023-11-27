@@ -170,7 +170,6 @@ const LoginPage = () => {
               toast.error("login failed");
             }}
           />
-          ;
         </div>
       </div>
     </div>

@@ -35,6 +35,7 @@ import SeeVideosHOC from "./components/userComponents/SeeVideosHOC.jsx";
 import SeeDietsHOC from "./components/userComponents/SeeDietsHOC.jsx";
 import LiveList from "./components/userComponents/LiveList.jsx";
 import UserVideoStream from "./components/userComponents/UserVideoStream.jsx";
+import SubscriptionPrivateRoute from "./components/userComponents/SubscriptionPrivateRoute.jsx";
 
 import TrainerPrivateRoute from "./components/trainerComponent/TrainerPrivateRoute";
 import TrainerLogin from "./components/trainerComponent/TrainerLogin";
@@ -67,12 +68,12 @@ const routes = createRoutesFromElements(
       <Route path="/profile" element={<UserProfile />} />
       <Route path="/user-trainer-view/:trainerId" element={<TrainerView />} />
       <Route path="/subscription-plans" element={<SubscriptionPlans/>} />
+      <Route path="" element={<SubscriptionPrivateRoute />}>
       <Route path="/user-messages/:chatId" element={<Messages/>}/>
       <Route path="/user-roompage/:roomId" element={<Roompage/>}/>
       <Route path='/user-conferences' element={<LiveList/>}/>
       <Route path='/user/video-conference/:liveId' element={<UserVideoStream/>}/>
-
-
+      </Route>
     </Route>
 
     {/************Admin side routes ***************/}

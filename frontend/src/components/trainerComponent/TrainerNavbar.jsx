@@ -126,31 +126,31 @@ const TrainerNavbar = () => {
           <ul className="space-y-2">
           <li>
               <Link
-                href="#"
+                to="/trainer"
                 className="text-white hover:text-gray-300 w-full block"
               >
-               Dashboard
+               Home
               </Link>
             </li>
             <li>
               <Link
-                href="/trainer-video-conference"
+                to='trainer/list-lives'
                 className="text-white hover:text-gray-300 w-full block"
               >
-                Live
+                Conference
               </Link>
             </li>
             <li>
             <li>
               <Link
-                href="#"
+                to="/trainer/messages"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Messages
               </Link>
             </li>
               <Link
-                href="#"
+                to="/trainer/diet"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Diet
@@ -158,10 +158,18 @@ const TrainerNavbar = () => {
             </li>
             <li>
               <Link
-                href="#"
+                to="/trainer/videos"
                 className="text-white hover:text-gray-300 w-full block"
               >
                 Videos
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/trainer/add-results"
+                className="text-white hover:text-gray-300 w-full block"
+              >
+                Results
               </Link>
             </li>
 

@@ -68,6 +68,7 @@ const SubscriptionPlans = () => {
 
     if (result.success === true) {
       toast.success(result.message);
+      dispatch(setCredentials({ ...userInfo, subscription: result.user.subscription_status }));
       navigate("/profile");
     } else if (result.success === false) {
       toast.error(result.message);

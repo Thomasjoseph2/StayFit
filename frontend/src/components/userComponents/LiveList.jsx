@@ -64,7 +64,7 @@ const LiveList = () => {
                         className="w-full"
                         onClick={() => handleNavigate(live.randomId)}
                       >
-                        Click Here to Start conference
+                        Click Here to join conference
                       </Button>
                     </CardFooter>
                   </Card>

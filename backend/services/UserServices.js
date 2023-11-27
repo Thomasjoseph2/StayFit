@@ -98,6 +98,8 @@ class UserService {
           imagePath: image,
 
           blocked: user.blocked,
+
+          subscription: user.subscription_status,
         },
       };
     } else if (!user.verified === true) {
@@ -112,6 +114,7 @@ class UserService {
   };
 
   googleLogin = asyncHandler(async (token, res) => {
+    
     const googleClient = new OAuth2Client(process.env.GOOGLE_KEY);
 
     const ticket = await googleClient.verifyIdToken({
@@ -150,6 +153,8 @@ class UserService {
           imagePath: image,
 
           blocked: userExists.blocked,
+
+          subscription: userExists.subscription_status,
         },
       };
     } else {
@@ -356,6 +361,8 @@ class UserService {
           email: user.email,
 
           blocked: user.blocked,
+
+          subscription: user.subscription_status,
         },
       };
     }
@@ -371,12 +378,11 @@ class UserService {
 
   findActiveLives = asyncHandler(async () => {
     const lives = await UserRepository.findActiveLives();
-    
+
     if (lives) {
       return { statusCode: 200, lives };
     }
   });
-
 
   createOrder = asyncHandler(async (price) => {
     var options = {
@@ -395,6 +401,7 @@ class UserService {
   });
 
   verifyPayment = asyncHandler(async (data) => {
+    console.log('hreredtydhj');
     const {
       razorpay_order_id,
 
@@ -420,12 +427,14 @@ class UserService {
     if (generated_signature === razorpay_signature) {
       await UserRepository.addPayment(data);
 
-      await UserRepository.addSubscription(userId, plan, duration);
+     const user= await UserRepository.addSubscription(userId, plan, duration);
+
+     console.log(user);
 
       return {
         statusCode: 200,
 
-        data: { success: true, message: "Payment verified successfully" },
+        data: { success: true, message: "Payment verified successfully",user:user },
       };
     } else {
       return {
