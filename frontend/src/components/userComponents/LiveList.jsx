@@ -35,8 +35,8 @@ const LiveList = () => {
   }
   return (
     <>
-      <div className="mt-20 mb-20 container ml-14 flex flex-wrap">
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 mt-20">
+      <div className="mt-20 mb-20  flex flex-wrap justify-center items-center">
+        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 mt-20">
           {lives.map((trainer) =>
             trainer.lives.map((live) => {
               return live.expired !== "true" ? (

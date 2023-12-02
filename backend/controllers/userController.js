@@ -98,6 +98,8 @@ const getUserProfile = asyncHandler(async (req, res) => {
 
 const addProfileImage = asyncHandler(async (req, res) => {
 
+  console.log(req.file);
+
   const result = await UserServices.addProfileImage(
 
     req.file.buffer,

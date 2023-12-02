@@ -25,7 +25,8 @@ import {
   unlistPlans,
   activatePlan,
   getSales,
-  getAdminConferences
+  getAdminConferences,
+  getCustomRangeData
 } from "../controllers/adminController.js";
 
 
@@ -69,6 +70,8 @@ router.post ('/add-plans',protectAdmin,addPlans)
 router.post ('/unlist-plan',protectAdmin,unlistPlans)
 
 router.post('/activate-plan',protectAdmin,activatePlan)
+
+router.post('/custom-date-data',protectAdmin,getCustomRangeData)
 
 router.get('/get-plans',protectAdmin,getPlans)
 

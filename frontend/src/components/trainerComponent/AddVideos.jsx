@@ -20,7 +20,22 @@ const AddVideos = ({ refreshPosts }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (postFile && description) {
+    if (!postFile) {
+      toast.error("Please select a video file.");
+      return;
+    }
+  
+    if (!specification.trim()) {
+      toast.error("Please enter the specification.");
+      return;
+    }
+  
+    if (!description.trim()) {
+      toast.error("Please enter a description.");
+      return;
+    }
+
+    if (postFile && description && specification) {
       try {
         // Create a FormData object and append the file and description
         const formData = new FormData();
@@ -75,6 +90,7 @@ const AddVideos = ({ refreshPosts }) => {
                 onChange={handleFileChange}
                 name="postFile"
                 className="mb-4 p-2 w-full border rounded border-black"
+                required
               />
 
               <input
@@ -83,6 +99,7 @@ const AddVideos = ({ refreshPosts }) => {
                 value={specification}
                 placeholder="enter specification..."
                 onChange={(e) => setSpecification(e.target.value)}
+                required
               />
 
               <textarea
@@ -91,6 +108,7 @@ const AddVideos = ({ refreshPosts }) => {
                 placeholder="Enter description..."
                 className="mb-4 p-2 w-full border rounded border-black mt-3"
                 rows="4"
+                required
               />
               <div className="flex justify-end">
                 <button

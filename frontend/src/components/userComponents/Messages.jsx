@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import noimg from "../../assets/no-avatar.webp";
-import {  FaPaperPlane } from "react-icons/fa";
+import { FaPaperPlane } from "react-icons/fa";
 import "../../css/overflow.css";
 import {
   useGetRoomsMutation,
@@ -51,7 +51,6 @@ const Messages = () => {
       socket.off("stop typing");
       socket.disconnect();
     };
-    
   }, []);
 
   useEffect(() => {
@@ -60,7 +59,6 @@ const Messages = () => {
     if (chatId && chatId !== "allchats") {
       getRoom(chatId, userInfo._id);
     }
-    
   }, [userInfo._id, chatId]);
 
   useEffect(() => {
@@ -176,7 +174,7 @@ const Messages = () => {
       <div className="lg:w-1/4 md:w-1/2 bg-gray-900 h-screen overflow-y-auto scroll">
         <div className="flex items-center mt-24 mx-9  ">
           <img
-            src={userInfo?.imagePath ? userInfo.imagePath: noimg }
+            src={userInfo?.imagePath ? userInfo.imagePath : noimg}
             className="rounded-full"
             width={60}
             height={60}

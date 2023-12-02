@@ -56,7 +56,8 @@ const getTrainers = asyncHandler(async (req, res) => {
 });
 
 const blockUser = asyncHandler(async (req, res) => {
-  const userId = new ObjectId(req.body.userId);
+  
+  const userId = new ObjectId(req.body.userIdToConfirm);
 
   const blocked = await AdminServices.blockUser(userId);
 
@@ -70,7 +71,7 @@ const blockUser = asyncHandler(async (req, res) => {
 });
 
 const unblockUser = asyncHandler(async (req, res) => {
-  const userId = new ObjectId(req.body.userId);
+  const userId = new ObjectId(req.body.userIdToConfirm);
   const unblocked = await AdminServices.unblockUser(userId);
 
   if (unblocked) {
@@ -258,6 +259,14 @@ const getAdminConferences = asyncHandler(async (req, res) => {
 
   res.status(response.statusCode).json(response.lives);
 });
+
+const getCustomRangeData=asyncHandler(async(req,res)=>{
+  const { startDate,endDate}=req.body
+  const data=await AdminServices.getCustomRangeData(startDate,endDate)
+  console.log(data);
+  res.status(data.statusCode).json( {customSales:data.sales.data[0].totalCustomSales});
+
+})
 export {
   authAdmin,
   logoutAdmin,
@@ -280,5 +289,6 @@ export {
   unlistPlans,
   getSales,
   activatePlan,
-  getAdminConferences
+  getAdminConferences,
+  getCustomRangeData
 };

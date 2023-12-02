@@ -157,6 +157,13 @@ export const adminApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getCustomDateData: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/custom-date-data`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -183,4 +190,6 @@ export const {
   useActivatePlansMutation,
   useGetSalesMutation,
   useGetAdminConferencesMutation,
+  useTrainersMutation,
+  useGetCustomDateDataMutation
 } = adminApiSlice;

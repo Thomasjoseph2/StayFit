@@ -28,7 +28,16 @@ const AddDiet = ({ refreshPosts }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    if (!dietImage) {
+      toast.error("Please select an image for the diet.");
+      return;
+    }
+  
+    if (!category.trim() || !dietType.trim() || !description.trim()) {
+      toast.error("Please fill out all the fields.");
+      return;
+    }
    
       try {
         const formData = new FormData();
@@ -93,6 +102,7 @@ const AddDiet = ({ refreshPosts }) => {
                 className="border p-2 w-full text-black border-black mt-2"
                 placeholder='category of the diet...'
                 onChange={(e) => setCategory(e.target.value)}
+                required
               />
 
               <input
@@ -100,6 +110,7 @@ const AddDiet = ({ refreshPosts }) => {
                 className="border p-2 w-full text-black border-black mt-2"
                 placeholder="enter the diet type..."
                 onChange={(e) => setDietType(e.target.value)}
+                required
               />
               <textarea
                 value={description}

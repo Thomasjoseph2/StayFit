@@ -15,7 +15,7 @@ const LoginPage = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [error,setError]=useState('')
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -60,6 +60,7 @@ const LoginPage = () => {
       );
       navigate("/");
     } catch (err) {
+      console.log(err);
       setError("Invalid email or password");
     }
   };
@@ -162,7 +163,7 @@ const LoginPage = () => {
           <hr className="w-full" />
         </div>
         <div className="my-6 space-y-2 mt-10 ">
-          <GoogleLogin
+          <GoogleLogin 
             onSuccess={(response) => {
               googleSubmitHandler(response.credential);
             }}

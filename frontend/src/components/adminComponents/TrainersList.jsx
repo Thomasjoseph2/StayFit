@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import {
   useBlockTrainerMutation,
   useUnblockTrainerMutation,
+  useTrainersMutation
 } from "../../slices/adminApiSlice";
 import ConfirmationDialog from "../Confirmation";
 
@@ -22,6 +23,7 @@ const TrainersList = () => {
 
   const [blockTrainer] = useBlockTrainerMutation();
   const [unblockTrainer] = useUnblockTrainerMutation();
+  const [getTrainers]=useTrainersMutation();
 
   const filteredTrainers = actualData.filter(
     (trainer) =>
@@ -34,17 +36,19 @@ const TrainersList = () => {
   };
 
   useEffect(() => {
-    axios
-      .get("/api/admin/trainers")
-      .then((response) => {
-        setActualData(response.data); // Set trainer data in state
-        setLength(response.data.length);
-      })
-      .catch((error) => {
-        console.error("Error fetching trainer data:", error);
-        toast.error("Error fetching trainer data");
-      });
+    fetchTrainerData()
   }, [refresher]);
+
+  const fetchTrainerData = async () => {
+    try {
+      const response = await getTrainers();
+      setActualData(response.data);
+      setLength(response.data.length)
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      toast.error("Error fetching user data");
+    }
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);

@@ -126,6 +126,14 @@ const UserNavbar = () => {
             </li>
             <li>
               <Link
+                to='/user-conferences'
+                className="text-white hover:text-gray-300 w-full block"
+              >
+                Conferences
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/diets"
                 className="text-white hover:text-gray-300 w-full block"
               >

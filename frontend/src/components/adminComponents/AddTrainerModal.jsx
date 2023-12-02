@@ -105,7 +105,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
     }
 
     if (!profileImage) {
-      setGenderError("image required");
+      setImageError("image required");
       isValid = false;
     }
     if (isValid) {
@@ -415,8 +415,12 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
                           type="file"
                           accept="image/*"
                           onChange={handleImageChange}
-                          className="mb-2"
-                        />
+                          className={`mb-2 ${imageError ? "border-red-500" : ""}`}                        />
+                        {imageError && (
+                          <p className="text-red-500 text-xs italic">
+                            {imageError}
+                          </p>
+                        )}
                       </div>
                     </div>
 

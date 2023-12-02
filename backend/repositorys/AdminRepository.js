@@ -283,6 +283,44 @@ class AdminRepository {
       console.error(error);
     }
   }
+
+  async getCustomRangeData(startDate, endDate) {
+    // Convert the start and end dates to Date objects
+    const startDay = new Date(startDate);
+    const endDay = new Date(endDate);
+  
+    // Set the time part of both start and end dates to midnight
+    startDay.setUTCHours(0, 0, 0, 0);
+    endDay.setUTCHours(23, 59, 59, 999);
+  
+    const aggregatePipeline = [
+      {
+        $match: {
+          createdAt: {
+            $gte: startDay,
+            $lte: endDay,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalCustomSales: { $sum: "$amount" },
+        },
+      },
+    ];
+  
+    try {
+      const result = await Payment.aggregate(aggregatePipeline);
+      return { data: result }
+    } catch (error) {
+      console.error(error);
+      return { statusCode: 500, error: "Internal server error" };
+    }
+  }
+  
+  
+  
   
   
   

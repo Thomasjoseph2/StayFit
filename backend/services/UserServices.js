@@ -293,6 +293,7 @@ class UserService {
   });
 
   addProfileImage = asyncHandler(async (imgBuffer, userId, mimetype) => {
+    
     const buffer = await goodSizeResize(imgBuffer);
 
     const imageName = randomImageName();

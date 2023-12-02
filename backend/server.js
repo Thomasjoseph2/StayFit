@@ -37,7 +37,7 @@ import { Server } from "socket.io";
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    // origin: ["https://stayfit.online","https://www.stayfit.online"],
+    // origin: ["https://thomasjoseph.online","https://www.thomasjoseph.online"],
     origin: "http://localhost:3000",
   },
 });

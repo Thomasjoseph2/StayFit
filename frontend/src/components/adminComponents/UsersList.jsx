@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {
   useBlockUserMutation,
   useUnblockUserMutation,
+  useUsersMutation
 } from "../../slices/adminApiSlice";
-import ConfirmationModal from "../ConfirmationModal";
+import ConfirmationDialog from "../Confirmation";
 
 const UsersList = () => {
   const [actualData, setActualData] = useState([]);
-  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState(false);
-
-  const [blockUser] = useBlockUserMutation();
-  const [unblockUser] = useUnblockUserMutation();
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [confirmedAction, setConfirmedAction] = useState(null);
   const [refresher, setRefresher] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [length,setLength]=useState(0)
+  const [userIdToConfirm, setUserIdToConfirm] = useState(null);
 
   const [currentPage,setCurrentPage]=useState(1);
   const [postsPerPage,setPostPerPage]=useState(10);
+
+  const [blockUser] = useBlockUserMutation();
+  const [unblockUser] = useUnblockUserMutation();
+  const [getUsers]=useUsersMutation();
+
+
 
   const filteredUsers = actualData.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())||
@@ -26,7 +32,7 @@ const UsersList = () => {
   );
   const fetchUserData = async () => {
     try {
-      const response = await axios.get("/api/admin/users");
+      const response = await getUsers();
       setActualData(response.data);
       setLength(response.data.length)
     } catch (error) {
@@ -40,42 +46,85 @@ const UsersList = () => {
     fetchUserData();
   }, [refresher]);
 
-  const handleBlockUser = async (userId) => {
-    const confirmBlock = window.confirm(
-      "are you sure you want to block this user?"
-    );
-    if (confirmBlock) {
-      try {
-        await blockUser({ userId });
 
+  const handleBlockUser = (userId) => {
+    setUserIdToConfirm(userId);
+    setConfirmedAction("block");
+    setIsConfirmationVisible(true);
+  };
+
+  const handleUnBlockUser = (userId) => {
+    setUserIdToConfirm(userId);
+    setConfirmedAction("unblock");
+    setIsConfirmationVisible(true);
+  };
+
+  const handleConfirmation = async () => {
+    try {
+      if (confirmedAction === "block") {
+        await blockUser({ userIdToConfirm });
         toast.success("user blocked");
-
-        setRefresher((prev) => !prev);
-      } catch (err) {
-        console.error("Error blocking user:", err);
-        // Show an error toast
-        toast.error("An error occurred while blocking the user.");
+      } else if (confirmedAction === "unblock") {
+        await unblockUser({ userIdToConfirm });
+        toast.success("user unblocked successfully");
       }
+      setRefresher((prev) => !prev);
+    } catch (err) {
+      console.error(
+        `Error ${
+          confirmedAction === "block" ? "blocking" : "unblocking"
+        } user:`,
+        err
+      );
+      // Show an error toast
+      toast.error(
+        `An error occurred while ${
+          confirmedAction === "block" ? "blocking" : "unblocking"
+        } the user.`
+      );
     }
+    setUserIdToConfirm(null);
+    setConfirmedAction(null);
+    setIsConfirmationVisible(false);
   };
 
-  const handleUnBlockUser = async (userId) => {
-    const confirmUnblock = window.confirm(
-      "Are you sure you want to unblock this user?"
-    );
-    if (confirmUnblock) {
-      try {
-        await unblockUser({ userId });
-        toast.success("User unblocked successfully");
-        // Refetch user data and update state after unblocking
-        setRefresher((prev) => !prev);
-      } catch (err) {
-        console.error("Error unblocking user:", err);
-        // Show an error toast
-        toast.error("An error occurred while unblocking the user.");
-      }
-    }
-  };
+
+  // const handleBlockUser = async (userId) => {
+  //   const confirmBlock = window.confirm(
+  //     "are you sure you want to block this user?"
+  //   );
+  //   if (confirmBlock) {
+  //     try {
+  //       await blockUser({ userId });
+
+  //       toast.success("user blocked");
+
+  //       setRefresher((prev) => !prev);
+  //     } catch (err) {
+  //       console.error("Error blocking user:", err);
+  //       // Show an error toast
+  //       toast.error("An error occurred while blocking the user.");
+  //     }
+  //   }
+  // };
+
+  // const handleUnBlockUser = async (userId) => {
+  //   const confirmUnblock = window.confirm(
+  //     "Are you sure you want to unblock this user?"
+  //   );
+  //   if (confirmUnblock) {
+  //     try {
+  //       await unblockUser({ userId });
+  //       toast.success("User unblocked successfully");
+  //       // Refetch user data and update state after unblocking
+  //       setRefresher((prev) => !prev);
+  //     } catch (err) {
+  //       console.error("Error unblocking user:", err);
+  //       // Show an error toast
+  //       toast.error("An error occurred while unblocking the user.");
+  //     }
+  //   }
+  // };
 
   const indexOfLastPost=currentPage*postsPerPage;
   const indexOfFirstPost=indexOfLastPost-postsPerPage;
@@ -156,6 +205,15 @@ const UsersList = () => {
     </div>):null }
 
       </div>
+      {isConfirmationVisible && (
+        <ConfirmationDialog
+          message={`Are you sure you want to ${
+            confirmedAction === "block" ? "block" : "unblock"
+          } this user?`}
+          onConfirm={handleConfirmation}
+          onCancel={() => setIsConfirmationVisible(false)}
+        />
+      )}
     </div>
   );
 };
