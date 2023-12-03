@@ -108,6 +108,16 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
       setImageError("image required");
       isValid = false;
     }
+    const dobDate = new Date(dob);
+    const currentDate = new Date();
+    const minValidDate = new Date();
+    minValidDate.setFullYear(currentDate.getFullYear() - 18);
+
+    if (dobDate > minValidDate) {
+      setDobError("Trainer should be at least 18 years old.");
+      setIsLoading(false);
+      return;
+    }
     if (isValid) {
       try {
         const formData = new FormData();
