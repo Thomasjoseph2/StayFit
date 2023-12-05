@@ -4,7 +4,7 @@ import AdminRepository from "../repositorys/AdminRepository.js";
 import { randomImageName } from "../utils/randomName.js";
 import { goodSizeResize } from "../utils/buffer.js";
 import generateUrl from "../utils/generateUrl.js";
-import putS3Obj from "../utils/puts3Obj.js";
+import putS3Obj from "../utils/putS3Obj.js";
 
 class AdminServices {
   static instance;

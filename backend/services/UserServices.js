@@ -8,7 +8,7 @@ import s3Obj from "../utils/s3.js";
 import generateUrl from "../utils/generateUrl.js";
 import { goodSizeResize } from "../utils/buffer.js";
 import { randomImageName } from "../utils/randomName.js";
-import putS3Obj from "../utils/puts3Obj.js";
+import putS3Obj from "../utils/putS3Obj.js";
 import deletes3Obj from "../utils/deletes3Obj.js";
 import instance from "../utils/instance.js";
 import crypto from "crypto";

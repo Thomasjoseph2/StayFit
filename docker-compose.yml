@@ -1,0 +1,15 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontEnd
+    ports:
+      - "3000:3000"
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5000:5000"
+    # Add other configuration as needed
