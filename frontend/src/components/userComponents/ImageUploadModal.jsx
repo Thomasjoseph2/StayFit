@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 const ImageUploadModal = ({ isOpen, onClose ,setRefresher,userId}) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [addProfileImage]=useAddProfileImageMutation();
+  const [addProfileImage,{isLoading}]=useAddProfileImageMutation();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -47,6 +47,12 @@ if(selectedImage){
       <div className='modal-overlay fixed inset-0 bg-black opacity-50'></div>
       <div className='modal-container bg-gray-900 w-96 p-6 rounded-lg shadow-lg z-50'>
         <h2 className='text-2xl mb-4 text-white'>Upload Profile Image</h2>
+        {isLoading ? (
+          // Loading indicator
+          <div className="flex items-center justify-center text-white">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500"></div>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit} className='space-y-4 text-white'>
           <input
             type='file'
@@ -68,6 +74,7 @@ if(selectedImage){
             Cancel
           </button>
         </form>
+        )}
       </div>
     </div>
   );

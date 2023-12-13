@@ -22,8 +22,20 @@ const EditDietModal = ({
     }
   }, [dietDetails]);
 
+  const validateForm=()=>{
+    if(!category.trim() || !dietType.trim() || !description.trim()){
+      toast.error('all fields are required')
+      return false
+    }
+    return true
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(!validateForm()){
+      return;
+    }
 
     try {
       const response = await updateDiet({

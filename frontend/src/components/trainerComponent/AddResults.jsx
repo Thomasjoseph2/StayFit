@@ -12,11 +12,23 @@ const AddResults = ({refreshPosts}) => {
   const [description, setDescription] = useState("");
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setPostImage(file);
+    if(file){
+      if(file.type.startsWith("image/")){
+        setPostImage(file);
+      }else {
+        toast.error("Please select a valid image file.");
+        e.target.value = null;
+      }
+    }
   };
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+
+  if(!description.trim()){
+    toast.error("Please fill out all the fields.");
+    return;
+  }
   
   if (postImage && description) {
     try {

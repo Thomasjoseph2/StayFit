@@ -129,8 +129,9 @@ const deletePost = asyncHandler(async (req, res) => {
   const response = await TrainerServices.deletePost(
     req.body.selectedPostId,
     req.body.trainer,
-    req.body.name
+    req.body.imageName
   );
+
 
   if (response) {
     res.status(response.statusCode).json(response.message);
@@ -158,6 +159,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
 });
 
 const addDiet = asyncHandler(async (req, res) => {
+  
   const { description, trainerId, category, dietType, trainerName } = req.body;
 
   const diet = await TrainerServices.addDiet(

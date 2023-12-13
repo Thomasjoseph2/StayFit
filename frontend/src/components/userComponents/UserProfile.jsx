@@ -57,28 +57,28 @@ const UserProfile = () => {
   return (
     <div className="bg-black container mx-auto h-screen items-center justify-center ">
       <h2 className="text-white text-center mt-24 text-2xl">USER PROFILE</h2>
-      <div className="bg-black mx-auto mt-20  flex justify-center border relative">
-      <Link to="/subscription-plans" className="bg-red-900 text-white h-7 absolute top-4 right-4 rounded w-40 flex items-center justify-center m-2">
+      <div className="bg-black mx-auto mt-20 flex-col flex justify-center border relative sm:flex-row ">
+      <Link to="/subscription-plans" className="bg-red-900 text-white h-7 absolute top-10 right-14  rounded w-40 flex items-center justify-center m-2">
         <FaCrown className="mr-2 text-yellow-800" />
         Add Subscription
       </Link>
-        <div>
+        <div className="ml-10 mt-10 mr-10">
           {userData?.user?.imageUrl ? (
             <img
-              className="h-80 ounded-full rounded-full mt-4 "
+              className="md:h-80  md:rounded-full Md:mt-4 "
               src={userData?.user?.imageUrl}
               alt=""
             />
           ) : (
             <img
-              className="h-80 ounded-full rounded-full mt-4 "
+              className="md:h-80 md:rounded-full mt-4 "
               src={avatar}
               alt=""
             />
           )}
           <button
             onClick={openModal}
-            className="bg-green-600 rounded-2xl text-white ml- mt-5 mb-16 w-full "
+            className="bg-green-600 rounded-2xl text-white mt-5 mb-16 w-full  "
           >
             Change Image
           </button>
@@ -90,9 +90,9 @@ const UserProfile = () => {
           />
         </div>
 
-        <div className=" p-4">
-          <form className="ml-10 mt-16 ">
-            <div className="mb-4 flex mt-5">
+        <div className=" p-4 flex justify-center  ">
+          <form className="md:ml-10 md:mt-16 mb-10 ">
+            <div className="mb-4 flex mt-5 ">
               <label className="text-white block mb-2 ">Name:</label>
               <span className="text-gray-300 ml-3">{userData?.user?.name}</span>
             </div>
