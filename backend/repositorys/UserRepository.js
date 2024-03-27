@@ -6,8 +6,8 @@ import Result from "../models/resultsModel.js";
 import Videos from "../models/videosModel.js";
 import Diet from "../models/dietModel.js";
 import Plan from "../models/plans.js";
-import Payments from "../models/payments.js"; 
-import Live from '../models/lives.js'
+import Payments from "../models/payments.js";
+import Live from "../models/lives.js";
 class UserRepository {
   static instance;
 
@@ -67,30 +67,39 @@ class UserRepository {
       {
         $match: {
           "lives.date": { $gt: currentDate }, // Match dates greater than the current date
-          "lives.time": { $gt: currentDate.toLocaleTimeString('en-US', { hour12: false }) } // Match times greater than the current time
-        }
+          "lives.time": {
+            $gt: currentDate.toLocaleTimeString("en-US", { hour12: false }),
+          }, // Match times greater than the current time
+        },
       },
       {
         $project: {
-          "_id": 1,
-          "lives": {
+          _id: 1,
+          lives: {
             $filter: {
               input: "$lives",
               as: "live",
               cond: {
                 $and: [
                   { $gt: ["$$live.date", currentDate] },
-                  { $gt: ["$$live.time", currentDate.toLocaleTimeString('en-US', { hour12: false })] }
-                ]
-              }
-            }
-          }
-        }
-      }
+                  {
+                    $gt: [
+                      "$$live.time",
+                      currentDate.toLocaleTimeString("en-US", {
+                        hour12: false,
+                      }),
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
     ]);
     return result;
   }
-  
+
   async findActivePlans() {
     try {
       const activePlans = await Plan.find({
@@ -108,7 +117,7 @@ class UserRepository {
     return await Videos.find({});
   }
   async getUserDiets() {
-    return await Diet.find({});
+    return await Diet.find({}).sort({ _id: -1 });
   }
 
   async getTrainer(trainerId) {
@@ -148,15 +157,15 @@ class UserRepository {
   async checkPlanStatus(userId) {
     try {
       const user = await User.findById(userId);
-  
+
       if (!user) {
         throw new Error("User not found");
       }
-  
+
       if (user.subscription_status === "inactive") {
         return false;
       }
-  
+
       if (user.subscription_expire) {
         const currentDate = new Date();
         const subscriptionExpireDate = user.subscription_expire;
@@ -164,19 +173,19 @@ class UserRepository {
           user.subscription_status = "inactive";
           await user.save();
           return false;
-        } else if(user.subscription_status === "active"){
+        } else if (user.subscription_status === "active") {
           return true;
         }
       } else {
         console.log("Subscription expire date is undefined for this user.");
-        return false; 
+        return false;
       }
     } catch (err) {
       console.log(err);
       throw new Error("Something went wrong");
     }
   }
-  
+
   async addProfileImage(imageName, userId) {
     try {
       const user = await User.findById(userId);
