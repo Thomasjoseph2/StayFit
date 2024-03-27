@@ -15,7 +15,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { logout } from "../../slices/authSlice";
 import "../../css/typing.css";
 // const ENDPOINT = "https://stayfit-backend.thomasjoseph.online/";
-const ENDPOINT = "http://localhost:5000";
+// const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = "https://stayfit.thomasjoseph.online/";
+
 
 var socket, selectedChatCompare;
 

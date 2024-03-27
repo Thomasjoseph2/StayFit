@@ -16,8 +16,8 @@ import { toast } from "react-toastify";
 
 import io from "socket.io-client";
 
-// const ENDPOINT = "https://stayfit-backend.thomasjoseph.online/";
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT = "https://stayfit.thomasjoseph.online/";
+// const ENDPOINT = "http://localhost:5000";
 
 var socket, selectedChatCompare;
 
