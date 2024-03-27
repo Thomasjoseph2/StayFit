@@ -15,7 +15,8 @@ const UserBody = () => {
   const fetchData = async () => {
     try {
       const response = await getDiets().unwrap();
-      setDiets(response?.postDiets[0]?.diets.slice(0, 4));
+      console.log(response.postDiets[0].diets.slice(0, 4));
+      setDiets(response.postDiets[0].diets.slice(0, 4));
     } catch (error) {
       console.error(`Error fetching diet data`, error);
       toast.error(`Error fetching dietdata`);
