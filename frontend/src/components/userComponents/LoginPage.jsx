@@ -60,7 +60,7 @@ const LoginPage = () => {
       );
       navigate("/");
     } catch (err) {
-      console.log(err);
+      toast.error('something went wrong')
       setError("Invalid email or password");
     }
   };
@@ -163,8 +163,9 @@ const LoginPage = () => {
           <hr className="w-full" />
         </div>
         <div className="my-6 space-y-2 mt-10 ">
-          <GoogleLogin 
+          <GoogleLogin
             onSuccess={(response) => {
+              console.log(response,'response');
               googleSubmitHandler(response.credential);
             }}
             onError={() => {

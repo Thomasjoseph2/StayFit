@@ -39,6 +39,10 @@ const AddPlanModal = ({ isOpen, onRequestClose ,setRefresher}) => {
       isValid = false;
     }
 
+    if (parseFloat(price) < 0) {
+      setPriceError("Price cannot be negative.");
+      isValid = false;
+    }
     if (isValid) {
       try {
         const formData = {

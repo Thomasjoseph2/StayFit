@@ -15,9 +15,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
 import io from "socket.io-client";
-import { button, input } from "@material-tailwind/react";
 
+// const ENDPOINT = "https://stayfit-backend.thomasjoseph.online/";
 const ENDPOINT = "http://localhost:5000";
+
 var socket, selectedChatCompare;
 
 const TrainerMessages = () => {
@@ -30,7 +31,7 @@ const TrainerMessages = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
-  const [selected, setSelected] = useState(true);
+  const [selected, setSelected] = useState(false);
   const [brodcastMessage, setBrodcastMessage] = useState("");
   const [invitationSuccess, setInvitationSuccess] = useState({});
   const [invitationSending, setInvitationSending] = useState({});

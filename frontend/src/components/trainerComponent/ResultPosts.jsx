@@ -33,6 +33,8 @@ const ResultPosts = ({ refreshTrigger }) => {
     try {
       const response = await getPosts(trainerId);
       setPosts(response.data);
+      console.log(response,'response');
+      console.log(response?.error?.status);
       if (response?.error?.status === 401) {
         toast.error("you are not authorized to access the page");
         dispatch(logout());

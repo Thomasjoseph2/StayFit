@@ -18,13 +18,13 @@ const AdminDietView = () => {
   const [rejectDiet] = useRejectDietMutation();
 
 
-  const filteredDiets = diets
+  const filteredDiets =  diets
     .filter((trainer) =>
       trainer.trainerName.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .flatMap((trainer) =>
       trainer.diets.map((diet) => ({ ...diet, trainerId: trainer.trainer }))
-    );
+    )
 
   useEffect(() => {
     setLength(filteredDiets.length);

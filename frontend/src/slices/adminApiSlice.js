@@ -192,4 +192,5 @@ export const {
   useGetAdminConferencesMutation,
   useTrainersMutation,
   useGetCustomDateDataMutation
+
 } = adminApiSlice;

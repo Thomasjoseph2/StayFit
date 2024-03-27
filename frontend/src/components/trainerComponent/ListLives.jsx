@@ -25,7 +25,6 @@ const ListLives = () => {
   const [error, setError] = useState("");
   const [lives, setLives] = useState([]);
   const [refresher, setRefresher] = useState(false);
-  const [expiryCheck, setExpiryCheck] = useState(false);
 
   const [addLive] = useAddLiveMutation();
   const [getLives] = useGetLivesMutation();
@@ -103,7 +102,7 @@ const ListLives = () => {
     return randomId;
   };
   const handleNavigate = (liveId) => {
-    console.log('camehere',liveId);
+    console.log("camehere", liveId);
     navigate(`/trainer/video-conference/${liveId}`);
   };
 
@@ -132,50 +131,56 @@ const ListLives = () => {
             Add new Conference
           </button>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 mt-20">
-          {lives.map((live) => (
-            <div key={live._id} className="">
-              <Card className="mt-6 w-80 mx-2 mb-2 ml-3">
-                <Button
-                  onClick={() => deleteLives(live._id)}
-                  className=" m-2 w-24  text-center bg-red-800 ml-auto mr-6"
-                >
-                  delete
-                </Button>
-                <CardBody>
-                  <Typography variant="h5" color="blue-gray" className="mb-2">
-                    {live.title}
-                  </Typography>
-                  <Typography>
-                    Date: {new Date(live.date).toLocaleDateString()} Time:
-                    {live.time}
-                  </Typography>
-                </CardBody>
-                <CardFooter className="pt-0">
-                  {live.expired === "true" ? (
-                    <Button className="w-full bg-red-900">
-                      Conference Expired
-                    </Button>
-                  ) : live.expired === "started" ? (
-                    <Button
-                      className="w-full bg-blue-600"
-                      onClick={() => handleNavigate(live.randomId)}
-                    >
-                      Enter Conference
-                    </Button>
-                  ) : (
-                    <Button
-                      className="w-full"
-                      onClick={() => handleNavigate(live.randomId)}
-                    >
-                      Click Here to Join Conference
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
-            </div>
-          ))}
-        </div>
+        {lives.length === 0 ? (
+          <div className="text-white text-center text-2xl w-full h-96 mt-10">
+            You haven't uploaded any conferences.
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 mt-20">
+            {lives.map((live) => (
+              <div key={live._id} className="">
+                <Card className="mt-6 w-80 mx-2 mb-2 ml-3">
+                  <Button
+                    onClick={() => deleteLives(live._id)}
+                    className=" m-2 w-24  text-center bg-red-800 ml-auto mr-6"
+                  >
+                    delete
+                  </Button>
+                  <CardBody>
+                    <Typography variant="h5" color="blue-gray" className="mb-2">
+                      {live.title}
+                    </Typography>
+                    <Typography>
+                      Date: {new Date(live.date).toLocaleDateString()} Time:
+                      {live.time}
+                    </Typography>
+                  </CardBody>
+                  <CardFooter className="pt-0">
+                    {live.expired === "true" ? (
+                      <Button className="w-full bg-red-900">
+                        Conference Expired
+                      </Button>
+                    ) : live.expired === "started" ? (
+                      <Button
+                        className="w-full bg-blue-600"
+                        onClick={() => handleNavigate(live.randomId)}
+                      >
+                        Enter Conference
+                      </Button>
+                    ) : (
+                      <Button
+                        className="w-full"
+                        onClick={() => handleNavigate(live.randomId)}
+                      >
+                        Click Here to Join Conference
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">

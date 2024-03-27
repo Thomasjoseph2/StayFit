@@ -10,7 +10,6 @@ import ConfirmationDialog from "../Confirmation";
 const UsersList = () => {
   const [actualData, setActualData] = useState([]);
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [confirmationMessage, setConfirmationMessage] = useState("");
   const [confirmedAction, setConfirmedAction] = useState(null);
   const [refresher, setRefresher] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -89,42 +88,6 @@ const UsersList = () => {
   };
 
 
-  // const handleBlockUser = async (userId) => {
-  //   const confirmBlock = window.confirm(
-  //     "are you sure you want to block this user?"
-  //   );
-  //   if (confirmBlock) {
-  //     try {
-  //       await blockUser({ userId });
-
-  //       toast.success("user blocked");
-
-  //       setRefresher((prev) => !prev);
-  //     } catch (err) {
-  //       console.error("Error blocking user:", err);
-  //       // Show an error toast
-  //       toast.error("An error occurred while blocking the user.");
-  //     }
-  //   }
-  // };
-
-  // const handleUnBlockUser = async (userId) => {
-  //   const confirmUnblock = window.confirm(
-  //     "Are you sure you want to unblock this user?"
-  //   );
-  //   if (confirmUnblock) {
-  //     try {
-  //       await unblockUser({ userId });
-  //       toast.success("User unblocked successfully");
-  //       // Refetch user data and update state after unblocking
-  //       setRefresher((prev) => !prev);
-  //     } catch (err) {
-  //       console.error("Error unblocking user:", err);
-  //       // Show an error toast
-  //       toast.error("An error occurred while unblocking the user.");
-  //     }
-  //   }
-  // };
 
   const indexOfLastPost=currentPage*postsPerPage;
   const indexOfFirstPost=indexOfLastPost-postsPerPage;

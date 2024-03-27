@@ -7,8 +7,8 @@ const VideoStream = () => {
   const { trainerInfo } = useSelector((state) => state.trainerAuth);
 
   const myMeeting = async (element) => {
-    const appID = 1386993773;
-    const serverSecret = "9f5a181252a1975976ab3ec06c014321";
+    const appID = 1302994617;
+    const serverSecret = "80919b1ecf7d59b3f7547456eaae2f10";
     const roomID = liveId;
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,

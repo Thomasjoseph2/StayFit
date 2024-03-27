@@ -75,12 +75,6 @@ export const usersApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
-    getUserDiets: builder.mutation({
-      query: () => ({
-        url: `${USERS_URL}/get-user-diets`,
-        method: "GET",
-      }),
-    }),
     otpVerification: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/otp-verification`,
@@ -104,13 +98,6 @@ export const usersApiSlice = apiSlice.injectEndpoints({
    verifyPayment: builder.mutation({
       query: (data) => ({
         url: `${USERS_URL}/verify-payment`,
-        method: "POST",
-        body: data,
-      }),
-    }),
-    addPayment: builder.mutation({
-      query: (data) => ({
-        url: `${USERS_URL}/add-payment`,
         method: "POST",
         body: data,
       }),

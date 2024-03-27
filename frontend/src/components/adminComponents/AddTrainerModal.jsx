@@ -108,6 +108,7 @@ const AddTrainerModal = ({ isOpen, onRequestClose }) => {
       setImageError("image required");
       isValid = false;
     }
+
     const dobDate = new Date(dob);
     const currentDate = new Date();
     const minValidDate = new Date();

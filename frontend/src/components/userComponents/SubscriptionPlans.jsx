@@ -5,12 +5,12 @@ import { useVerifyPaymentMutation } from "../../slices/usersApiSlice";
 import { useCheckPlanStatusMutation } from "../../slices/usersApiSlice";
 import { useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
+import { setCredentials } from "../../slices/authSlice";
 import { toast } from "react-toastify";
 import { logout } from "../../slices/authSlice";
 import logo from "../../assets/fitnesss.png";
 const SubscriptionPlans = () => {
   const { userInfo } = useSelector((state) => state.auth);
-
   const [plans, setPlans] = useState([]);
   const [price, setPrice] = useState("");
   const [plan, setPlan] = useState("");
@@ -56,6 +56,7 @@ const SubscriptionPlans = () => {
   };
 
   const verifypayment = async (response, planId, plan, price, duration) => {
+  
     const result = await verifyPayment({
       ...response,
       plan,
@@ -65,7 +66,7 @@ const SubscriptionPlans = () => {
       userId: userInfo._id,
       user_name: userInfo.name,
     }).unwrap();
-
+      console.log(result);
     if (result.success === true) {
       toast.success(result.message);
       dispatch(setCredentials({ ...userInfo, subscription: result.user.subscription_status }));
@@ -81,7 +82,7 @@ const SubscriptionPlans = () => {
       setPlan(plan);
 
       const options = {
-        key: "rzp_test_4VSqO0TCBFvtCE",
+        key: "rzp_test_3aKlYN0Jk5jqZX",
         amount: price * 100,
         currency: "INR",
         name: "Stay fit",

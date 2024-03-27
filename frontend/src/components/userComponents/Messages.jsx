@@ -14,7 +14,9 @@ import io from "socket.io-client";
 import { useNavigate, useParams } from "react-router-dom";
 import { logout } from "../../slices/authSlice";
 import "../../css/typing.css";
+// const ENDPOINT = "https://stayfit-backend.thomasjoseph.online/";
 const ENDPOINT = "http://localhost:5000";
+
 var socket, selectedChatCompare;
 
 const Messages = () => {
@@ -178,7 +180,7 @@ const Messages = () => {
             className="rounded-full"
             width={60}
             height={60}
-            alt="User Avatar"
+            alt="noimg"
           />
           <div className="ml-4 text-white">
             <h3 className="text-2xl">{userInfo.name}</h3>

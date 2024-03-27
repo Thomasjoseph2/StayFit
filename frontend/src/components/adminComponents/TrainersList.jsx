@@ -195,7 +195,7 @@ const TrainersList = () => {
         <ConfirmationDialog
           message={`Are you sure you want to ${
             confirmedAction === "block" ? "block" : "unblock"
-          } this user?`}
+          } this trainer?`}
           onConfirm={handleConfirmation}
           onCancel={() => setIsConfirmationVisible(false)}
         />

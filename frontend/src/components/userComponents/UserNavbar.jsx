@@ -118,6 +118,14 @@ const UserNavbar = () => {
           <ul className="space-y-2">
           <li>
               <Link
+                to='/user-trainers' 
+                className="text-white hover:text-gray-300 w-full block"
+              >
+                Trainers
+              </Link>
+            </li>
+          <li>
+              <Link
                 to={`/user-messages/allchats`}
                 className="text-white hover:text-gray-300 w-full block"
               >

@@ -8,7 +8,7 @@ const ShowVideos = ({ posts, handleDeleteClick }) => {
   return (
     <div className="container mx-auto mt-8 mb-20">
       {posts.length === 0 ? (
-        <div className="text-white text-center text-2xl h-screen ">You haven't uploaded any videos.</div>
+        <div className="text-white text-center text-2xl h-96">You haven't uploaded any videos.</div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           {posts.map((post) => (
