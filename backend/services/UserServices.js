@@ -322,20 +322,22 @@ class UserService {
 
   getUserDiets = asyncHandler(async (req, res) => {
     const postDiets = await UserRepository.getUserDiets();
-
+  
     const dietsWithSignedUrls = await Promise.all(
       postDiets.map(async (trainer) => {
+        const approvedDiets = trainer.diets.filter(diet => diet.status === 'approved');
+  
         const dietsWithUrls = await Promise.all(
-          trainer.diets.map(async (diet) => {
+          approvedDiets.map(async (diet) => {
             const signedUrl = await generateUrl(diet.imageName);
-
+  
             return {
               ...diet.toObject(),
               signedUrl: signedUrl,
             };
           })
         );
-
+  
         return {
           ...trainer.toObject(),
           diets: dietsWithUrls,
@@ -344,7 +346,7 @@ class UserService {
     );
     return { statusCode: 200, dietsWithSignedUrls };
   });
-
+  
   verifyOtp = asyncHandler(async (email, otp, res) => {
     const user = await UserRepository.verifyOtp(email, otp);
 
