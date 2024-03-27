@@ -16,7 +16,11 @@ const UserBody = () => {
   const fetchData = async () => {
     try {
       const response = await getDiets().unwrap();
-      setDiets(response?.postDiets[0]?.diets?.slice(0, 3));
+      // Get the first trainer's diets
+      const firstTrainerDiets = response?.postDiets.find(
+        (post) => post.trainerName === response?.postDiets[0]?.trainerName
+      )?.diets.slice(0, 4);
+      setDiets(firstTrainerDiets);
     } catch (error) {
       console.error(`Error fetching diet data`, error);
       toast.error(`Error fetching dietdata`);
@@ -49,26 +53,19 @@ const UserBody = () => {
         </p>
       </div>
       <div className="flex flex-wrap p-4 w-full container">
-        {diets.map((trainer) =>
-          trainer?.diets?.map(
-            (diet, index) =>
-              diet.status === 'approved' && (
-                <div
-                  key={diet._id}
-                  className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 p-2 "
-                >
-                  <WorkoutCard
-                    key={index}
-                    image={diet?.signedUrl}
-                    dietType={diet?.dietType}
-                    category={diet?.category}
-                    trainer={trainer?.trainerName}
-                    description={diet?.description}
-                  />
-                </div>
-              )
-          )
-        )}
+        {diets?.map((diet) => (
+          <div
+            key={diet._id}
+            className="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 xl:w-1/4 p-2 "
+          >
+            <WorkoutCard
+              image={diet?.signedUrl}
+              dietType={diet?.dietType}
+              category={diet?.category}
+              description={diet?.description}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
