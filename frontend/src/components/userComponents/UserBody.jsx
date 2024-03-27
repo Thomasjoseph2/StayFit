@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import image from '../../assets/banners.jpeg';
 import WorkoutCard from './WorkoutCard';
 import { useGetUserDietsMutation } from '../../slices/usersApiSlice';
@@ -15,8 +15,7 @@ const UserBody = () => {
   const fetchData = async () => {
     try {
       const response = await getDiets().unwrap();
-      console.log(response.postDiets[0].diets.slice(0, 4));
-      setDiets(response.postDiets[0].diets.slice(0, 4));
+      setDiets(response?.postDiets[0]?.diets?.slice(0, 4));
     } catch (error) {
       console.error(`Error fetching diet data`, error);
       toast.error(`Error fetching dietdata`);
@@ -50,7 +49,7 @@ const UserBody = () => {
       </div>
       <div className="flex flex-wrap p-4 w-full container">
         {diets.map((trainer) =>
-          trainer.diets.map(
+          trainer?.diets?.map(
             (diet, index) =>
               diet.status === 'approved' && (
                 <div
@@ -59,11 +58,11 @@ const UserBody = () => {
                 >
                   <WorkoutCard
                     key={index}
-                    image={diet.signedUrl}
-                    dietType={diet.dietType}
-                    category={diet.category}
-                    trainer={trainer.trainerName}
-                    description={diet.description}
+                    image={diet?.signedUrl}
+                    dietType={diet?.dietType}
+                    category={diet?.category}
+                    trainer={trainer?.trainerName}
+                    description={diet?.description}
                   />
                 </div>
               )
