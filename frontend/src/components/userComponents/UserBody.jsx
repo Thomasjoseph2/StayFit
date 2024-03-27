@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 const UserBody = () => {
   const [diets, setDiets] = useState([]);
   const [getDiets] = useGetUserDietsMutation();
+  console.log(diets);
 
   useEffect(() => {
     fetchData();
@@ -15,7 +16,7 @@ const UserBody = () => {
   const fetchData = async () => {
     try {
       const response = await getDiets().unwrap();
-      setDiets(response?.postDiets[0]?.diets?.slice(0, 4));
+      setDiets(response?.postDiets[0]?.diets?.slice(0, 3));
     } catch (error) {
       console.error(`Error fetching diet data`, error);
       toast.error(`Error fetching dietdata`);
