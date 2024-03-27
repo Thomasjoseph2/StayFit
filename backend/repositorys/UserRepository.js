@@ -61,10 +61,36 @@ class UserRepository {
   async getTrainers() {
     return await Trainer.find({});
   }
-  async findActiveLives(){
-    const result = await Live.find({}).sort({_id: -1})
+  async findActiveLives() {
+    const currentDate = new Date();
+    const result = await Live.aggregate([
+      {
+        $match: {
+          "lives.date": { $gt: currentDate }, // Match dates greater than the current date
+          "lives.time": { $gt: currentDate.toLocaleTimeString('en-US', { hour12: false }) } // Match times greater than the current time
+        }
+      },
+      {
+        $project: {
+          "_id": 1,
+          "lives": {
+            $filter: {
+              input: "$lives",
+              as: "live",
+              cond: {
+                $and: [
+                  { $gt: ["$$live.date", currentDate] },
+                  { $gt: ["$$live.time", currentDate.toLocaleTimeString('en-US', { hour12: false })] }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]);
     return result;
   }
+  
   async findActivePlans() {
     try {
       const activePlans = await Plan.find({

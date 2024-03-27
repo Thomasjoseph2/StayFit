@@ -7,14 +7,15 @@ import connectDB from "./config/db.js";
 import cookieParser from "cookie-parser";
 import adminRoutes from "./routes/adminRoutes.js";
 import trainerRoutes from "./routes/trainerRoutes.js"; // Add the missing semicolon here
-
 import cors from "cors";
 
 const port = process.env.PORT || 5000;
 connectDB();
 const app = express();
 
+// app.use(cors({ origin: "https://stayfit-front-end.vercel.app", credentials: true }));
 app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,11 +26,17 @@ app.use("/api/trainer", trainerRoutes); // Add the forward slash before api/trai
 
 app.get("/", (req, res) => res.send("server is ready"));
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'success', message: 'Health check passed' });
+});
+
+
+
 app.use(notFound);
 app.use(errorHandler);
 
 const server = app.listen(port, () => {
-  console.log(`server started on port ${port}`);
+  console.log(`server started successfully on port  ${port}`);
 });
 
 import { Server } from "socket.io";
@@ -37,8 +44,9 @@ import { Server } from "socket.io";
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    // origin: ["https://thomasjoseph.online","https://www.thomasjoseph.online"],
-    origin: "http://localhost:3000",
+    // origin: ["https://stayfit-front-end.vercel.app"],
+    origin: ["http://localhost:3000"],
+
   },
 });
 
@@ -46,25 +54,14 @@ io.on("connection", (socket) => {
   socket.on("setup", (userData) => {
     socket.join(userData._id);
     socket.emit("connected");
-    console.log("user joined", userData._id);
   });
 
   socket.on("join chat", (room) => {
     socket.join(room);
-    console.log("userjoined room", room);
   });
 
   socket.on("typing", (room) => socket.in(room).emit("typing"));
   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
-
-  // socket.on("uservideoCall", ({ to, offer }) => {
-  //   io.to(to).emit("incoming:call", { from: socket.id, offer });
-  // });
-
-  // socket.on('videoCall',(roomId)=>{
-  //    const room=roomId;
-     
-  // })
 
   socket.on("new message", (newMessageReceived) => {
     var chat = newMessageReceived.room;
@@ -85,3 +82,5 @@ io.on("connection", (socket) => {
     socket.leave(userData._id);
   });
 });
+
+export  {app,io};

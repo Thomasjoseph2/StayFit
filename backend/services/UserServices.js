@@ -13,7 +13,6 @@ import deletes3Obj from "../utils/deletes3Obj.js";
 import instance from "../utils/instance.js";
 import crypto from "crypto";
 import util from "util";
-
 class UserService {
   static instance;
 
@@ -114,7 +113,6 @@ class UserService {
   };
 
   googleLogin = asyncHandler(async (token, res) => {
-    
     const googleClient = new OAuth2Client(process.env.GOOGLE_KEY);
 
     const ticket = await googleClient.verifyIdToken({
@@ -137,7 +135,7 @@ class UserService {
       let image;
 
       if (userExists.imagePath) {
-        image = await generateUrl(user.imagePath);
+        image = await generateUrl(userExists.imagePath);
       }
 
       return {
@@ -158,6 +156,7 @@ class UserService {
         },
       };
     } else {
+      console.log("registration");
       const user = await UserRepository.createUser({ name, email });
 
       if (user) {
@@ -181,7 +180,6 @@ class UserService {
       }
     }
   });
-
   getTrainers = asyncHandler(async () => {
     const trainers = await UserRepository.getTrainers();
 
@@ -293,7 +291,6 @@ class UserService {
   });
 
   addProfileImage = asyncHandler(async (imgBuffer, userId, mimetype) => {
-    
     const buffer = await goodSizeResize(imgBuffer);
 
     const imageName = randomImageName();
@@ -306,7 +303,11 @@ class UserService {
 
     await putS3Obj(imageName, mimetype, buffer);
 
-    return { statusCode: 200, message: "profile photo updated " };
+    const url = await generateUrl(imageName);
+
+     
+
+    return { statusCode: 200, message: "profile photo updated " ,url};
   });
 
   editUser = asyncHandler(async (userId, name, email) => {
@@ -402,7 +403,7 @@ class UserService {
   });
 
   verifyPayment = asyncHandler(async (data) => {
-    console.log('hreredtydhj');
+    console.log("hreredtydhj");
     const {
       razorpay_order_id,
 
@@ -428,14 +429,18 @@ class UserService {
     if (generated_signature === razorpay_signature) {
       await UserRepository.addPayment(data);
 
-     const user= await UserRepository.addSubscription(userId, plan, duration);
+      const user = await UserRepository.addSubscription(userId, plan, duration);
 
-     console.log(user);
+      console.log(user);
 
       return {
         statusCode: 200,
 
-        data: { success: true, message: "Payment verified successfully",user:user },
+        data: {
+          success: true,
+          message: "Payment verified successfully",
+          user: user,
+        },
       };
     } else {
       return {

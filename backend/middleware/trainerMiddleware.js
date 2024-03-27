@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import TrainerRepository from "../repositorys/TrainerRepository.js";
 
 const protectTrainer = asyncHandler(async (req, res, next) => {
+    
 
     let token;
   
@@ -12,7 +13,9 @@ const protectTrainer = asyncHandler(async (req, res, next) => {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  
+
+        console.log('here',decoded);
+
         req.trainer = await TrainerRepository.findById(decoded.trainerId);
   
         next();

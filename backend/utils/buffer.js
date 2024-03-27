@@ -9,7 +9,7 @@ export const resize = async (image) => {
     return resizedImg;
   })(image);
 
-  return buffer; 
+  return buffer; // Return the resized image buffer
 };
 export const goodSizeResize = async (image) => {
     const buffer = await (async (img) => {
@@ -20,7 +20,7 @@ export const goodSizeResize = async (image) => {
       return resizedImg;
     })(image);
   
-    return buffer; 
+    return buffer; // Return the resized image buffer
   };
 
 

@@ -63,7 +63,6 @@ router.get('/get-user-plans',isBlocked,protect,getUserPlans)
 
 router.get('/get-user-conferences',isBlocked,protect,getUserConferences)
 
-
 router.post('/create-order',protect,createOrder)
 
 router.post('/verify-payment',protect,paymentVerification)

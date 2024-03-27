@@ -47,7 +47,7 @@ router.post("/block-trainer",protectAdmin, blockTrainer)
 
 router.post("/unblock-trainer",protectAdmin, unBlockTrainer);
 
-router.get("/users",protectAdmin,  users);
+router.get("/users",protectAdmin,users);
 
 router.post("/add-trainer",protectAdmin, upload.single("profileImage"), addTrainer);
 
@@ -71,8 +71,6 @@ router.post ('/unlist-plan',protectAdmin,unlistPlans)
 
 router.post('/activate-plan',protectAdmin,activatePlan)
 
-router.post('/custom-date-data',protectAdmin,getCustomRangeData)
-
 router.get('/get-plans',protectAdmin,getPlans)
 
 router.get('/get-subscriptions',protectAdmin,getSubscriptions)
@@ -81,6 +79,7 @@ router.get('/get-sales',protectAdmin,getSales)
 
 router.get('/get-admin-conferences',protectAdmin,getAdminConferences)
 
+router.post('/custom-date-data',protectAdmin,getCustomRangeData)
 
 // router.route('/profile').get(protect,profile).put(protect,upload.single('file'),updateUserProfile);
 

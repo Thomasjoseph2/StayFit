@@ -169,7 +169,6 @@ class TrainerServices {
     );
 
     if (response.success === true) {
-
       await deletes3Obj(imageName);
 
       return { statusCode: 201, message: "post deleted successfully" };

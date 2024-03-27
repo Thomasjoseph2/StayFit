@@ -68,6 +68,7 @@ class AdminServices {
   });
 
   blockTrainer = asyncHandler(async (trainerId) => {
+
     const trainer = await AdminRepository.findTrainerById(trainerId);
 
     if (trainer) {
@@ -258,9 +259,11 @@ class AdminServices {
   });
 
   unlistPlans = asyncHandler(async (planId) => {
+
     const planAdded = await AdminRepository.unlistPlans(planId);
 
     if (planAdded) {
+    
       return { statusCode: 200, success: true };
     } else {
       return { statusCode: 200, success: false };
@@ -268,9 +271,11 @@ class AdminServices {
   });
 
   activatePlan = asyncHandler(async (planId) => {
+
     const planAdded = await AdminRepository.activatePlan(planId);
 
     if (planAdded) {
+    
       return { statusCode: 200, success: true };
     } else {
       return { statusCode: 200, success: false };
@@ -306,6 +311,14 @@ class AdminServices {
     }
   });
 
+  getAdminConferences = asyncHandler(async () => {
+    const lives = await AdminRepository.findActiveLives();
+    
+    if (lives) {
+      return { statusCode: 200, lives };
+    }
+  });
+
   getCustomRangeData = asyncHandler(async (startDate, endDate) => {
     const data = await AdminRepository.getCustomRangeData(startDate, endDate);
     if (data) {
@@ -315,14 +328,7 @@ class AdminServices {
       throw new Error("data not found");
     }
   });
-
-  getAdminConferences = asyncHandler(async () => {
-    const lives = await AdminRepository.findActiveLives();
-
-    if (lives) {
-      return { statusCode: 200, lives };
-    }
-  });
+  
 }
 
 export default new AdminServices();

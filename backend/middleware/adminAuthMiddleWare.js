@@ -9,6 +9,7 @@ const protectAdmin = asyncHandler(async (req, res, next) => {
 
   if (token) {
     try {
+      
       const decoded = jwt.verify(token, process.env.JWT_SECRET_FOR_ADMIN);
 
       req.admin = await AdminRepository.findById(decoded.adminId);

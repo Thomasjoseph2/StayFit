@@ -259,7 +259,6 @@ const getAdminConferences = asyncHandler(async (req, res) => {
 
   res.status(response.statusCode).json(response.lives);
 });
-
 const getCustomRangeData=asyncHandler(async(req,res)=>{
   const { startDate,endDate}=req.body
   const data=await AdminServices.getCustomRangeData(startDate,endDate)

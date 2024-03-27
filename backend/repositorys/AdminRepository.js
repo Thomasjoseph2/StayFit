@@ -73,10 +73,10 @@ class AdminRepository {
     return await Trainer.create(newTrainer);
   }
   async getAdminVideos() {
-    return await Videos.find({});
+    return await Videos.find({}).sort({ _id: -1 });
   }
   async getDiets() {
-    return await Diet.find({});
+    return await Diet.find({}).sort({ _id: -1 });
   }
 
   async approveVideo(trainerId, videoId) {
@@ -283,7 +283,7 @@ class AdminRepository {
       console.error(error);
     }
   }
-
+  
   async getCustomRangeData(startDate, endDate) {
     // Convert the start and end dates to Date objects
     const startDay = new Date(startDate);
@@ -318,10 +318,6 @@ class AdminRepository {
       return { statusCode: 500, error: "Internal server error" };
     }
   }
-  
-  
-  
-  
   
   
 }

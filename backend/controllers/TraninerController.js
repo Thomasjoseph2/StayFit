@@ -132,7 +132,6 @@ const deletePost = asyncHandler(async (req, res) => {
     req.body.imageName
   );
 
-
   if (response) {
     res.status(response.statusCode).json(response.message);
   } else {
@@ -159,7 +158,6 @@ const deleteVideo = asyncHandler(async (req, res) => {
 });
 
 const addDiet = asyncHandler(async (req, res) => {
-  
   const { description, trainerId, category, dietType, trainerName } = req.body;
 
   const diet = await TrainerServices.addDiet(
@@ -211,7 +209,6 @@ const getDiets = asyncHandler(async (req, res) => {
 const getLives = asyncHandler(async (req, res) => {
 
   const trainerId = new ObjectId(req.params.trainerId);
-  console.log(trainerId);
 
   const lives = await TrainerServices.getLives(trainerId);
 
@@ -241,7 +238,7 @@ const deleteDiet = asyncHandler(async (req, res) => {
 });
 
 const deleteLive = asyncHandler(async (req, res) => {
-  console.log(req.body);
+
   const response = await TrainerServices.deleteLive(
     req.body.trainerId,
     req.body.liveId,

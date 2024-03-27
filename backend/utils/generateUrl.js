@@ -8,7 +8,7 @@ const generateUrl = async (key) => {
     Key: key,
   };
   const command = new GetObjectCommand(getObjectParams);
-  const url = await getSignedUrl(s3Obj, command, { expiresIn: 60000 });
+  const url = await getSignedUrl(s3Obj, command, { expiresIn: 600000 });
   return url;
 };
 
