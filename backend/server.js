@@ -13,7 +13,7 @@ const port = process.env.PORT || 5000;
 connectDB();
 const app = express();
 
-app.use(cors({ origin: "https://stayfit.thomasjoseph.online", credentials: true }));
+app.use(cors({ origin: "https://stayfit-gq6f.onrender.com/", credentials: true }));
 // app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 app.use(express.json());
@@ -50,7 +50,7 @@ import { Server } from "socket.io";
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: ["https://stayfit.thomasjoseph.online"],
+    origin: ["https://stayfit-gq6f.onrender.com/"],
     // origin: ["http://localhost:3000"],
   },
 });
